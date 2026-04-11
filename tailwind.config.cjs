@@ -67,6 +67,13 @@ module.exports = {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
         sans:  ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      fontSize: {
+        /** Maps to :root tokens in global.css — single place to tune responsive display sizes */
+        'page-title': ['var(--font-page-title)', { lineHeight: '1.15' }],
+        hero: ['var(--font-hero)', { lineHeight: '1.1' }],
+        'cta-band': ['var(--font-cta-band)', { lineHeight: '1.2' }],
+        'second-hero': ['var(--font-second-hero)', { lineHeight: '1.2' }],
+      },
       typography: (theme) => ({
         DEFAULT: {
           css: {

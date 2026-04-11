@@ -22,6 +22,15 @@
   --radius:       0.625rem;
   --radius-lg:    1rem;
   --radius-pill:  9999px;
+
+  /* Typography scale — tune here; Tailwind theme maps text-page-title, text-hero, etc. */
+  --font-hero:            clamp(2.5rem, 6vw, 5rem);
+  --font-page-title:      clamp(2rem, 5vw, 3.5rem);
+  --font-section-major:   clamp(1.75rem, 4vw, 2.75rem);
+  --font-cta-band:        clamp(1.75rem, 4vw, 3rem);
+  --font-second-hero:     clamp(1.75rem, 3.5vw, 2.75rem);
+  /** Slight bump for Traditional/Simplified vs Latin at same nominal size (see .st-i18n rules). */
+  --font-lang-cjk-scale:  1.02;
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────── */
@@ -109,7 +118,7 @@
 
   .section-heading {
     @apply font-serif font-bold text-heading;
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-size: var(--font-section-major);
     line-height: 1.15;
   }
 
@@ -120,6 +129,25 @@
   .link-arrow {
     @apply inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 transition-colors;
   }
+}
+
+/*
+ * LocalizedInline / LocalizedHtml: when Traditional or Simplified is active, scale the
+ * visible zh slot slightly vs Latin for even perceived size (replaces per-page +1px hacks).
+ */
+html[data-lang="zh-Hant"] .st-i18n .st-lang-zh-Hant,
+html[data-lang="zh-Hans"] .st-i18n .st-lang-zh-Hans {
+  font-size: calc(1em * var(--font-lang-cjk-scale));
+}
+html[data-lang="zh-Hant"] .st-i18n-html .st-lang-zh-Hant,
+html[data-lang="zh-Hans"] .st-i18n-html .st-lang-zh-Hans {
+  font-size: calc(1em * var(--font-lang-cjk-scale));
+}
+
+/* Pastor bios and other .st-lang blocks outside .st-i18n */
+html[data-lang="zh-Hant"] .st-bio-para.st-lang-zh-Hant,
+html[data-lang="zh-Hans"] .st-bio-para.st-lang-zh-Hans {
+  font-size: calc(1em * var(--font-lang-cjk-scale));
 }
 
 /* ─── Animations ──────────────────────────────────────────────────────────── */
