@@ -1,0 +1,242 @@
+---
+import LocalizedInline from "../UI/LocalizedInline.astro";
+import { getCollection } from "astro:content";
+
+export interface Props {
+  /** `pathways` = mockup2 photo cards + theme.css `.pathways`; `default` = icon overlay grid */
+  variant?: "default" | "pathways";
+}
+
+const { variant = "default" } = Astro.props;
+
+const entries = await getCollection("siteInfo");
+const entry = entries.find(
+  (item) =>
+    item.id === "new-to_crosspoint" ||
+    item.id === "new-to-crosspoint" ||
+    item.slug === "new-to_crosspoint" ||
+    item.slug === "new-to-crosspoint" ||
+    item.id.endsWith("/new-to_crosspoint") ||
+    item.id.endsWith("/new-to-crosspoint") ||
+    item.id.endsWith("/new-to_crosspoint.md") ||
+    item.id.endsWith("/new-to-crosspoint.md") ||
+    item.id === "new-to_crosspoint.md" ||
+    item.id === "new-to-crosspoint.md",
+);
+const block = entry?.data.newToCrosspoint;
+
+const sectionTitle = block?.sectionTitle;
+const sectionSubtitle = block?.sectionSubtitle;
+const cardLinkLabel = block?.cardLinkLabel;
+
+type CardIcon = "users" | "music" | "globe" | "sparkles" | "calenders" | "question_mark" | "thunder";
+type Localized = { en: string; "zh-Hant"?: string; "zh-Hans"?: string };
+const cards = (block?.cards ?? []) as Array<{
+  icon: CardIcon;
+  tag?: Localized;
+  background?: string;
+  title: Localized;
+  description: Localized;
+  href: string;
+}>;
+
+const iconShell: Record<
+  CardIcon,
+  { circle: string; icon: string }
+> = {
+  users: {
+    circle: "bg-primary-100",
+    icon: "text-primary-600",
+  },
+  music: {
+    circle: "bg-secondary-100",
+    icon: "text-secondary-600",
+  },
+  globe: {
+    circle: "bg-accent-100",
+    icon: "text-accent-600",
+  },
+  sparkles: {
+    circle: "bg-white/90",
+    icon: "text-heading",
+  },
+  calenders: {
+    circle: "bg-primary-100/90",
+    icon: "text-primary-700",
+  },
+  question_mark: {
+    circle: "bg-secondary-100/90",
+    icon: "text-secondary-700",
+  },
+  thunder: {
+    circle: "bg-accent-100/90",
+    icon: "text-accent-700",
+  },
+};
+
+const CARD_OVERLAY = {
+  from: { r: 26, g: 20, b: 16, a: 0.55 },
+  to: { r: 26, g: 20, b: 16, a: 0.82 },
+} as const;
+
+function overlayGradient(o: typeof CARD_OVERLAY) {
+  const { from, to } = o;
+  return `linear-gradient(to bottom, rgba(${from.r},${from.g},${from.b},${from.a}), rgba(${to.r},${to.g},${to.b},${to.a}))`;
+}
+
+const iconPath: Record<CardIcon, string> = {
+  users:
+    "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
+  music:
+    "M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3",
+  globe:
+    "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9",
+  sparkles:
+    "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+  calenders:
+    "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+  question_mark:
+    "M8.25 9a3.75 3.75 0 117.5 0c0 1.5-.874 2.25-2.25 3.2-1.163.803-1.5 1.275-1.5 2.55M12 17.25h.008v.008H12v-.008z",
+  thunder:
+    "M13 3L4 14h6l-1 7 9-11h-6l1-7z",
+};
+
+function cardImageAlt(title: Localized) {
+  return title.en || title["zh-Hant"] || title["zh-Hans"] || "";
+}
+
+const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索" };
+---
+
+
+
+{block && cards.length > 0 && variant === "pathways" && (
+  <section class="section-default">
+    <div class="">
+      <div class="">
+        <p class="eyebrow">Get Connected</p>
+        {sectionTitle && (
+          <h2 class="section-heading">
+            <LocalizedInline value={sectionTitle} />
+          </h2>
+        )}
+        {sectionSubtitle && (
+          <p class="section-sub">
+            <LocalizedInline value={sectionSubtitle} />
+          </p>
+        )}
+      </div>
+      <div class="pathways-grid">
+        {cards.map((card) => (
+          <a href={card.href} class="pathway-card">
+            <img
+              src={card.background ?? ""}
+              alt={cardImageAlt(card.title)}
+              loading="lazy"
+            />
+            <div class="pathway-card-overlay"></div>
+            <div class="pathway-card-body">
+              {card.tag && (
+                <div class="pathway-card-tag">
+                  <LocalizedInline value={card.tag} />
+                </div>
+              )}
+              <div class="pathway-card-title">
+                <LocalizedInline value={card.title} />
+              </div>
+              <div class="pathway-card-arrow">
+                <LocalizedInline value={cardLinkLabel ?? exploreFallback} />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+{block && cards.length > 0 && variant === "default" && (
+<section >
+  <div class="container">
+    <div class="text-center mb-12">
+      {sectionTitle && (
+        <>
+          <p class="eyebrow mb-3">Get Connected</p>
+          <h2 class="section-heading mb-4">
+            <LocalizedInline value={sectionTitle} />
+          </h2>
+        </>
+      )}
+      {sectionSubtitle && (
+        <p class="text-base text-muted max-w-2xl mx-auto">
+          <LocalizedInline value={sectionSubtitle} />
+        </p>
+      )}
+    </div>
+
+    <div
+      class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+    >
+      {
+        cards.map((card) => {
+          const shell = iconShell[card.icon];
+          const d = iconPath[card.icon];
+          return (
+            <a
+              href={card.href}
+              class="group card relative text-center p-8 overflow-hidden block isolate"
+              style={`background-image: url(${card.background ?? ""}); background-size: cover; background-position: center;`}
+            >
+              <div
+                class="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
+                style={`background-image: ${overlayGradient(CARD_OVERLAY)};`}
+              />
+              <div class="absolute inset-0 bg-white/0 transition-all duration-300 group-hover:bg-white/60"></div>
+              <div class="relative z-10">
+              <div
+                class:list={[
+                  "w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center",
+                  shell.circle,
+                ]}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class:list={["h-10 w-10", shell.icon]}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d={d}
+                  />
+                </svg>
+              </div>
+              <h3 class="text-2xl font-serif font-bold mb-2 text-white group-hover:text-heading transition-colors duration-300">
+                <LocalizedInline value={card.title} />
+              </h3>
+              {(card.description.en || card.description["zh-Hant"] || card.description["zh-Hans"]) && (
+              <p class="mb-4 text-white/90 group-hover:text-ink-3 transition-colors duration-300 text-sm">
+                <LocalizedInline value={card.description} />
+              </p>
+              )}
+              {cardLinkLabel && (
+                <span class="font-medium text-secondary-300 group-hover:text-primary-700 transition-colors duration-300 text-sm">
+                  <LocalizedInline value={cardLinkLabel} />
+                </span>
+              )}
+              </div>
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+)}

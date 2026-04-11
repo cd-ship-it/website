@@ -1,0 +1,166 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+
+const page = await getEntry("pages", "about-pastors");
+if (!page) throw new Error('Content entry "pages/about-pastors" not found.');
+
+const { title, seo, pageHeader, pageIntro, pastors, contactPhone } = page.data;
+
+const headerBg = pageHeader?.backgroundImage ?? "/uploads/page-header-bg.webp";
+---
+
+<BaseLayout title={seo.title} description={seo.description}>
+  <div class="about-pastors-page">
+
+  <PageHeader
+    title={title}
+    subtitle={pageHeader?.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <!-- ── Intro ──────────────────────────────────────────────────────────── -->
+  <!-- {pageIntro && (
+    <section class="py-14 bg-white">
+      <div class="container max-w-3xl mx-auto text-center">
+        <p class="text-xl text-ink-3 leading-relaxed">
+          <LocalizedInline value={pageIntro} />
+        </p>
+      </div>
+    </section>
+  )} -->
+
+  <!-- ── Pastor Cards ───────────────────────────────────────────────────── -->
+  {pastors && pastors.length > 0 && (
+    <section class="py-16 bg-cream">
+      <div class="container">
+        <div class="grid grid-cols-1 gap-10 max-w-4xl mx-auto">
+          {pastors.map((pastor) => (
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col sm:flex-row gap-0">
+
+              <!-- Photo (circular crop) -->
+              <div class="shrink-0 flex justify-center sm:justify-start pt-8 pb-2 sm:py-8 sm:pl-8 sm:pr-0">
+                <div class="h-40 w-40 sm:h-44 sm:w-44 rounded-full overflow-hidden bg-cream-2 ring-2 ring-cream-3 shrink-0">
+                  <img
+                    src={pastor.image}
+                    alt={typeof pastor.title === "string" ? pastor.title : pastor.title.en}
+                    class="h-full w-full object-cover object-center"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              <!-- Info -->
+              <div class="flex flex-col justify-between p-6 flex-1 min-w-0">
+                <div>
+                  <h2 class="text-xl font-bold text-heading mb-1">{pastor.name}</h2>
+                  <p class="text-sm font-medium text-secondary-500 mb-4 leading-snug">
+                    <LocalizedInline value={pastor.title} />
+                  </p>
+                  <div class="text-ink-3 text-sm leading-relaxed space-y-3">
+                    {(typeof pastor.bio === "string" ? pastor.bio : pastor.bio.en)
+                      .split("\n\n")
+                      .map((para: string) => (
+                        <p class="st-bio-para">{para.trim()}</p>
+                      ))
+                    }
+                    {/* zh-Hant bio paragraphs */}
+                    {typeof pastor.bio !== "string" && pastor.bio["zh-Hant"] &&
+                      pastor.bio["zh-Hant"].split("\n\n").map((para: string) => (
+                        <p class="st-bio-para st-lang st-lang-zh-Hant hidden">{para.trim()}</p>
+                      ))
+                    }
+                    {/* zh-Hans bio paragraphs */}
+                    {typeof pastor.bio !== "string" && pastor.bio["zh-Hans"] &&
+                      pastor.bio["zh-Hans"].split("\n\n").map((para: string) => (
+                        <p class="st-bio-para st-lang st-lang-zh-Hans hidden">{para.trim()}</p>
+                      ))
+                    }
+                  </div>
+                </div>
+
+                {pastor.email && (
+                  <a
+                    href={`mailto:${pastor.email}`}
+                    class="inline-flex items-center gap-2 mt-5 text-sm text-primary-600 font-medium hover:underline"
+                  >
+                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {pastor.email}
+                  </a>
+                )}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Contact CTA ────────────────────────────────────────────────────── -->
+  <section class="py-20 bg-cover bg-center text-white"
+    style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(/uploads/thank-you-bg.webp)"
+  >
+    <div class="container">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
+          <LocalizedInline value={{ en: "Get in Touch", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
+        </h2>
+        <p class="text-xl mb-8">
+          <LocalizedInline value={{
+            en: "Have a question for our pastoral team? We'd love to hear from you.",
+            "zh-Hant": "想聯絡我們的牧者？歡迎與我們分享您的需要。",
+            "zh-Hans": "想联络我们的牧者？欢迎与我们分享您的需要。"
+          }} />
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          {contactPhone && (
+            <a href={`tel:${contactPhone.replace(/\D/g, "")}`} class="btn btn-blue">
+              {contactPhone}
+            </a>
+          )}
+          <a href="/contact" class="btn btn-ghost-white">
+            <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /*
+   * Bio text: show only the language matching the current site language.
+   * English paragraphs carry no extra class so they show by default.
+   * zh-Hant / zh-Hans paragraphs use the same .st-lang pattern as LocalizedInline.
+   */
+  .st-bio-para { display: block; }
+
+  /* Hide Chinese bios by default (English shown) */
+  .st-lang-zh-Hant,
+  .st-lang-zh-Hans { display: none; }
+
+  /* Show the matching language, hide English */
+  html[data-lang="zh-Hant"] .st-lang-zh-Hant { display: block; }
+  html[data-lang="zh-Hant"] .st-bio-para:not(.st-lang) { display: none; }
+
+  html[data-lang="zh-Hans"] .st-lang-zh-Hans { display: block; }
+  html[data-lang="zh-Hans"] .st-bio-para:not(.st-lang) { display: none; }
+
+  /* Chinese (Traditional / Simplified): +1px vs English for this page */
+  html[data-lang="zh-Hant"] .about-pastors-page .st-i18n .st-lang-zh-Hant,
+  html[data-lang="zh-Hans"] .about-pastors-page .st-i18n .st-lang-zh-Hans {
+    font-size: calc(1em + 1px);
+  }
+  html[data-lang="zh-Hant"] .about-pastors-page .st-bio-para.st-lang-zh-Hant,
+  html[data-lang="zh-Hans"] .about-pastors-page .st-bio-para.st-lang-zh-Hans {
+    font-size: calc(0.875rem + 1px);
+  }
+</style>

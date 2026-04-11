@@ -1,0 +1,109 @@
+---
+import LocalizedInline from "../UI/LocalizedInline.astro";
+import { pickLocalizedText, type LocalizedText } from "../../lib/i18n";
+import { homeCampusDisplayOrder, normalizeCampusOrderKey } from "../../config/site";
+
+function campusPageHref(campusName: string | LocalizedText): string {
+  const id = pickLocalizedText(campusName, "en");
+  const slug = id.toLowerCase().replace(/\s+/g, "-");
+  return `/campus/${slug}`;
+}
+
+export interface CampusRow {
+  campusName: string | LocalizedText;
+  worshipDate: string | LocalizedText;
+  services: (string | LocalizedText)[];
+}
+
+export interface Props {
+  sectionHeading: LocalizedText;
+  campuses: CampusRow[];
+  /** Defaults match the homepage mockup. */
+  eyebrow?: LocalizedText;
+  sectionSub?: LocalizedText;
+  planVisitHref?: string;
+  planVisitLabel?: LocalizedText;
+}
+
+const {
+  sectionHeading,
+  campuses,
+  eyebrow = {
+    en: "Five campuses across the Bay Area",
+    "zh-Hant": "灣區五個會堂",
+    "zh-Hans": "湾区五个會堂",
+  },
+  sectionSub = {
+    en: "We gather every week in English, Cantonese, and Mandarin.",
+    "zh-Hant": "我們每週以英語、粵語及國語聚會。",
+    "zh-Hans": "我们每周以英语、粤语及普通话聚会。",
+  },
+  planVisitHref = "#",
+  planVisitLabel = {
+    en: "Plan Your Visit →",
+    "zh-Hant": "計劃您的到訪 →",
+    "zh-Hans": "计划您的到访 →",
+  },
+} = Astro.props;
+
+function campusRowKey(row: CampusRow): string {
+  const name = typeof row.campusName === "string" ? row.campusName : row.campusName.en;
+  return normalizeCampusOrderKey(name);
+}
+
+const placed = new Set<string>();
+const orderedCampuses: CampusRow[] = [];
+for (const label of homeCampusDisplayOrder) {
+  const want = normalizeCampusOrderKey(label);
+  const row = campuses.find((c) => campusRowKey(c) === want);
+  if (row) {
+    orderedCampuses.push(row);
+    placed.add(want);
+  }
+}
+for (const c of campuses) {
+  const k = campusRowKey(c);
+  if (!placed.has(k)) orderedCampuses.push(c);
+}
+---
+
+<section
+  id="service-times-home"
+  class="service-section"
+  aria-labelledby="service-times-heading"
+>
+  <p class="eyebrow"><LocalizedInline value={eyebrow} /></p>
+  <h2 id="service-times-heading" class="section-heading">
+    <LocalizedInline value={sectionHeading} />
+  </h2>
+  <p class="section-sub"><LocalizedInline value={sectionSub} /></p>
+
+  <div class="campus-grid">
+    {orderedCampuses.map((campus) => (
+      <a class="campus-row" href={campusPageHref(campus.campusName)}>
+        <div>
+          <div class="campus-day-tag">
+            <LocalizedInline value={campus.worshipDate} />
+          </div>
+          <div class="campus-name">
+            <LocalizedInline value={campus.campusName} />
+          </div>
+          <div class="campus-times-list">
+            {campus.services.map((service) => (
+              <div class="campus-time">
+                <LocalizedInline value={service} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="campus-arrow" aria-hidden="true">›</div>
+      </a>
+    ))}
+  </div>
+
+  <!-- <div class="service-cta">
+    <a class="btn btn-blue" href={planVisitHref}>
+      <LocalizedInline value={planVisitLabel} />
+    </a>
+  </div> -->
+</section>

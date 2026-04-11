@@ -1,0 +1,132 @@
+---
+import { normalizeSiteLang, type SiteLang } from "../../lib/i18n";
+
+export interface LocalizedSection {
+  heading?: string;
+  paragraphs?: string[];
+}
+
+export interface LocalizedBlock {
+  title?: string;
+  subtitle?: string;
+  sections?: LocalizedSection[];
+}
+
+export interface Props {
+  content: Partial<Record<SiteLang, LocalizedBlock>>;
+  /** When set, this language is rendered at build time (no cookie / request). */
+  lang?: SiteLang;
+  className?: string;
+  /**
+   * When true, SSR renders English only; a small script updates the block from
+   * `document.documentElement.dataset.lang` so static prerender matches the user's stored language.
+   */
+  clientLocaleSync?: boolean;
+}
+
+const { content, lang, className = "", clientLocaleSync = false } = Astro.props as Props;
+const selectedLang = normalizeSiteLang(lang ?? "en");
+const english = content.en ?? {};
+const selected = clientLocaleSync ? english : (content[selectedLang] ?? english);
+
+const title = selected.title ?? english.title;
+const subtitle = selected.subtitle ?? english.subtitle;
+const sections = (selected.sections && selected.sections.length > 0)
+  ? selected.sections
+  : (english.sections ?? []);
+
+const payloadJson = JSON.stringify(content);
+---
+
+<div
+  class:list={[className]}
+  {...(clientLocaleSync ? { "data-localized-content": "", "data-localized-payload": payloadJson } : {})}
+>
+  {title && <h2 class="text-3xl md:text-4xl font-bold mb-6">{title}</h2>}
+  {subtitle && <p class="text-xl text-ink-3 mb-8">{subtitle}</p>}
+
+  {sections.map((section) => (
+    <div class="mb-8">
+      {section.heading && <h3 class="text-3xl md:text-4xl font-bold mb-6">{section.heading}</h3>}
+      {(section.paragraphs ?? []).map((paragraph) => (
+        <p class="text-xl text-ink-3 mb-8">{paragraph}</p>
+      ))}
+    </div>
+  ))}
+</div>
+
+{clientLocaleSync && (
+  <script is:inline>
+    (function () {
+      function normalizeLang(value) {
+        var s = typeof value === "string" ? value : "";
+        if (s === "en" || s === "zh-Hant" || s === "zh-Hans") return s;
+        return "en";
+      }
+      function pickBlock(content, lang) {
+        var valid = normalizeLang(lang);
+        var english = content.en || {};
+        var loc = content[valid] || {};
+        var titleSel = loc.title != null ? loc.title : english.title;
+        var subSel = loc.subtitle != null ? loc.subtitle : english.subtitle;
+        var secSel =
+          loc.sections && loc.sections.length > 0
+            ? loc.sections
+            : english.sections || [];
+        return { title: titleSel, subtitle: subSel, sections: secSel };
+      }
+      function renderLocalizedRoot(root) {
+        var raw = root.getAttribute("data-localized-payload");
+        if (!raw) return;
+        var content;
+        try {
+          content = JSON.parse(raw);
+        } catch (e) {
+          return;
+        }
+        var lang = document.documentElement.dataset.lang || "en";
+        var picked = pickBlock(content, lang);
+        var title = picked.title;
+        var subtitle = picked.subtitle;
+        var sections = picked.sections;
+        root.replaceChildren();
+        if (title) {
+          var h2 = document.createElement("h2");
+          h2.className = "text-3xl md:text-4xl font-bold mb-6";
+          h2.textContent = title;
+          root.appendChild(h2);
+        }
+        if (subtitle) {
+          var p = document.createElement("p");
+          p.className = "text-xl text-ink-3 mb-8";
+          p.textContent = subtitle;
+          root.appendChild(p);
+        }
+        (sections || []).forEach(function (section) {
+          var wrap = document.createElement("div");
+          wrap.className = "mb-8";
+          if (section.heading) {
+            var h3 = document.createElement("h3");
+            h3.className = "text-3xl md:text-4xl font-bold mb-6";
+            h3.textContent = section.heading;
+            wrap.appendChild(h3);
+          }
+          (section.paragraphs || []).forEach(function (text) {
+            var para = document.createElement("p");
+            para.className = "text-xl text-ink-3 mb-8";
+            para.textContent = text;
+            wrap.appendChild(para);
+          });
+          root.appendChild(wrap);
+        });
+      }
+      function syncAllLocalized() {
+        document.querySelectorAll("[data-localized-content]").forEach(function (el) {
+          if (el instanceof HTMLElement) renderLocalizedRoot(el);
+        });
+      }
+      document.addEventListener("DOMContentLoaded", syncAllLocalized);
+    })();
+  </script>
+)}
+</think>

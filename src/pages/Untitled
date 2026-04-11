@@ -1,0 +1,67 @@
+<section class="service-section">
+    <p class="eyebrow">Five campuses across the Bay Area</p>
+    <h2 class="section-heading">Find your<br><em>home away from home</em></h2>
+    <p class="section-sub">We gather every week in English, Cantonese, and Mandarin.</p>
+
+    <div class="campus-grid">
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Milpitas</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>Cantonese</b></div>
+            <div class="campus-time">11:00 am · <b>Mandarin</b></div>
+            <div class="campus-time">11:00 am · <b>English / Youth</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Pleasanton</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>English</b></div>
+            <div class="campus-time">11:00 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Saturday</div>
+          <div class="campus-name">Tracy</div>
+          <div class="campus-times-list">
+            <div class="campus-time">10:00 am · <b>Cantonese</b></div>
+            <div class="campus-time">10:00 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Peninsula</div>
+          <div class="campus-times-list">
+            <div class="campus-time">10:00 am · <b>Cantonese</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">San Leandro</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>Cantonese</b></div>
+            <div class="campus-time">11:45 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="service-cta">
+      <a class="btn btn-blue" href="#">Plan Your Visit →</a>
+    </div>
+  </section>

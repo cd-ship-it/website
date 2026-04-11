@@ -1,0 +1,50 @@
+ // ── Nav fill on scroll ──────────────────────
+    const nav = document.getElementById('site-nav');
+    const onScroll = () => {
+      nav.classList.toggle('filled', window.scrollY > 80);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ── Subtle scale-down on buried panels ─────
+    // As each panel gets covered by the next, it
+    // gently shrinks — Apple-style depth cue.
+    const panels = document.querySelectorAll('.panel');
+
+    const updatePanels = () => {
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight;
+
+      panels.forEach((panel, i) => {
+        const rect = panel.getBoundingClientRect();
+        const panelTop = rect.top;
+
+        // How far is the panel's top above the viewport top?
+        // When panel is stuck at 0, panelTop === 0.
+        // As next panel scrolls over, the panel stays at 0
+        // and the "burial progress" increases.
+
+        // Only scale when panel is stuck (panelTop ~= 0)
+        // and a subsequent panel is covering it.
+        if (Math.abs(panelTop) < 2) {
+          // How much of this panel has the *next* panel covered?
+          // Look at how far we've scrolled past this panel's natural offset.
+          const panelOffset = panel.offsetTop;
+          const scrollPast = Math.max(0, scrollY - panelOffset);
+          const progress = Math.min(scrollPast / vh, 1); // 0 → 1
+
+          // Scale from 1.0 down to 0.96
+          const scale = 1 - (progress * 0.04);
+          // Fade from 1.0 down to 0.85
+          const opacity = progress > 0.05 ? 1 - (progress * 0.2) : 1;
+
+          panel.style.transform = `scale(${scale.toFixed(4)})`;
+          panel.style.transformOrigin = 'top center';
+        } else if (panelTop > 2) {
+          // Panel hasn't been reached yet — reset
+          panel.style.transform = '';
+        }
+      });
+    };
+
+    window.addEventListener('scroll', updatePanels, { passive: true });
+    updatePanels();

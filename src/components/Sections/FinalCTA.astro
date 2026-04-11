@@ -1,0 +1,60 @@
+---
+import Button from "../UI/Button.astro";
+
+export interface Props {
+  heading?: string;
+  subtext?: string;
+  primaryCtaText?: string;
+  primaryCtaLink?: string;
+  secondaryCtaText?: string;
+  secondaryCtaLink?: string;
+  backgroundImage?: string;
+}
+
+const {
+  heading = "Ready to Join Our Community?",
+  subtext = "We'd love to welcome you to our church family. Come visit us this Sunday or reach out with any questions.",
+  primaryCtaText = "I'm New Here",
+  primaryCtaLink = "/im-new",
+  secondaryCtaText = "Contact Us",
+  secondaryCtaLink = "/contact",
+  backgroundImage,
+} = Astro.props;
+---
+
+<section
+  class="py-24 relative overflow-hidden"
+  style={backgroundImage
+    ? `background-image: linear-gradient(rgba(13,59,106,0.88), rgba(13,59,106,0.95)), url(${backgroundImage}); background-size: cover; background-position: center;`
+    : "background: linear-gradient(135deg, #0D3B6A 0%, #195C99 50%, #0D3B6A 100%);"}
+>
+  <!-- Decorative circles -->
+  <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10 translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, #f5a020, transparent 70%);"></div>
+  <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-10 -translate-x-1/2 translate-y-1/2" style="background: radial-gradient(circle, #f5a020, transparent 70%);"></div>
+
+  <div class="container relative z-10">
+    <div class="max-w-2xl mx-auto text-center">
+      <p class="text-secondary-400 text-xs font-semibold tracking-widest uppercase mb-4">You're Welcome Here</p>
+      <h2 class="font-serif font-bold text-white mb-6 leading-tight" style="font-size: clamp(1.75rem, 4vw, 3rem);">
+        {heading}
+      </h2>
+      <p class="text-white/70 text-lg mb-10 leading-relaxed">
+        {subtext}
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-4">
+        <Button href={primaryCtaLink} variant="secondary" size="lg">
+          {primaryCtaText}
+        </Button>
+        <Button
+          href={secondaryCtaLink}
+          variant="outline"
+          size="lg"
+          class="!border-white/30 !text-white hover:!bg-white/15 hover:!border-white/60"
+        >
+          {secondaryCtaText}
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

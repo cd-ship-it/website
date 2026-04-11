@@ -1,0 +1,43 @@
+---
+import { resolveLocalizedSlot, type LocalizedText } from "../../lib/i18n";
+
+export interface Props {
+  value: string | LocalizedText;
+  class?: string;
+}
+
+const { value, class: className } = Astro.props;
+const v: LocalizedText = typeof value === "string" ? { en: value } : value;
+---
+
+<span class:list={["st-i18n", className]}>
+  <span class="st-lang st-lang-en">{resolveLocalizedSlot(v, "en")}</span>
+  <span class="st-lang st-lang-zh-Hant">{resolveLocalizedSlot(v, "zh-Hant")}</span>
+  <span class="st-lang st-lang-zh-Hans">{resolveLocalizedSlot(v, "zh-Hans")}</span>
+</span>
+
+<style is:global>
+  /*
+   * Show one language based on <html data-lang> (set in BaseLayout).
+   * Default to English when data-lang is absent or "en" so text is never all hidden.
+   */
+  .st-i18n .st-lang-zh-Hant,
+  .st-i18n .st-lang-zh-Hans {
+    display: none;
+  }
+  .st-i18n .st-lang-en {
+    display: inline;
+  }
+  html[data-lang="zh-Hant"] .st-i18n .st-lang-en {
+    display: none;
+  }
+  html[data-lang="zh-Hant"] .st-i18n .st-lang-zh-Hant {
+    display: inline;
+  }
+  html[data-lang="zh-Hans"] .st-i18n .st-lang-en {
+    display: none;
+  }
+  html[data-lang="zh-Hans"] .st-i18n .st-lang-zh-Hans {
+    display: inline;
+  }
+</style>

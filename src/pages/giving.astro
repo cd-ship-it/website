@@ -1,0 +1,363 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import LearnMoreDisclosure from "../components/UI/LearnMoreDisclosure.astro";
+import LocalizedHtml from "../components/UI/LocalizedHtml.astro";
+
+const page = await getEntry("giving", "giving-page");
+if (!page) throw new Error('Content entry "giving/giving-page" not found.');
+
+const {
+  seo,
+  pageHeader,
+  mainHeading,
+  introParagraph1,
+  introParagraph2,
+  tithelySection,
+  paypalSection,
+  designatedFundsSection,
+  additionalGivingOptions,
+  ctaSection,
+  contactEmail,
+  contactPhone,
+  designatedfundsDetails,
+} = page.data;
+
+if (!additionalGivingOptions?.heading || !Array.isArray(additionalGivingOptions.methods)) {
+  throw new Error(
+    'giving/giving-page is missing valid "additionalGivingOptions" (heading + methods). ' +
+      "Confirm src/content/giving/giving-page.md, then run `npx astro sync` and restart the dev server so the content layer reloads."
+  );
+}
+
+const headerBg = pageHeader.backgroundImage;
+---
+
+<BaseLayout title={seo.title} description={seo.description}>
+
+  <PageHeader
+    title={pageHeader.title}
+    subtitle={pageHeader.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <!-- ── Intro ──────────────────────────────────────────────────────────── -->
+  <section class="py-4">
+    <div class="container">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+          <LocalizedInline value={mainHeading} />
+        </h2>
+        <p class="text-lg text-ink-3 leading-relaxed">
+          <LocalizedInline value={introParagraph1} />
+        </p>
+        <!-- <p class="text-lg text-ink-3 leading-relaxed">
+          <LocalizedInline value={introParagraph2} />
+        </p> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Online Giving — Tithe.ly ───────────────────────────────────────── -->
+  <section class="py-4 bg-cream">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold">
+              <LocalizedInline value={tithelySection.heading} />
+            </h2>
+          </div>
+
+          <p class="text-ink-3 mb-6 leading-relaxed">
+            <LocalizedInline value={tithelySection.description} />
+          </p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+            {tithelySection.campuses.map((campus) => (
+              <a
+                href={campus.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-blue text-center text-sm py-3"
+              >
+                <LocalizedInline value={campus.name} />
+              </a>
+            ))}
+          </div>
+
+          <p class="text-sm text-muted italic">
+            <LocalizedInline value={tithelySection.feesNote} />
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Online Giving — PayPal ─────────────────────────────────────────── -->
+  <section class="py-4">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-sm">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold">
+              <LocalizedInline value={paypalSection.heading} />
+            </h2>
+          </div>
+
+          <p class="text-ink-3 mb-6 leading-relaxed">
+            <LocalizedInline value={paypalSection.description} />
+          </p>
+
+          <a
+            href={paypalSection.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-blue inline-block"
+          >
+            <LocalizedInline value={{ en: "Donate via PayPal", "zh-Hant": "透過 PayPal 奉獻", "zh-Hans": "通过 PayPal 奉献" }} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Designated Funds ───────────────────────────────────────────────── -->
+  <section class="py-4 bg-cream">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-sm">
+          <h2 class="text-2xl font-bold mb-4">
+            <LocalizedInline value={designatedFundsSection.heading} />
+          </h2>
+          <p class="text-ink-3 mb-4 leading-relaxed">
+            <LocalizedInline value={designatedFundsSection.description} />
+          </p>
+
+          <ul class="flex flex-wrap gap-3 mb-6">
+            {designatedFundsSection.funds.map((fund) => (
+              <li class="px-4 py-2 bg-primary-50 font-medium text-sm">
+                <LocalizedInline value={fund} />
+              </li>
+            ))}
+          </ul>
+          {designatedfundsDetails && (
+            <details class="mb-6 [&[open]_summary_.learn-more-chevron]:rotate-180">
+              <!-- Inner span: WebKit can hide summary contents when flex is applied directly to <summary> -->
+              <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-600 bg-white px-5 py-2.5 text-sm font-medium text-primary-600 shadow-sm transition hover:bg-primary-50">
+                  <LocalizedInline
+                    value={{
+                      en: "Learn more",
+                      "zh-Hant": "了解更多",
+                      "zh-Hans": "了解更多",
+                    }}
+                  />
+                  <svg
+                    class="learn-more-chevron h-4 w-4 shrink-0 transition-transform"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </summary>
+              <div class="mt-4 space-y-4">
+                <div class="rounded-xl bg-cream px-4 py-4 text-sm leading-relaxed text-ink-3 whitespace-pre-line">
+                  <LocalizedHtml value={designatedfundsDetails} />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <figure class="m-0">
+                    <img
+                      src="/uploads/giving-sample-check-mission-funds.png"
+                      alt="Sample check: pay to Crosspoint Church and write Mission Funds on the memo line."
+                      class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
+                      loading="lazy"
+                    />
+                    <figcaption class="mt-2 text-center text-xs text-muted">
+                      <LocalizedInline
+                        value={{
+                          en: "Memo: Mission Funds",
+                          "zh-Hant": "備註：宣教基金",
+                          "zh-Hans": "备注：宣教基金",
+                        }}
+                      />
+                    </figcaption>
+                  </figure>
+                  <figure class="m-0">
+                    <img
+                      src="/uploads/giving-sample-check-community-center-fund.png"
+                      alt="Sample check: pay to Crosspoint Church and write Community Center Fund on the memo line."
+                      class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
+                      loading="lazy"
+                    />
+                    <figcaption class="mt-2 text-center text-xs text-muted">
+                      <LocalizedInline
+                        value={{
+                          en: "Memo: Community Center Fund",
+                          "zh-Hant": "備註：社區中心基金",
+                          "zh-Hans": "备注：社区中心基金",
+                        }}
+                      />
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            </details>
+          )}
+
+
+           <!-- <p class="text-sm text-ink-3 italic">
+            <LocalizedInline value={designatedFundsSection.contactNote} />
+          </p>  -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Additional Giving Options (all non-pillar methods: 2 cards per row on md+) ── -->
+  <section class="py-12 md:py-16 bg-white">
+    <div class="container">
+      <div class="text-center mb-10 md:mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          <LocalizedInline value={additionalGivingOptions.heading} />
+        </h2>
+        {additionalGivingOptions.subtitle && (
+          <p class="text-xl text-muted max-w-3xl mx-auto">
+            <LocalizedInline value={additionalGivingOptions.subtitle} />
+          </p>
+        )}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+        {additionalGivingOptions.methods.map((method) =>
+          method.variant === "checkCash" ? (
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold mb-3">
+                <LocalizedInline value={method.title} />
+              </h3>
+              <p class="text-ink-3 text-sm leading-relaxed">
+                <LocalizedInline value={method.description} />
+              </p>
+              {method.learnMoreDetails && (
+                <LearnMoreDisclosure details={method.learnMoreDetails} sampleCheckImage />
+              )}
+            </div>
+          ) : method.variant === "billPay" ? (
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div class="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold mb-3">
+                <LocalizedInline value={method.title} />
+              </h3>
+              <p class="text-ink-3 text-sm mb-4 leading-relaxed">
+                <LocalizedInline value={method.description} />
+              </p>
+              <p class="text-sm font-medium text-ink-2 bg-cream rounded-lg px-4 py-3">
+                Crosspoint Church<br />
+                {method.address}
+              </p>
+              {method.learnMoreDetails && (
+                <LearnMoreDisclosure details={method.learnMoreDetails} />
+              )}
+            </div>
+          ) : (
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold mb-2">
+                <LocalizedInline value={method.title} />
+              </h3>
+              <p class="text-ink-3 text-sm leading-relaxed">
+                <LocalizedInline value={method.description} />
+              </p>
+              {method.learnMoreDetails && (
+                <LearnMoreDisclosure details={method.learnMoreDetails} />
+              )}
+            </div>
+          )
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ────────────────────────────────────────────────────────── -->
+  <section class="py-4">
+    <div class="container">
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-sm text-center">
+          <h2 class="text-2xl font-bold mb-4">
+            <LocalizedInline value={{ en: "Questions About Giving?", "zh-Hant": "有關奉獻的問題？", "zh-Hans": "有关奉献的问题？" }} />
+          </h2>
+          <p class="text-ink-3 mb-6">
+            <LocalizedInline value={{
+              en: "Our finance team is here to help. Reach out to us for questions about your giving history, tax receipts, or any other giving-related inquiries.",
+              "zh-Hant": "我們的財務團隊隨時為您提供協助，歡迎聯絡我們。",
+              "zh-Hans": "我们的财务团队随时为您提供协助，欢迎联络我们。"
+            }} />
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a href={`mailto:${contactEmail}`} class="btn btn-blue">
+              {contactEmail}
+            </a>
+            <a href={`tel:${contactPhone.replace(/\D/g, "")}`} class="btn btn-ghost">
+              {contactPhone}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ────────────────────────────────────────────────────────────── -->
+  <!-- <section
+    class="py-20 bg-cover bg-center text-white"
+    style={`background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${headerBg})`}
+  >
+    <div class="container">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
+          <LocalizedInline value={ctaSection.heading} />
+        </h2>
+        <p class="text-xl mb-8">
+          <LocalizedInline value={ctaSection.description} />
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href={tithelySection.campuses[0]?.url ?? "#"} target="_blank" rel="noopener noreferrer" class="btn btn-blue">
+            <LocalizedInline value={{ en: "Give Now", "zh-Hant": "立即奉獻", "zh-Hans": "立即奉献" }} />
+          </a>
+          <a href="/contact" class="btn btn-ghost-white">
+            <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+</BaseLayout>

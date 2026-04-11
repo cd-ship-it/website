@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I'm New — Crosspoint Church Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PAGE-SPECIFIC STYLES
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    /* ── Page Hero ── */
+    .page-hero {
+      position: relative;
+      padding-top: 64px; /* nav height */
+      min-height: 52vh;
+      display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to top, rgba(15,8,4,.9) 0%, rgba(15,8,4,.4) 60%, rgba(15,8,4,.15) 100%),
+        linear-gradient(145deg, #1A304E 0%, #3A6A2A 50%, #8B5520 100%);
+    }
+    .page-hero-content {
+      position: relative; z-index: 2;
+      padding: 48px 24px 56px;
+      width: 100%;
+    }
+    .page-hero-eyebrow {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .page-hero-eyebrow::before {
+      content: ''; display: block;
+      width: 24px; height: 2px;
+      background: var(--orange); flex-shrink: 0;
+    }
+    .page-hero-headline {
+      font-family: var(--serif);
+      font-size: clamp(42px, 11vw, 72px);
+      font-weight: 900; line-height: 1.0;
+      letter-spacing: -.02em;
+      color: white; margin-bottom: 18px;
+    }
+    .page-hero-headline em { font-style: italic; color: var(--orange); }
+    .page-hero-sub {
+      font-size: 17px; color: rgba(255,255,255,.75);
+      max-width: 400px; line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .page-hero-actions { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+
+    /* ── Quick Stats Strip ── */
+    .stats-strip {
+      background: var(--ink-2);
+      padding: 0 24px;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1px; background: rgba(255,255,255,.08);
+    }
+    .stat-item {
+      background: var(--ink-2);
+      padding: 24px 20px; text-align: center;
+    }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 32px; font-weight: 900;
+      color: var(--orange); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+    }
+
+    /* ── Section Wrapper ── */
+    .section {
+      padding: 72px 24px;
+    }
+    .section-cream   { background: var(--cream); }
+    .section-cream-2 { background: var(--cream-2); }
+    .section-dark    { background: var(--ink-2); }
+    .section-white   { background: var(--white); }
+
+    /* ── What To Expect steps ── */
+    .steps-list { margin-top: 40px; }
+    .step-card:first-child { border-top: 1px solid var(--cream-3); }
+
+    /* ── Info Cards Grid ── */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr;
+      gap: 16px; margin-top: 40px;
+    }
+
+    /* ── Campus Picker ── */
+    .campus-section { padding: 72px 24px; background: var(--cream); }
+    .campus-section .section-sub { margin-bottom: 40px; }
+
+    /* ── Families Section ── */
+    .families-grid {
+      display: grid; grid-template-columns: 1fr;
+      gap: 12px; margin-top: 36px;
+    }
+    .family-card {
+      position: relative; border-radius: 18px;
+      overflow: hidden; min-height: 220px;
+      display: flex; align-items: flex-end;
+    }
+    .family-card-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .family-card-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.1) 60%, transparent 100%);
+    }
+    .family-card-content {
+      position: relative; z-index: 2;
+      padding: 24px 20px; color: white;
+    }
+    .family-card-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 6px;
+    }
+    .family-card-title {
+      font-family: var(--serif);
+      font-size: 24px; font-weight: 700; line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .family-card-body {
+      font-size: 13px; color: rgba(255,255,255,.72); line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .family-card-ages {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .age-tag {
+      font-size: 11px; font-weight: 600;
+      padding: 4px 12px; border-radius: 99px;
+      background: rgba(255,255,255,.15);
+      color: white; border: 1px solid rgba(255,255,255,.25);
+    }
+
+    .family-card:nth-child(1) .family-card-bg { background: linear-gradient(145deg, #1A3A50, #2D6080); }
+    .family-card:nth-child(2) .family-card-bg { background: linear-gradient(145deg, #3A1A50, #6A2D80); }
+    .family-card:nth-child(3) .family-card-bg { background: linear-gradient(145deg, #1A3A18, #2D6A28); }
+
+    /* ── FAQ Section ── */
+    .faq-section { padding: 72px 24px; background: var(--cream-2); }
+    .faq-list { margin-top: 40px; border-top: 1px solid var(--cream-3); }
+
+    /* ── Visit Form / Contact Strip ── */
+    .visit-strip {
+      background: var(--cream);
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .visit-strip p { margin-bottom: 28px; }
+    .visit-contact-row {
+      display: flex; flex-direction: column;
+      gap: 12px; align-items: center;
+    }
+    .contact-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink-3);
+      background: var(--cream-2);
+      padding: 10px 18px; border-radius: 99px;
+      border: 1px solid var(--cream-3);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       DESKTOP
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    @media (min-width: 768px) {
+      .page-hero-content { padding: 64px 60px 72px; max-width: 680px; }
+      .page-hero-actions { flex-direction: row; }
+
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+      .stats-strip { padding: 0 60px; }
+
+      .section { padding: 96px 60px; }
+      .campus-section { padding: 96px 60px; }
+      .faq-section { padding: 96px 60px; }
+
+      .info-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .families-grid { grid-template-columns: repeat(3, 1fr); }
+      .family-card { min-height: 340px; }
+
+      .visit-strip { padding: 80px 60px; }
+      .visit-contact-row { flex-direction: row; justify-content: center; }
+    }
+
+    @media (min-width: 1100px) {
+      .page-hero-content { padding: 64px 80px 80px; }
+      .section { padding: 96px 80px; }
+      .campus-section { padding: 96px 80px; }
+      .faq-section { padding: 96px 80px; }
+      .stats-strip { padding: 0 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mockup-pin">Design Mockup — I'm New / Plan Your Visit</div>
+
+  <!-- ══════════════════════════════════
+       NAV  (shared component)
+  ══════════════════════════════════ -->
+  <nav class="nav">
+    <a class="nav-logo" href="mockup.html">
+      <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#1f6eb3" d="M42,208 C49,190 61,175 78,173 L202,170 C254,163 258,260 236,252 L220,408 210,414 200,408 184,252 C150,250 98,243 60,239 47,235 35,222 42,208Z"/>
+        <path fill="#f5a020" d="M388,208 C371,226 359,241 342,243 L218,246 C162,253 162,150 184,164 L200,12 210,6 220,12 236,164 C270,166 322,173 360,177 373,181 385,193 388,208Z"/>
+      </svg>
+      <div class="nav-wordmark">
+        <div class="nav-name">Crosspoint</div>
+        <div class="nav-sub">Church</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="mockup.html">Home</a>
+        <a href="#">About</a>
+        <a href="#">Ministries</a>
+        <a href="#">Events</a>
+        <a href="#">Sermons</a>
+        <a href="#" class="active" style="color:var(--blue);font-weight:600">I'm New</a>
+      </div>
+      <a class="btn btn-orange btn-sm nav-cta" href="#">Plan Your Visit</a>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════
+       PAGE HERO
+  ══════════════════════════════════ -->
+  <section class="page-hero">
+    <div class="page-hero-bg"
+      data-photo="PHOTO: Warm welcome moment — smiling greeter, open doors">
+    </div>
+    <div class="page-hero-content">
+      <p class="page-hero-eyebrow">Welcome</p>
+      <h1 class="page-hero-headline">We've been<br>expecting <em>you.</em></h1>
+      <p class="page-hero-sub">
+        No pressure. No dress code. No insider language.
+        Just a family that's genuinely glad you're here.
+      </p>
+      <div class="page-hero-actions">
+        <a class="btn btn-orange" href="#campus">Find Your Campus</a>
+        <a class="btn btn-ghost-white" href="#expect">What to Expect</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       QUICK STATS STRIP
+  ══════════════════════════════════ -->
+  <div class="stats-strip">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">25</div>
+        <div class="stat-label">Years of Faith</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Bay Area Campuses</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Languages</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">~75<span style="font-size:18px">min</span></div>
+        <div class="stat-label">Service Length</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       WHAT TO EXPECT  (step cards — shared component)
+  ══════════════════════════════════ -->
+  <section class="section section-cream" id="expect">
+    <p class="eyebrow">Before you arrive</p>
+    <h2 class="section-heading">Your first Sunday,<br><em>sorted.</em></h2>
+    <p class="section-sub">Here's exactly what happens when you walk through the door.</p>
+
+    <div class="steps-list">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Park & walk in</div>
+          <div class="step-body">Free parking at every campus. Look for our greeters — they're the ones smiling at the door. No check-in required. Just come in.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Grab a coffee</div>
+          <div class="step-body">Most campuses have a welcome area with coffee and light refreshments. A great place to meet people before the service starts.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Worship together</div>
+          <div class="step-body">Contemporary music, a practical message from the Bible, and about 75 minutes total. Dress however you're comfortable — we mean that.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">No pressure. No obligation.</div>
+          <div class="step-body">Come, see how it feels, and leave when you're ready. If you love it, we'd love to connect you. If you have questions, we're happy to answer them.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       SERVICE INFO CARDS  (info-card component)
+  ══════════════════════════════════ -->
+  <section class="section section-cream-2">
+    <p class="eyebrow">What it's like</p>
+    <h2 class="section-heading">Open, <em>alive,</em> and real.</h2>
+    <p class="section-sub">Here's the vibe you can expect every Sunday.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-card-icon">🎵</div>
+        <div class="info-card-label">Worship Style</div>
+        <div class="info-card-title">Contemporary & Heartfelt</div>
+        <div class="info-card-body">Live music that's modern and singable. Not a performance — a room full of people genuinely worshipping together.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">📖</div>
+        <div class="info-card-label">Teaching Style</div>
+        <div class="info-card-title">Practical & Bible-Based</div>
+        <div class="info-card-body">Messages that connect Scripture to everyday life. No theological jargon — just honest, applicable truth delivered with warmth.</div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🌏</div>
+        <div class="info-card-label">Languages</div>
+        <div class="info-card-title">English, Cantonese & Mandarin</div>
+        <div class="info-card-body">Services offered in all three languages across our campuses. Everyone hears the message in the language closest to their heart.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       CAMPUS PICKER  (campus-row component)
+  ══════════════════════════════════ -->
+  <section class="campus-section" id="campus">
+    <p class="eyebrow">Five locations</p>
+    <h2 class="section-heading">Find your<br><em>home campus</em></h2>
+    <p class="section-sub">Pick the one closest to you and we'll save you a seat.</p>
+
+    <div class="campus-grid">
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Milpitas</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>Cantonese</b></div>
+            <div class="campus-time">11:00 am · <b>Mandarin</b></div>
+            <div class="campus-time">11:00 am · <b>English / Youth</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Pleasanton</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>English</b></div>
+            <div class="campus-time">11:00 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Saturday</div>
+          <div class="campus-name">Tracy</div>
+          <div class="campus-times-list">
+            <div class="campus-time">10:00 am · <b>Cantonese</b></div>
+            <div class="campus-time">10:00 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">Peninsula</div>
+          <div class="campus-times-list">
+            <div class="campus-time">10:00 am · <b>Cantonese</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+      <div class="campus-row">
+        <div>
+          <div class="campus-day-tag">Sunday</div>
+          <div class="campus-name">San Leandro</div>
+          <div class="campus-times-list">
+            <div class="campus-time">9:30 am · <b>Cantonese</b></div>
+            <div class="campus-time">11:45 am · <b>Mandarin</b></div>
+          </div>
+        </div>
+        <div class="campus-arrow">›</div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px">
+      <a class="btn btn-blue" href="#">Plan Your Visit →</a>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       FOR FAMILIES  (photo cards — p-card component variation)
+  ══════════════════════════════════ -->
+  <section class="section section-cream-2">
+    <p class="eyebrow">Bringing the family?</p>
+    <h2 class="section-heading">There's a place for<br><em>every</em> generation.</h2>
+    <p class="section-sub">Your kids are as welcome here as you are.</p>
+
+    <div class="families-grid">
+      <div class="family-card" data-photo="PHOTO: Kids in Sunday program, joyful">
+        <div class="family-card-bg"></div>
+        <div class="family-card-content">
+          <div class="family-card-label">Kids Ministry</div>
+          <div class="family-card-title">Crosspoint Kids</div>
+          <div class="family-card-body">Age-appropriate, safe, and seriously fun. Kids are checked in before service so you can worship without worry.</div>
+          <div class="family-card-ages">
+            <span class="age-tag">Nursery</span>
+            <span class="age-tag">Preschool</span>
+            <span class="age-tag">Elementary</span>
+          </div>
+        </div>
+      </div>
+      <div class="family-card" data-photo="PHOTO: Youth group, teens engaged">
+        <div class="family-card-bg"></div>
+        <div class="family-card-content">
+          <div class="family-card-label">Youth Ministry</div>
+          <div class="family-card-title">Crosspoint Youth</div>
+          <div class="family-card-body">A community where teenagers can be real, ask hard questions, and find genuine friendship.</div>
+          <div class="family-card-ages">
+            <span class="age-tag">Middle School</span>
+            <span class="age-tag">High School</span>
+          </div>
+        </div>
+      </div>
+      <div class="family-card" data-photo="PHOTO: Seniors & adults in warm community">
+        <div class="family-card-bg"></div>
+        <div class="family-card-content">
+          <div class="family-card-label">Adults & Seniors</div>
+          <div class="family-card-title">You Belong Here Too</div>
+          <div class="family-card-body">Small groups, men's and women's ministry, and meaningful community for every stage of adult life.</div>
+          <div class="family-card-ages">
+            <span class="age-tag">Young Adults</span>
+            <span class="age-tag">Adults</span>
+            <span class="age-tag">Seniors</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       FAQ  (accordion component)
+  ══════════════════════════════════ -->
+  <section class="faq-section" id="faq">
+    <p class="eyebrow">Got questions?</p>
+    <h2 class="section-heading">We thought you<br><em>might ask.</em></h2>
+
+    <div class="faq-list">
+
+      <div class="faq-item open">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What should I wear?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Whatever you're comfortable in. Seriously. Some people come in jeans, some in dress clothes. We've seen it all and nobody is checking. Just come as you are.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do I need to sign up or register first?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Nope. Just show up. If you're bringing kids, there will be a quick check-in process for their safety — but for adults, you can walk right in and find a seat.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Will anyone pressure me to join or give money?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Absolutely not. Giving is never directed at guests — it's something our church family does as an act of worship. You're here to explore, and that's completely okay with us.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          I'm not Christian. Is that okay?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">More than okay. Crosspoint is a place where questions are welcomed and doubts don't have to be hidden. Come curious. Come skeptical. Come and see.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How long is the service?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">About 75 minutes — give or take. Worship music, announcements, and a message. We respect your time and we always end on time.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do you have services in Chinese?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Yes! We have Cantonese and Mandarin services at several campuses. Check the campus list above to find the right language and location for you.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       CONTACT STRIP
+  ══════════════════════════════════ -->
+  <div class="visit-strip">
+    <p class="eyebrow" style="justify-content:center">Still have questions?</p>
+    <h2 class="section-heading" style="text-align:center">We'd love to<br><em>hear from you.</em></h2>
+    <p class="body-text" style="text-align:center;max-width:400px;margin:0 auto 28px">
+      Our team is happy to answer anything before your first visit.
+      No question is too small.
+    </p>
+    <div class="visit-contact-row">
+      <a class="contact-chip" href="mailto:hello@crosspointchurchsv.org">
+        ✉ hello@crosspointchurchsv.org
+      </a>
+      <a class="contact-chip" href="#">
+        📍 Find a campus near you
+      </a>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       FINAL CTA  (shared component)
+  ══════════════════════════════════ -->
+  <section class="final-cta">
+    <p class="final-cta-pre">You're invited</p>
+    <h2 class="final-cta-headline">See you<br><em>Sunday.</em></h2>
+    <p class="final-cta-sub">
+      We've saved you a seat.
+      Come as you are — there's nothing to prove and no bar to clear.
+    </p>
+    <div class="final-cta-actions">
+      <a class="btn btn-orange btn-lg" href="#">Plan Your Visit</a>
+      <a class="btn btn-ghost-white" href="#">Contact Us</a>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════
+       FOOTER  (shared component)
+  ══════════════════════════════════ -->
+  <footer class="footer">
+    <div>
+      <div class="footer-logo">
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#1f6eb3" d="M42,208 C49,190 61,175 78,173 L202,170 C254,163 258,260 236,252 L220,408 210,414 200,408 184,252 C150,250 98,243 60,239 47,235 35,222 42,208Z"/>
+          <path fill="#f5a020" d="M388,208 C371,226 359,241 342,243 L218,246 C162,253 162,150 184,164 L200,12 210,6 220,12 236,164 C270,166 322,173 360,177 373,181 385,193 388,208Z"/>
+        </svg>
+        <span class="footer-church">Crosspoint Church</span>
+      </div>
+      <p class="footer-tagline">25 Years Strong. Still Moving Forward in Faith.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#">f</a>
+        <a class="social-btn" href="#" style="font-size:10px">IG</a>
+        <a class="social-btn" href="#" style="font-size:10px">YT</a>
+        <a class="social-btn" href="#" style="font-size:10px">in</a>
+      </div>
+      <div class="footer-lang">
+        <span class="lang-btn on">EN</span>
+        <span class="lang-btn">繁中</span>
+        <span class="lang-btn">简中</span>
+      </div>
+    </div>
+    <div>
+      <p class="footer-col-title">Campuses</p>
+      <ul class="footer-campus-list">
+        <li><b>Milpitas</b> — Sunday</li>
+        <li><b>Pleasanton</b> — Sunday</li>
+        <li><b>Tracy</b> — Saturday</li>
+        <li><b>Peninsula</b> — Sunday</li>
+        <li><b>San Leandro</b> — Sunday</li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Links</p>
+      <nav class="footer-nav">
+        <a href="mockup.html">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Ministries</a>
+        <a href="#">Sermons</a>
+        <a href="#">Events</a>
+        <a href="#" style="color:white;font-weight:600">I'm New ←</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Crosspoint Church. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      // close all
+      document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+      // open clicked (unless it was already open)
+      if (!isOpen) item.classList.add('open');
+    }
+  </script>
+
+</body>
+</html>

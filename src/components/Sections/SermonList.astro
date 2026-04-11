@@ -1,0 +1,55 @@
+---
+import Button from "../UI/Button.astro";
+import SermonCard from "../UI/SermonCard.astro";
+import { fetchSermons } from "../../lib/sermonApi";
+import type { Sermon } from "../../lib/sermonApi";
+
+export interface Props {
+  count?: number;
+  showViewAll?: boolean;
+  /** Home page: `sermon-card--home`, no description on cards. */
+  variant?: "default" | "home";
+}
+
+const { count = 3, showViewAll = true, variant = "default" } = Astro.props;
+
+let sermons: Sermon[] = [];
+try {
+  const res = await fetchSermons({ per_page: count, page: 1 });
+  sermons = res.data;
+} catch {
+  // Silently fail; section simply won't render
+}
+
+---
+
+{sermons.length > 0 && (
+  <section class="section-default">
+    <div class="">
+      <div class="">
+        <p class="eyebrow mb-3">Messages</p>
+        <h2 class="section-heading mb-3">Recent Sermons</h2>
+        <p class="section-sub max-w-2xl mx-auto">
+          Listen to or watch our latest messages from Sunday services
+        </p>
+      </div>
+
+      <div
+        class:list={[
+          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+          variant === "home" && "sermon-list--home",
+        ]}
+      >
+        {sermons.map((sermon) => (
+          <SermonCard sermon={sermon} summaryWordLimit={20} variant={variant} />
+        ))}
+      </div>
+
+      {showViewAll && (
+        <div class="mt-12 text-center">
+          <Button href="/sermons" variant="outline">View All Sermons</Button>
+        </div>
+      )}
+    </div>
+  </section>
+)}

@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+:root {
+  --blue:         #1f6eb3;
+  --blue-dark:    #0D3B6A;
+  --orange:       #f5a020;
+  --orange-dark:  #D98810;
+  --ink:          #1A1410;
+  --ink-2:        #2D2118;
+  --ink-3:        #4A3C32;
+  --cream:        #FDFAF6;
+  --cream-2:      #F4EEE4;
+  --cream-3:      #E8DED0;
+  --muted:        #9A8A7E;
+
+  --radius-sm:    0.375rem;
+  --radius:       0.625rem;
+  --radius-lg:    1rem;
+  --radius-pill:  9999px;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-sans text-ink bg-cream;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-bold text-heading;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg;
+  }
+}
+
+/* ─── Components ──────────────────────────────────────────────────────────── */
+@layer components {
+  /* Home sermon strip: cards use .sermon-card--home (no description) */
+  .sermon-card--home {
+    @apply rounded-xl border border-cream-3;
+  }
+
+  .sermon-list--home {
+    @apply gap-6;
+  }
+
+  .container {
+    @apply px-4 mx-auto max-w-7xl;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center px-5 py-3 text-base font-medium transition-all rounded-full shadow-sm;
+  }
+
+  .btn-primary {
+    @apply text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply text-ink bg-secondary-500 hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-offset-2;
+  }
+
+  .btn-accent {
+    @apply text-white bg-accent-600 hover:bg-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply text-ink bg-transparent border border-ink/30 hover:bg-cream-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply overflow-hidden transition-all bg-white rounded-lg shadow-md hover:shadow-lg;
+  }
+
+  /* Typography utilities */
+  .eyebrow {
+    @apply text-xs font-semibold tracking-widest uppercase text-secondary-500;
+  }
+
+  .section-heading {
+    @apply font-serif font-bold text-heading;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.15;
+  }
+
+  .section-sub {
+    @apply text-base leading-relaxed text-muted;
+  }
+
+  .link-arrow {
+    @apply inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-700 transition-colors;
+  }
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+/* ─── Misc ────────────────────────────────────────────────────────────────── */
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* accordion effect (skip giving-page “Learn more” chevrons; they use their own rotation) */
+details > summary svg {
+  transition: transform 0.2s ease;
+}
+
+details[open] > summary svg:not([class*="learn-more-chevron"]) {
+  transform: rotate(45deg);
+}

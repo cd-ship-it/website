@@ -1,0 +1,44 @@
+---
+export interface Props {
+  items?: string[];
+  speed?: number; /* seconds for one full loop */
+}
+
+const {
+  items = [
+    "Sunday Worship",
+    "Silicon Valley",
+    "Youth Ministry",
+    "English Ministry",
+    "Children's Ministry",
+    "Life Groups",
+    "25 Years Strong",
+  ],
+  speed = 28,
+} = Astro.props;
+
+// Duplicate items for seamless loop
+const allItems = [...items, ...items];
+---
+
+<div class="overflow-hidden bg-primary-500 py-3 select-none" aria-hidden="true">
+  <div
+    class="ticker-track flex gap-10 whitespace-nowrap"
+    style={`animation: ticker ${speed}s linear infinite;`}
+  >
+    {allItems.map((item) => (
+      <span class="inline-flex items-center gap-3 text-cream font-semibold text-sm tracking-wide uppercase">
+        {/* <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 opacity-60" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+        </svg> */}
+        {item}
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ticker-track {
+    will-change: transform;
+  }
+</style>

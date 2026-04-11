@@ -1,0 +1,50 @@
+---
+import LocalizedInline from "../UI/LocalizedInline.astro";
+import type { LocalizedText } from "../../lib/i18n";
+
+export interface Props {
+  /** Plain string or trilingual object (same pattern as content `localizedOrString`). */
+  title: string | LocalizedText;
+  subtitle?: string | LocalizedText;
+  backgroundImage?: string;
+  titleDataI18n?: string;
+  subtitleDataI18n?: string;
+}
+
+const {
+  title,
+  subtitle,
+  backgroundImage = "/uploads/page-header-bg.webp",
+  titleDataI18n,
+  subtitleDataI18n,
+} = Astro.props;
+
+function isLocalized(v: string | LocalizedText): v is LocalizedText {
+  return typeof v === "object" && v !== null && "en" in v;
+}
+---
+
+<section
+  class="relative h-[250px] flex items-center bg-cover bg-center overflow-hidden"
+  style={`background-image: linear-gradient(rgba(26,20,16,0.55) 0%, rgba(26,20,16,0.80) 100%), url(${backgroundImage})`}
+>
+  <div class="container">
+    <div class="max-w-2xl">
+      <h1
+        class="font-serif font-bold text-white mb-4 leading-tight"
+        style="font-size: clamp(2rem, 5vw, 3.5rem);"
+        {...(!isLocalized(title) && titleDataI18n ? { "data-i18n": titleDataI18n } : {})}
+      >
+        {isLocalized(title) ? <LocalizedInline value={title} /> : title}
+      </h1>
+      {subtitle !== undefined && subtitle !== "" && (
+        <p
+          class="text-white/75 text-lg leading-relaxed"
+          {...(!isLocalized(subtitle) && subtitleDataI18n ? { "data-i18n": subtitleDataI18n } : {})}
+        >
+          {isLocalized(subtitle) ? <LocalizedInline value={subtitle} /> : subtitle}
+        </p>
+      )}
+    </div>
+  </div>
+</section>

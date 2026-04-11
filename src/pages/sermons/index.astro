@@ -1,0 +1,332 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/Sections/PageHeader.astro";
+
+const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
+---
+
+<BaseLayout
+  title="Sermons - Crosspoint Church"
+  description="Listen to our latest sermons. Browse by location, language, or preacher."
+>
+  <PageHeader
+    title="Sermons"
+    subtitle="Messages from our Sunday services"
+    backgroundImage="/uploads/sermons-header-bg.webp"
+  />
+
+  <section class="py-16">
+    <div class="container">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+        <!-- Filters Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+            <h2 class="text-xl font-bold mb-6">Filter Sermons</h2>
+
+            <!-- Location -->
+            <div class="mb-5">
+              <label for="filter-location" class="block text-sm font-medium text-ink-3 mb-1">Location</label>
+              <select id="filter-location" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="">All Locations</option>
+                <option value="Pleasanton">Pleasanton</option>
+                <option value="Milpitas">Milpitas</option>
+                <option value="San Leandro">San Leandro</option>
+                <option value="Peninsula">Peninsula</option>
+                <option value="Tracy">Tracy</option>
+              </select>
+            </div>
+
+            <!-- Language -->
+            <div class="mb-5">
+              <label for="filter-language" class="block text-sm font-medium text-ink-3 mb-1">Language</label>
+              <select id="filter-language" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                <option value="">All Languages</option>
+                <option value="English">English</option>
+                <option value="Cantonese">Cantonese 粵語</option>
+                <option value="Mandarin">Mandarin 國語</option>
+              </select>
+            </div>
+
+            <!-- Preacher -->
+            <div class="mb-5">
+              <label for="filter-preacher" class="block text-sm font-medium text-ink-3 mb-1">Preacher</label>
+              <input
+                type="text"
+                id="filter-preacher"
+                placeholder="Search by name..."
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- Reset -->
+            <button
+              id="reset-filters"
+              class="w-full mt-2 px-4 py-2 text-sm font-medium text-ink-3 bg-cream-2 rounded-md hover:bg-gray-200 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- Sermons Grid -->
+        <div class="lg:col-span-3">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">All Sermons</h2>
+            <span id="result-count" class="text-sm text-muted"></span>
+          </div>
+
+          <!-- Loading state -->
+          <div id="sermons-loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({length: 6}).map(() => (
+              <div class="bg-cream-2 rounded-lg overflow-hidden animate-pulse">
+                <div class="bg-gray-200 h-44 w-full"></div>
+                <div class="p-5 space-y-3">
+                  <div class="h-5 bg-gray-200 rounded w-3/4"></div>
+                  <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div class="h-4 bg-gray-200 rounded w-full"></div>
+                  <div class="h-4 bg-gray-200 rounded w-full"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <!-- Sermon cards injected here -->
+          <div id="sermons-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden"></div>
+
+          <!-- No results -->
+          <div id="no-results" class="hidden text-center py-16 bg-cream rounded-lg">
+            <p class="text-muted text-lg">No sermons match your filters.</p>
+          </div>
+
+          <!-- Error state -->
+          <div id="sermons-error" class="hidden text-center py-16 bg-red-50 rounded-lg">
+            <p class="text-red-600">Could not load sermons. Please try again later.</p>
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination" class="hidden mt-10 flex items-center justify-center gap-2">
+            <button id="prev-page" class="px-4 py-2 text-sm font-medium text-ink-3 bg-white border border-gray-300 rounded-md hover:bg-cream disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              ← Previous
+            </button>
+            <span id="page-info" class="px-4 py-2 text-sm text-muted"></span>
+            <button id="next-page" class="px-4 py-2 text-sm font-medium text-ink-3 bg-white border border-gray-300 rounded-md hover:bg-cream disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+              Next →
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ API_URL }}>
+  const LANG_LABELS = { English: 'English', Cantonese: '粵語', Mandarin: '國語' };
+  const LANG_COLORS = {
+    English:  'bg-primary-100 text-primary-800',
+    Cantonese: 'bg-secondary-100 text-secondary-800',
+    Mandarin:  'bg-accent-100 text-accent-800',
+  };
+
+  function esc(str) {
+    return (str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function preacherLabel(chi, eng) {
+    const parts = [chi, eng].filter(Boolean);
+    return parts.join(' · ') || '—';
+  }
+
+  function summaryPreview(html, limit = 30) {
+    const text = (html ?? '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!text) return '';
+    const words = text.split(' ');
+    return words.length > limit ? `${words.slice(0, limit).join(' ')}...` : text;
+  }
+
+  function langBadge(lang) {
+    const label = LANG_LABELS[lang] ?? lang;
+    const color = LANG_COLORS[lang] ?? 'bg-cream-2 text-ink-3';
+    return `<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full ${color}">${esc(label)}</span>`;
+  }
+
+  function sermonCard(sermon) {
+    const thumb = `https://img.youtube.com/vi/${esc(sermon.youtube_id)}/mqdefault.jpg`;
+    const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
+    const date = formatDate(sermon.date);
+    const summaryText = summaryPreview(sermon.summary, 30);
+
+    return `
+      <a href="/sermons/${esc(sermon.youtube_id)}"
+         class="card group overflow-hidden block bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+        <div class="relative w-full overflow-hidden pb-[56.25%]">
+          <img src="${thumb}" alt="${esc(sermon.sermon_title)}"
+               class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 block"
+               loading="lazy" onerror="this.src='/uploads/sermon-placeholder.webp'" />
+        </div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <h3 class="text-lg font-bold leading-snug line-clamp-2 flex-1">${esc(sermon.sermon_title)}</h3>
+            ${langBadge(sermon.language)}
+          </div>
+          <div class="flex items-center text-sm text-muted mb-1 gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>${esc(date)}</span>
+          </div>
+          <div class="flex items-center text-sm text-muted mb-1 gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span>${esc(preacher)}</span>
+          </div>
+          <div class="flex items-center text-sm text-muted mb-3 gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>${esc(sermon.location)}</span>
+          </div>
+          ${summaryText ? `<p class="text-muted text-sm mb-4 leading-relaxed">${esc(summaryText)}</p>` : ''}
+          <p class="text-blue-600 font-medium text-sm group-hover:underline">Watch / 觀看 →</p>
+        </div>
+      </a>
+    `;
+  }
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  let currentPage = 1;
+  let debounceTimer = null;
+  let requestSeq = 0;
+  let activeController = null;
+
+  function getFilters() {
+    return {
+      location: document.getElementById('filter-location').value,
+      language: document.getElementById('filter-language').value,
+      preacher: document.getElementById('filter-preacher').value.trim(),
+    };
+  }
+
+  function buildParams(page = 1) {
+    const f = getFilters();
+    const p = new URLSearchParams({ page });
+    if (f.location) p.set('location', f.location);
+    if (f.language) p.set('language', f.language);
+    if (f.preacher) p.set('preacher', f.preacher);
+    return p.toString();
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  async function loadSermons(page = 1) {
+    currentPage = page;
+    const thisRequest = ++requestSeq;
+    const loading = document.getElementById('sermons-loading');
+    const grid    = document.getElementById('sermons-grid');
+    const noRes   = document.getElementById('no-results');
+    const errEl   = document.getElementById('sermons-error');
+    const pagEl   = document.getElementById('pagination');
+    const countEl = document.getElementById('result-count');
+
+    if (activeController) activeController.abort();
+    const controller = new AbortController();
+    activeController = controller;
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+    loading.classList.remove('hidden');
+    grid.classList.add('hidden');
+    noRes.classList.add('hidden');
+    errEl.classList.add('hidden');
+    pagEl.classList.add('hidden');
+
+    try {
+      const res = await fetch(`${API_URL}?${buildParams(page)}`, {
+        signal: controller.signal,
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error();
+      const json = await res.json();
+      if (thisRequest !== requestSeq) return;
+
+      loading.classList.add('hidden');
+
+      if (json.data.length === 0) {
+        noRes.classList.remove('hidden');
+        countEl.textContent = '';
+      } else {
+        grid.innerHTML = json.data.map(sermonCard).join('');
+        grid.classList.remove('hidden');
+        countEl.textContent = `${json.pagination.total} sermon${json.pagination.total !== 1 ? 's' : ''}`;
+
+        // Pagination
+        if (json.pagination.total_pages > 1) {
+          document.getElementById('page-info').textContent =
+            `Page ${json.pagination.page} of ${json.pagination.total_pages}`;
+          document.getElementById('prev-page').disabled = page <= 1;
+          document.getElementById('next-page').disabled = page >= json.pagination.total_pages;
+          pagEl.classList.remove('hidden');
+        }
+      }
+    } catch (error) {
+      // Ignore stale/aborted requests when a newer one is already in flight.
+      if (thisRequest !== requestSeq) return;
+      if (error?.name === 'AbortError' && activeController !== controller) return;
+      loading.classList.add('hidden');
+      errEl.classList.remove('hidden');
+    } finally {
+      clearTimeout(timeoutId);
+      if (activeController === controller) activeController = null;
+    }
+  }
+
+  // ── Event listeners ────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSermons(1);
+
+    ['filter-location', 'filter-language'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => loadSermons(1));
+    });
+
+    document.getElementById('filter-preacher').addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => loadSermons(1), 400);
+    });
+
+    document.getElementById('reset-filters').addEventListener('click', () => {
+      document.getElementById('filter-location').value = '';
+      document.getElementById('filter-language').value = '';
+      document.getElementById('filter-preacher').value = '';
+      loadSermons(1);
+    });
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+      if (currentPage > 1) loadSermons(currentPage - 1);
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+      loadSermons(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // When returning from a sermon detail page via browser back, force a fresh load.
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      loadSermons(currentPage || 1);
+    }
+  });
+</script>

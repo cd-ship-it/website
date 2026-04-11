@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroSection from "../components/Sections/HeroSection.astro";
+import Ticker from "../components/Sections/Ticker.astro";
+import HomeSecondHero from "../components/Sections/home-second-hero.astro";
+import EventList from "../components/Sections/EventList.astro";
+import SermonList from "../components/Sections/SermonList.astro";
+import FinalCTA from "../components/Sections/FinalCTA.astro";
+import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.astro";
+import NewToCrosspoint from "../components/Sections/new-to-crosspoint.astro";
+import { getCollection } from "astro:content";
+import type { LocalizedText } from "../lib/i18n";
+
+const siteInfoEntries = await getCollection("siteInfo");
+const matchSiteInfo = (key: string) =>
+  siteInfoEntries.find(
+    (item) =>
+      item.id === key ||
+      item.slug === key ||
+      item.id.endsWith(`/${key}`) ||
+      item.id.endsWith(`/${key}.md`) ||
+      item.id === `${key}.md`,
+  );
+
+// ── Hero ─────────────────────────────────────────────────────────────────────
+const homeHeroEntry = matchSiteInfo("home-hero");
+const hero = homeHeroEntry?.data.hero;
+
+const serviceTimesEntry = matchSiteInfo("service-times");
+const campuses = (serviceTimesEntry?.data.campuses ?? []) as Array<{
+  campusName: string | LocalizedText;
+  worshipDate: string | LocalizedText;
+  services: (string | LocalizedText)[];
+}>;
+const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText | undefined;
+
+---
+
+<BaseLayout>
+  <div class="panel-deck">
+    <!-- PANEL 1 — HERO -->
+    <section class="panel panel--hero">
+      <div class="panel-inner">
+        
+        {hero ? (
+          <HeroSection
+            title={hero.heroTitle}
+            subtitle={hero.heroSubtitle}
+            backgroundImage={hero.backgroundImage}
+            ctaText={hero.ctaText}
+            ctaLink={hero.ctaLink}
+            secondaryCtaText={hero.secondaryCtaText}
+            secondaryCtaLink={hero.secondaryCtaLink}
+          />
+        ) : (
+          <HeroSection />
+        )}
+      
+        
+      </div>
+      <!-- Ticker -->
+        <Ticker />
+    </section>
+    
+    <section class="panel panel--services">
+      <div class="panel-inner">
+         {sectionHeading && campuses.length > 0 && (
+          <ServiceTimesCampuses sectionHeading={sectionHeading} campuses={campuses} />
+        )}
+      
+
+      </div>
+    </section>
+
+    <!-- PANEL 2 — MISSION -->
+    <section class="panel panel--secondhero">
+      <div class="panel-inner">
+        <HomeSecondHero />
+
+      </div>
+    </section>
+
+    <!-- PANEL 3 — SERVICES -->
+    <section class="panel panel--pathways">
+
+        <NewToCrosspoint variant="pathways" />
+      
+       
+      
+    </section>
+
+
+
+    <!-- PANEL 4 — STORY -->
+    <section class="panel panel--events">
+      <div class="panel-inner">
+        <EventList />
+
+    </section>
+
+   
+
+    <!-- PANEL 6 — SERMONS -->
+    <section class="panel panel--sermons">
+      <div class="panel-inner">
+        <SermonList variant="home" />
+
+      </div>
+    </section>
+
+    <!-- PANEL 7 — CTA -->
+    <section class="panel panel--cta">
+      <div class="panel-inner">
+        <FinalCTA />
+
+    </section>
+  </div>
+  
+
+</BaseLayout>

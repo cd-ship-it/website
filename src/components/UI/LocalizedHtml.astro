@@ -1,0 +1,57 @@
+---
+/**
+ * Same language switching as LocalizedInline, but renders each slot with `set:html`.
+ * Use only for trusted content (e.g. your own markdown frontmatter) so you can use
+ * inline HTML such as <a href="...">...</a> in `en` / `zh-Hant` / `zh-Hans`.
+ */
+import { resolveLocalizedSlot, type LocalizedText } from "../../lib/i18n";
+
+export interface Props {
+  value: string | LocalizedText;
+  class?: string;
+}
+
+const { value, class: className } = Astro.props;
+const v: LocalizedText = typeof value === "string" ? { en: value } : value;
+
+const en = resolveLocalizedSlot(v, "en");
+const zhHant = resolveLocalizedSlot(v, "zh-Hant");
+const zhHans = resolveLocalizedSlot(v, "zh-Hans");
+---
+
+<div class:list={["st-i18n", "st-i18n-html", className]}>
+  <div class="st-lang st-lang-en" set:html={en} />
+  <div class="st-lang st-lang-zh-Hant" set:html={zhHant} />
+  <div class="st-lang st-lang-zh-Hans" set:html={zhHans} />
+</div>
+
+<style is:global>
+  .st-i18n-html .st-lang-zh-Hant,
+  .st-i18n-html .st-lang-zh-Hans {
+    display: none;
+  }
+  .st-i18n-html .st-lang-en {
+    display: block;
+  }
+  html[data-lang="zh-Hant"] .st-i18n-html .st-lang-en {
+    display: none;
+  }
+  html[data-lang="zh-Hant"] .st-i18n-html .st-lang-zh-Hant {
+    display: block;
+  }
+  html[data-lang="zh-Hans"] .st-i18n-html .st-lang-en {
+    display: none;
+  }
+  html[data-lang="zh-Hans"] .st-i18n-html .st-lang-zh-Hans {
+    display: block;
+  }
+
+  .st-i18n-html a {
+    color: #1f6eb3;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .st-i18n-html a:hover {
+    color: #195c99;
+  }
+</style>

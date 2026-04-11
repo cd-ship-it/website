@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open:*)",
+      "Bash(npm run:*)",
+      "WebFetch(domain:www.brooklake.org)",
+      "WebFetch(domain:anchortacoma.org)",
+      "WebFetch(domain:crosspointchurchsv.org)"
+    ]
+  }
+}

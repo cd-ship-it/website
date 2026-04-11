@@ -1,0 +1,61 @@
+---
+import Button from "../UI/Button.astro";
+import LocalizedInline from "../UI/LocalizedInline.astro";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("siteInfo");
+const entry = entries.find(
+  (item) =>
+    item.id === "home-second-hero" ||
+    item.slug === "home-second-hero" ||
+    item.id.endsWith("/home-second-hero") ||
+    item.id.endsWith("/home-second-hero.md") ||
+    item.id === "home-second-hero.md",
+);
+const s = entry?.data.secondHero;
+---
+
+{s && (
+  <section class="py-24 bg-ink-2">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+
+        <div class="relative">
+          <img
+            src={s.image}
+            alt={s.imageAlt?.en ?? ""}
+            class="rounded-2xl object-cover w-full aspect-[4/3] shadow-2xl"
+          />
+          <!-- Decorative accent border -->
+          <div class="absolute -bottom-4 -right-4 w-full h-full rounded-2xl border-2 border-secondary-500/30 pointer-events-none"></div>
+        </div>
+
+        <div>
+          <p class="text-secondary-400 text-xs font-semibold tracking-widest uppercase mb-4">Our Story</p>
+
+          {s.heading && (
+            <h2 class="font-serif font-bold text-white mb-6 leading-tight" style="font-size: clamp(1.75rem, 3.5vw, 2.75rem);">
+              <LocalizedInline value={s.heading} />
+            </h2>
+          )}
+          {s.paragraph1 && (
+            <p class="text-cream/70 mb-5 text-base leading-relaxed">
+              <LocalizedInline value={s.paragraph1} />
+            </p>
+          )}
+          {s.paragraph2 && (
+            <p class="text-cream/70 mb-8 text-base leading-relaxed">
+              <LocalizedInline value={s.paragraph2} />
+            </p>
+          )}
+          {s.ctaText && s.ctaLink && (
+            <Button href={s.ctaLink} variant="secondary">
+              <LocalizedInline value={s.ctaText} />
+            </Button>
+          )}
+        </div>
+
+      </div>
+    </div>
+  </section>
+)}

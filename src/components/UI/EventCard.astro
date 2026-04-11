@@ -1,0 +1,58 @@
+---
+import type { EventItem } from "../../lib/eventApi";
+
+export interface Props {
+  event: EventItem;
+}
+
+const { event } = Astro.props as Props;
+
+function monthLabel(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`)
+    .toLocaleDateString("en-US", { month: "short" })
+    .toUpperCase();
+}
+
+function dayNum(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { day: "2-digit" });
+}
+
+function weekDay(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" });
+}
+
+function fullDate(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    weekday: "short",
+    year: "numeric",
+  });
+}
+
+function rangeLabel(startDate: string, endDate?: string, time?: string) {
+  const start = fullDate(startDate);
+  const end = endDate && endDate !== startDate ? fullDate(endDate) : "";
+  const dateText = end ? `${start} - ${end}` : start;
+  return time ? `${dateText} • ${time}` : dateText;
+}
+---
+
+<a
+  href={`/events/${encodeURIComponent(event.slug)}`}
+  class="group block bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-lg hover:border-primary-200 hover:-translate-y-0.5 transition-all duration-300 p-5 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"
+>
+  <div class="flex gap-4 items-start">
+    <div class="shrink-0 rounded-lg overflow-hidden border border-gray-200 w-20 h-20 text-center bg-white">
+      <div class="bg-secondary-500 text-ink text-[11px] font-semibold tracking-wide py-1">{monthLabel(event.startDate)}</div>
+      <div class="text-2xl font-bold text-heading leading-tight pt-2">{dayNum(event.startDate)}</div>
+      <div class="text-xs text-muted pb-2">{weekDay(event.startDate)}</div>
+    </div>
+    <div class="min-w-0 flex-1">
+      <h3 class="text-lg font-bold text-heading mb-2 line-clamp-2">{event.title}</h3>
+      <p class="text-sm text-muted mb-2">{rangeLabel(event.startDate, event.endDate, event.time)}</p>
+      {event.location && <p class="text-sm text-muted mb-2 line-clamp-1">{event.location}</p>}
+      <p class="mt-3 text-sm font-medium text-primary-600 group-hover:underline">See details →</p>
+    </div>
+  </div>
+</a>

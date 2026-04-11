@@ -1,0 +1,62 @@
+---
+import LocalizedInline from "./LocalizedInline.astro";
+import LocalizedHtml from "./LocalizedHtml.astro";
+import type { LocalizedText } from "../../lib/i18n";
+
+export interface Props {
+  /** Body copy shown when expanded (same shape as other giving “Learn more” blocks). */
+  details: string | LocalizedText;
+  /** Check/cash card: show the payee/memo sample image under the text. */
+  sampleCheckImage?: boolean;
+}
+
+const { details, sampleCheckImage = false } = Astro.props;
+---
+
+<details class="mt-4 mb-0 [&[open]_summary_.learn-more-chevron]:rotate-180">
+  <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+    <span class="inline-flex items-center gap-1.5 rounded-full border border-primary-600 bg-white px-5 py-2.5 text-sm font-medium text-primary-600 shadow-sm transition hover:bg-primary-50">
+      <LocalizedInline
+        value={{
+          en: "Learn more",
+          "zh-Hant": "了解更多",
+          "zh-Hans": "了解更多",
+        }}
+      />
+      <svg
+        class="learn-more-chevron h-4 w-4 shrink-0 transition-transform"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </span>
+  </summary>
+  <div class="mt-4 space-y-4">
+    <div class="rounded-xl bg-cream px-4 py-4 text-sm leading-relaxed text-ink-3 whitespace-pre-line">
+      <LocalizedHtml value={details} />
+    </div>
+    {sampleCheckImage && (
+      <figure class="m-0">
+        <img
+          src="/uploads/giving-sample-check-payee-memo.png"
+          alt="Sample check: pay to Crosspoint Church only; write your campus name on the memo line."
+          class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
+          loading="lazy"
+        />
+        <figcaption class="mt-2 text-center text-xs text-muted">
+          <LocalizedInline
+            value={{
+              en: "Payee: Crosspoint Church · Memo: your campus name",
+              "zh-Hant": "抬頭：Crosspoint Church · 備註：您的會堂名稱",
+              "zh-Hans": "抬头：Crosspoint Church · 备注：您的会堂名称",
+            }}
+          />
+        </figcaption>
+      </figure>
+    )}
+  </div>
+</details>
