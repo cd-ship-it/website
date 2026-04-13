@@ -2,6 +2,9 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import Button from "../components/UI/Button.astro";
+import { getContactFormActionUrl } from "../config/site";
+
+const contactFormActionUrl = getContactFormActionUrl();
 ---
 
 <BaseLayout
@@ -20,7 +23,7 @@ import Button from "../components/UI/Button.astro";
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         <!-- Contact Form -->
         <div>
-          <h2 class="text-3xl font-bold mb-6">Send Us a Message</h2>
+          <h2 class="section-heading mb-6">Send Us a Message</h2>
           
           <form id="contact-form" class="space-y-6">
             <div>
@@ -83,6 +86,20 @@ import Button from "../components/UI/Button.astro";
                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
               ></textarea>
             </div>
+
+            <!-- Honeypot: must stay empty (handled in public/api/contact.php) -->
+            <div class="hidden" aria-hidden="true">
+              <label for="contact-website-hp">Company</label>
+              <input
+                type="text"
+                id="contact-website-hp"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+
+            <p id="contact-form-status" class="text-sm min-h-[1.25rem]" aria-live="polite"></p>
             
             <div>
               <Button type="submit" variant="primary">
@@ -91,22 +108,53 @@ import Button from "../components/UI/Button.astro";
             </div>
           </form>
           
-          <script>
-            // Handle form submission
-            document.getElementById('contact-form')?.addEventListener('submit', function(e) {
+          <script define:vars={{ contactFormActionUrl }}>
+            document.getElementById("contact-form")?.addEventListener("submit", async function (e) {
               e.preventDefault();
-              
-              // In a real implementation, you would handle the form submission here
-              // For this template, we'll just show a success message
-              alert('Thank you for your message! We will get back to you soon.');
-              this.reset();
+              const form = this;
+              const status = document.getElementById("contact-form-status");
+              const submitBtn = form.querySelector('button[type="submit"]');
+              if (status) {
+                status.textContent = "";
+                status.classList.remove("text-red-600", "text-green-700");
+              }
+              if (submitBtn) submitBtn.disabled = true;
+              try {
+                const res = await fetch(contactFormActionUrl, {
+                  method: "POST",
+                  body: new FormData(form),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.ok) {
+                  if (status) {
+                    status.textContent =
+                      "Thank you for your message! We will get back to you soon.";
+                    status.classList.add("text-green-700");
+                  }
+                  form.reset();
+                } else {
+                  if (status) {
+                    status.textContent =
+                      data.error || "Something went wrong. Please try again.";
+                    status.classList.add("text-red-600");
+                  }
+                }
+              } catch {
+                if (status) {
+                  status.textContent =
+                    "Could not send. Check your connection or try again later.";
+                  status.classList.add("text-red-600");
+                }
+              } finally {
+                if (submitBtn) submitBtn.disabled = false;
+              }
             });
           </script>
         </div>
         
         <!-- Contact Information -->
         <div>
-          <h2 class="text-3xl font-bold mb-6">Contact Information</h2>
+          <h2 class="section-heading mb-6">Contact Information</h2>
           
           <div class="space-y-8">
             <div class="flex items-start">
@@ -119,10 +167,10 @@ import Button from "../components/UI/Button.astro";
                 </div>
               </div>
               <div class="ml-4">
-                <h3 class="text-xl font-bold mb-1">Address</h3>
-                <address class="not-italic text-ink-3">
-                  <p>123 Main Street</p>
-                  <p>Anytown, ST 12345</p>
+                <h3 class="subhead mb-1">Main Office Address</h3>
+                <address class="not-italic body-copy mb-0">
+                  <p>658 Gibraltar Ct.</p>
+                  <p>Milpitas, CA 95035</p>
                 </address>
               </div>
             </div>
@@ -136,11 +184,11 @@ import Button from "../components/UI/Button.astro";
                 </div>
               </div>
               <div class="ml-4">
-                <h3 class="text-xl font-bold mb-1">Phone</h3>
-                <p class="text-ink-3">
-                  <a href="tel:+15551234567" class="hover:text-primary-600">
-                    (555) 123-4567
-                  </a>
+                <h3 class="subhead mb-1">Phone</h3>
+                <p class="body-copy">
+    
+                    (408) 586-8688
+                  
                 </p>
               </div>
             </div>
@@ -154,10 +202,10 @@ import Button from "../components/UI/Button.astro";
                 </div>
               </div>
               <div class="ml-4">
-                <h3 class="text-xl font-bold mb-1">Email</h3>
-                <p class="text-ink-3">
-                  <a href="mailto:info@churchname.org" class="hover:text-primary-600">
-                    info@churchname.org
+                <h3 class="subhead mb-1">Email</h3>
+                <p class="body-copy">
+                  <a href="mailto:com@crosspointchurchsv.org" class="hover:text-primary-600">
+                    com@crosspointchurchsv.org
                   </a>
                 </p>
               </div>
@@ -172,11 +220,11 @@ import Button from "../components/UI/Button.astro";
                 </div>
               </div>
               <div class="ml-4">
-                <h3 class="text-xl font-bold mb-1">Office Hours</h3>
-                <div class="text-ink-3">
-                  <p><strong>Monday - Friday:</strong> 9:00 AM - 5:00 PM</p>
-                  <p><strong>Saturday:</strong> 9:00 AM - 1:00 PM</p>
-                  <p><strong>Sunday:</strong> Closed (except for services)</p>
+                <h3 class="subhead mb-1">Office Hours</h3>
+                <div class="body-copy space-y-2 mb-0">
+                  <p><strong>Monday - Friday:</strong> 10:00 AM - 5:00 PM</p>
+                  <p><strong>Saturday:</strong> Closed</p>
+                  <p><strong>Sunday:</strong> 9:30 AM - 1PM</p>
                 </div>
               </div>
             </div>
@@ -186,21 +234,21 @@ import Button from "../components/UI/Button.astro";
           <div class="mt-8">
             <h3 class="text-xl font-bold mb-4">Connect With Us</h3>
             <div class="flex space-x-4">
-              <a href="https://facebook.com/yourchurch" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
+              <a href="https://CrosspointChurchSV.com/" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
                 <span class="sr-only">Facebook</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </a>
               
-              <a href="https://instagram.com/yourchurch" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
+              <a href="https://www.instagram.com/CrosspointChurchSV" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
                 <span class="sr-only">Instagram</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
               
-              <a href="https://youtube.com/yourchurch" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
+              <a href="https://youtube.com/CrosspointChurch" target="_blank" rel="noopener noreferrer" class="text-muted hover:text-primary-600 transition-colors">
                 <span class="sr-only">YouTube</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -217,7 +265,7 @@ import Button from "../components/UI/Button.astro";
   <section class="py-16 bg-cream">
     <div class="container">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Location & Directions</h2>
+        <h2 class="section-heading mb-4">Location & Directions</h2>
         <p class="text-xl text-muted max-w-3xl mx-auto">
           We're easy to find in the heart of Anytown
         </p>
@@ -235,27 +283,27 @@ import Button from "../components/UI/Button.astro";
         </div>
         
         <div>
-          <div class="bg-white p-8 rounded-lg shadow-md">
+          <div class="xp-panel-inner bg-white p-8">
             <h3 class="text-xl font-bold mb-4">Getting Here</h3>
             
             <div class="space-y-6">
               <div>
-                <h4 class="font-bold mb-2">By Car</h4>
-                <p class="text-ink-3">
+                <h4 class="subhead-sm mb-2">By Car</h4>
+                <p class="body-copy">
                   We have a large parking lot with plenty of free parking spaces, including accessible parking near the main entrance.
                 </p>
               </div>
               
               <div>
-                <h4 class="font-bold mb-2">Public Transportation</h4>
-                <p class="text-ink-3">
+                <h4 class="subhead-sm mb-2">Public Transportation</h4>
+                <p class="body-copy">
                   Bus lines 10 and 14 stop directly in front of our building. The nearest subway station is Central Station, a 10-minute walk from our church.
                 </p>
               </div>
               
               <div>
-                <h4 class="font-bold mb-2">Accessibility</h4>
-                <p class="text-ink-3">
+                <h4 class="subhead-sm mb-2">Accessibility</h4>
+                <p class="body-copy">
                   Our building is fully accessible with ramp access at the main entrance and elevator access to all floors. Accessible restrooms are available on each floor.
                 </p>
               </div>
@@ -276,19 +324,19 @@ import Button from "../components/UI/Button.astro";
   <section id="prayer" class="py-16">
     <div class="container">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ministry Contacts</h2>
+        <h2 class="section-heading mb-4">Ministry Contacts</h2>
         <p class="text-xl text-muted max-w-3xl mx-auto">
           Need to reach a specific ministry or staff member? Here's who to contact
         </p>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Pastoral Care</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Pastoral Care</h3>
+          <p class="body-copy">
             For spiritual counseling, hospital visits, or prayer requests
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -298,12 +346,12 @@ import Button from "../components/UI/Button.astro";
           </div>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Children's Ministry</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Children's Ministry</h3>
+          <p class="body-copy">
             For questions about programs for children from birth through 5th grade
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -313,12 +361,12 @@ import Button from "../components/UI/Button.astro";
           </div>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Youth Ministry</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Youth Ministry</h3>
+          <p class="body-copy">
             For questions about programs for students in 6th-12th grade
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -328,12 +376,12 @@ import Button from "../components/UI/Button.astro";
           </div>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Worship Ministry</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Worship Ministry</h3>
+          <p class="body-copy">
             For information about our music and creative arts ministries
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -343,12 +391,12 @@ import Button from "../components/UI/Button.astro";
           </div>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Outreach & Missions</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Outreach & Missions</h3>
+          <p class="body-copy">
             For information about our local and global mission initiatives
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -358,12 +406,12 @@ import Button from "../components/UI/Button.astro";
           </div>
         </div>
         
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="text-xl font-bold mb-2">Admin & Facilities</h3>
-          <p class="text-ink-3 mb-4">
+        <div class="xp-panel-inner bg-white p-6">
+          <h3 class="subhead mb-2">Admin & Facilities</h3>
+          <p class="body-copy">
             For building use, scheduling, and administrative questions
           </p>
-          <div class="flex items-center text-ink-3">
+          <div class="flex items-center body-copy mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
@@ -380,8 +428,8 @@ import Button from "../components/UI/Button.astro";
   <section id="newsletter" class="py-16 bg-primary-50">
     <div class="container">
       <div class="max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
-        <p class="text-lg text-ink-3 mb-8">
+        <h2 class="section-heading mb-4">Subscribe to Our Newsletter</h2>
+        <p class="body-copy text-lg mb-8">
           Stay updated with the latest events, announcements, and inspiration from our church community.
         </p>
         
@@ -406,13 +454,13 @@ import Button from "../components/UI/Button.astro";
         
         <script>
           // Handle newsletter form submission
-          document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
+          document.getElementById("newsletter-form")?.addEventListener("submit", function (e) {
             e.preventDefault();
-            
+            const form = e.currentTarget;
+            if (!(form instanceof HTMLFormElement)) return;
             // In a real implementation, you would handle the form submission here
-            // For this template, we'll just show a success message
-            alert('Thank you for subscribing to our newsletter!');
-            this.reset();
+            alert("Thank you for subscribing to our newsletter!");
+            form.reset();
           });
         </script>
       </div>

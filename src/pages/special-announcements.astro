@@ -1,0 +1,94 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import PageRailSection from "../components/UI/PageRailSection.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import { pickLocalizedText } from "../lib/i18n";
+
+const page = await getEntry("pages", "special-announcements");
+if (!page || page.data.pageKind !== "special-announcements") {
+  throw new Error('Content entry "pages/special-announcements" not found or wrong pageKind.');
+}
+const data = page.data;
+
+const title = pickLocalizedText(data.seo.title, "en");
+const description = pickLocalizedText(data.seo.description, "en");
+const headerBg = data.pageHeader.backgroundImage;
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHeader
+    title={data.pageHeader.title}
+    subtitle={data.pageHeader.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <PageRailSection>
+    <p class="eyebrow text-secondary-600 mb-2">
+      <LocalizedInline value={data.eyebrow} />
+    </p>
+    <h2 class="subsection-heading mb-2">
+      <LocalizedInline value={data.announcementTitle} />
+    </h2>
+    <p class="text-sm text-muted mb-6">
+      <LocalizedInline value={data.dateLabel} />
+    </p>
+    <div class="prose-content">
+      <p>
+        <LocalizedInline value={data.letterGreeting} />
+      </p>
+      {data.letterParagraphs.map((para) => (
+        <p>
+          <LocalizedInline value={para} />
+        </p>
+      ))}
+      <p>
+        <LocalizedInline value={data.prayerIntro} />
+      </p>
+      <ul>
+        {data.prayerBullets.map((b) => (
+          <li>
+            <LocalizedInline value={b} />
+          </li>
+        ))}
+      </ul>
+      <p>
+        <LocalizedInline value={data.letterClosing} />
+      </p>
+      <p class="not-italic font-medium text-ink-3">
+        <LocalizedInline value={data.signatureLine1} />
+        <br />
+        <LocalizedInline value={data.signatureLine2} />
+      </p>
+    </div>
+  </PageRailSection>
+
+  <PageRailSection cream>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.partnersSectionTitle} />
+    </h2>
+    <p class="body-copy mb-4">
+      <LocalizedInline value={data.partnersIntro} />
+    </p>
+    <ul class="list-disc pl-6 space-y-2 body-copy">
+      {data.partners.map((p) => (
+        <li>{p}</li>
+      ))}
+    </ul>
+  </PageRailSection>
+
+  <PageRailSection>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.disclaimerSectionTitle} />
+    </h2>
+    <p class="body-copy mb-4">
+      <LocalizedInline value={data.disclaimerIntro} />
+    </p>
+    <ul class="list-disc pl-6 space-y-2 body-copy">
+      {data.disclaimer.map((d) => (
+        <li>{d}</li>
+      ))}
+    </ul>
+  </PageRailSection>
+</BaseLayout>

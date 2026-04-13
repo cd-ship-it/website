@@ -31,15 +31,16 @@ const s = entry?.data.secondHero;
         </div>
 
         <div>
-          <p class="text-secondary-400 text-xs font-semibold tracking-widest uppercase mb-4">Our Story</p>
-
-          {s.heading && (
-            <h2 class="font-serif font-bold text-white mb-6 leading-tight text-second-hero">
-              <LocalizedInline value={s.heading} />
-            </h2>
-          )}
+          <div class="home-section-intro home-section-intro--flush">
+            <p class="text-secondary-400 text-xs font-semibold tracking-widest uppercase">Our Story</p>
+            {s.heading && (
+              <h2 class="font-serif font-bold text-white leading-tight text-second-hero">
+                <LocalizedInline value={s.heading} />
+              </h2>
+            )}
+          </div>
           {s.paragraph1 && (
-            <p class="text-cream/70 mb-5 text-base leading-relaxed">
+            <p class="text-cream/70 body-copy">
               <LocalizedInline value={s.paragraph1} />
             </p>
           )}

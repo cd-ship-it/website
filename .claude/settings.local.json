@@ -5,7 +5,13 @@
       "Bash(npm run:*)",
       "WebFetch(domain:www.brooklake.org)",
       "WebFetch(domain:anchortacoma.org)",
-      "WebFetch(domain:crosspointchurchsv.org)"
+      "WebFetch(domain:crosspointchurchsv.org)",
+      "Bash(ffmpeg -version)",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg -i 'web_Sharing Peony.mp4' -vf trim=start_frame=2,setpts=PTS-STARTPTS -af atrim=start=0.033367,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y 'web_Sharing Peony.mp4.tmp.mp4')",
+      "Bash(ffmpeg -i 'web_Sharing Pastor Fung.mp4' -vf trim=start_frame=1,setpts=PTS-STARTPTS -af atrim=start=0.016683,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y 'web_Sharing Pastor Fung.mp4.tmp.mp4')",
+      "Bash(ffmpeg -i web_Sharing_Pastor_Fung.mp4 -vf trim=start_frame=1,setpts=PTS-STARTPTS -af atrim=start=0.016683,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y web_Sharing_Pastor_Fung.mp4.tmp.mp4)",
+      "Bash(ffmpeg -i web_Sharing_Pastor_Fung.mp4 -vf trim=start_frame=2,setpts=PTS-STARTPTS -af atrim=start=0.033367,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y web_Sharing_Pastor_Fung.mp4.tmp.mp4)"
     ]
   }
 }

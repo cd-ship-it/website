@@ -29,8 +29,7 @@ maucariapacom-church-starter/
 │   │   ├── staff/        # Staff profile images
 │   │   ├── events/       # Event images
 │   │   ├── sermons/      # Sermon thumbnail images
-│   │   ├── ministries/   # Ministry logo images
-│   │   └── blog/         # Blog post images
+│   │   └── ministries/   # Ministry logo images
 │   ├── favicon.svg
 │   ├── robots.txt
 │   └── site.webmanifest
@@ -46,7 +45,6 @@ maucariapacom-church-starter/
 │   │   ├── events/       # Church events
 │   │   ├── sermons/      # Sermon content
 │   │   ├── ministries/   # Ministry descriptions
-│   │   ├── blog/         # Blog posts
 │   │   └── siteInfo/     # Site configuration content
 │   ├── layouts/          # Page layouts
 │   ├── pages/            # Astro pages
@@ -172,14 +170,15 @@ See `src/content/config.ts` for the complete schema definitions for all content 
 - **Ministries** (`/ministries`): All church ministries with detailed pages
 - **Sermons** (`/sermons`): Sermon archive with audio/video support and filtering
 - **Events** (`/events`): Upcoming and past events with registration support
-- **Blog** (`/blog`): Church blog with filtering and search
+- **Weekly Prayer** (`/weekly-prayer`): Latest content from WordPress (loaded on each visit)
+- **Word of Your Pastor** (`/word-of-your-pastor`): Latest post in the WordPress category (loaded on each visit)
 - **I'm New** (`/im-new`): First-time visitor information
 - **Contact** (`/contact`): Contact forms, location, staff contacts
 - **Giving** (`/giving`): Online giving information and financial transparency
 
 ### Special Features
 - **Responsive Design**: Mobile-first approach with proper breakpoints
-- **Content Filtering**: Advanced filtering on sermons and blog posts
+- **Content Filtering**: Advanced filtering on sermons
 - **SEO Optimization**: Complete meta tags, JSON-LD schema, and sitemap
 - **Accessibility**: WCAG compliant with proper ARIA labels and keyboard navigation
 - **Performance**: Optimized images and fast loading times
@@ -201,7 +200,7 @@ Update your church information in the following files:
 This template uses Tailwind CSS for styling:
 
 1. Customize colors and other theme settings in `tailwind.config.cjs`
-2. Global styles are in `src/assets/styles/global.css`
+2. Global styles (Tailwind entry + design tokens + homepage layout) are in `src/assets/styles/global.css` only
 3. The template includes a comprehensive color system with primary, secondary, and accent colors
 
 ### Logo & Branding
@@ -219,7 +218,6 @@ Images are organized in the `/public/uploads/` directory:
 - `/uploads/events/` - Event images
 - `/uploads/sermons/` - Sermon thumbnails
 - `/uploads/ministries/` - Ministry logos
-- `/uploads/blog/` - Blog post images
 
 The template includes fallback handling for missing images and uses external Unsplash images for some sections.
 

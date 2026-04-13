@@ -1,4 +1,5 @@
 ---
+pageKind: orange-kids
 title:
   en: "Orange Kids"
   zh-Hant: "Orange Kids"

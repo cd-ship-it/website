@@ -63,23 +63,6 @@ const ministriesCollection = defineCollection({
   }),
 });
 
-const blogCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    slug: z.string().optional(),
-    pubDate: z.date(),
-    description: z.string(), // Short description for previews
-    author: z.string().default("Church Staff"),
-    image: z.object({
-      url: z.string().startsWith('/uploads/blog/'),
-      alt: z.string()
-    }).optional(),
-    tags: z.array(z.string()).default(["general"]),
-    draft: z.boolean().default(false),
-  }),
-});
-
 /** Trilingual (or plain string for backwards compatibility). */
 const localizedText = z.object({
   en: z.string(),
@@ -162,51 +145,221 @@ const campusCollection = defineCollection({
   }),
 });
 
+/** Marketing pages under `src/content/pages/` — discriminated by `pageKind`. */
 const pagesCollection = defineCollection({
   type: 'content',
-  schema: z.object({
-    title: localizedOrString,
-    seo: z.object({
-      title: z.string(),
-      description: z.string(),
-    }),
-    pageHeader: z.object({
-      backgroundImage: z.string(),
-      title: localizedOrString.optional(),
-      subtitle: localizedOrString.optional(),
-    }).optional(),
-    heroImage: z.object({
-      src: z.string(),
-      alt: localizedOrString,
-    }).optional(),
-    pageIntro: localizedOrString.optional(),
-    missionStatement: localizedOrString.optional(),
-    coreCommitment: localizedOrString.optional(),
-    pillars: z.array(z.object({
-      icon: z.string(),
+  schema: z.discriminatedUnion('pageKind', [
+    z.object({
+      pageKind: z.literal('orange-kids'),
       title: localizedOrString,
-      description: localizedOrString,
-    })).optional(),
-    sundayMorning: z.object({
-      heading: localizedOrString,
-      description: localizedOrString,
-      keyPoints: z.array(localizedOrString),
-      childcareNote: localizedOrString.optional(),
-      image: z.object({
+      seo: z.object({
+        title: z.string(),
+        description: z.string(),
+      }),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedOrString.optional(),
+        subtitle: localizedOrString.optional(),
+      }).optional(),
+      heroImage: z.object({
         src: z.string(),
         alt: localizedOrString,
       }).optional(),
-    }).optional(),
-    pastors: z.array(z.object({
-      name: z.string(),
-      title: localizedOrString,
-      image: z.string(),
-      email: z.string().optional(),
-      bio: localizedOrString,
-    })).optional(),
-    contactPhone: z.string().optional(),
-    draft: z.boolean().default(false),
-  }),
+      pageIntro: localizedOrString.optional(),
+      missionStatement: localizedOrString.optional(),
+      coreCommitment: localizedOrString.optional(),
+      pillars: z.array(z.object({
+        icon: z.string(),
+        title: localizedOrString,
+        description: localizedOrString,
+      })).optional(),
+      sundayMorning: z.object({
+        heading: localizedOrString,
+        description: localizedOrString,
+        keyPoints: z.array(localizedOrString),
+        childcareNote: localizedOrString.optional(),
+        image: z.object({
+          src: z.string(),
+          alt: localizedOrString,
+        }).optional(),
+      }).optional(),
+      contactPhone: z.string().optional(),
+      draft: z.boolean().default(false),
+    }),
+    z.object({
+      pageKind: z.literal('special-announcements'),
+      seo: z.object({
+        title: localizedText,
+        description: localizedText,
+      }),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedText,
+        subtitle: localizedText.optional(),
+      }),
+      eyebrow: localizedText,
+      announcementTitle: localizedText,
+      dateLabel: localizedText,
+      letterGreeting: localizedText,
+      letterParagraphs: z.array(localizedText).min(1),
+      prayerIntro: localizedText,
+      prayerBullets: z.array(localizedText).min(1),
+      letterClosing: localizedText,
+      signatureLine1: localizedText,
+      signatureLine2: localizedText,
+      partnersSectionTitle: localizedText,
+      partnersIntro: localizedText,
+      partners: z.array(z.string()),
+      disclaimerSectionTitle: localizedText,
+      disclaimerIntro: localizedText,
+      disclaimer: z.array(z.string()),
+      draft: z.boolean().default(false),
+    }),
+    z.object({
+      pageKind: z.literal('lifegroups'),
+      seo: z.object({
+        title: localizedText,
+        description: localizedText,
+      }),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedText,
+        subtitle: localizedText.optional(),
+      }),
+      whatIsHeading: localizedText,
+      whatIsBody: localizedText,
+      whatIsImage: z.string(),
+      whatIsImageAlt: localizedText,
+      commitmentsEyebrow: localizedText,
+      lifeLetters: z.array(
+        z.object({
+          letter: z.enum(['L', 'I', 'F', 'E']),
+          text: localizedText,
+        }),
+      ).length(4),
+      joinSectionHeading: localizedText,
+      joinImage: z.string().optional(),
+      joinSectionBody: localizedText,
+      covenantHeading: localizedText,
+      covenantIntro: localizedText,
+      covenantItems: z.array(localizedText).min(1),
+      formSectionHeading: localizedText,
+      formSectionIntro: localizedText,
+      formLabels: z.object({
+        firstName: localizedText,
+        lastName: localizedText,
+        email: localizedText,
+        city: localizedText,
+        cityHelp: localizedText,
+        message: localizedText,
+        submit: localizedText,
+      }),
+      formSuccessMessage: localizedText,
+      draft: z.boolean().default(false),
+    }),
+    z.object({
+      pageKind: z.literal('membership'),
+      seo: z.object({
+        title: localizedText,
+        description: localizedText,
+      }),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedText,
+        subtitle: localizedText.optional(),
+      }),
+      introHeading: localizedText,
+      introBody: localizedText,
+      questionHeading: localizedText,
+      questionLead: localizedText,
+      reasons: z.array(
+        z.object({
+          title: localizedText,
+          body: localizedText,
+        }),
+      ).min(1),
+      requirementsHeading: localizedText,
+      requirements: z.array(localizedText).min(1),
+      zonePastorNote: localizedText,
+      contactHeading: localizedText,
+      phoneDisplay: z.string(),
+      contactEmail: z.string().email(),
+      draft: z.boolean().default(false),
+    }),
+    z.object({
+      pageKind: z.literal('im-new'),
+      seo: z.object({
+        title: localizedText,
+        description: localizedText,
+      }),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedText,
+        subtitle: localizedText,
+      }),
+      expectSection: z.object({
+        heading: localizedText,
+        subheading: localizedText,
+        cards: z.array(
+          z.object({
+            icon: z.enum(['clock', 'music', 'book']),
+            title: localizedText,
+            body: localizedText,
+          }),
+        ).length(3),
+      }),
+      kidsSection: z.object({
+        heading: localizedText,
+        intro: localizedText,
+        items: z.array(
+          z.object({
+            title: localizedText,
+            body: localizedText,
+          }),
+        ).min(1),
+        safetyNote: localizedText,
+        ctaText: localizedText,
+        ctaHref: z.string(),
+        image: z.string(),
+        imageAlt: localizedText,
+      }),
+      locationSection: z.object({
+        heading: localizedText,
+        subheading: localizedText,
+        mapPlaceholderTitle: localizedText,
+        mapPlaceholderNote: localizedText,
+        addressHeading: localizedText,
+        addressLines: z.array(localizedText).min(1),
+        phone: z.string(),
+        parkingHeading: localizedText,
+        parkingBody: localizedText,
+        transitHeading: localizedText,
+        transitBody: localizedText,
+        directionsText: localizedText,
+        directionsHref: z.string(),
+      }),
+      faqSection: z.object({
+        heading: localizedText,
+        subheading: localizedText,
+        items: z.array(
+          z.object({
+            question: localizedText,
+            answer: localizedText,
+          }),
+        ).min(1),
+      }),
+      visitCta: z.object({
+        backgroundImage: z.string(),
+        heading: localizedText,
+        body: localizedText,
+        contactText: localizedText,
+        contactHref: z.string(),
+        directionsText: localizedText,
+        directionsHref: z.string(),
+      }),
+      draft: z.boolean().default(false),
+    }),
+  ]),
 });
 
 const navigationLevel3 = z.object({
@@ -314,15 +467,77 @@ const givingCollection = defineCollection({
   }),
 });
 
+const aboutPastorEntry = z.object({
+  name: localizedOrString,
+  title: localizedOrString,
+  image: z.string(),
+  email: z.string().email().optional(),
+  bio: localizedOrString,
+});
+
+const aboutCollection = defineCollection({
+  type: 'content',
+  schema: z
+    .object({
+      seo: z.object({ title: z.string(), description: z.string() }),
+      /** Present on `about-pastors` only (page title vs. pageHeader.title). */
+      title: localizedOrString.optional(),
+      pageHeader: z.object({
+        backgroundImage: z.string(),
+        title: localizedOrString,
+        subtitle: localizedOrString.optional(),
+      }),
+      pageIntro: localizedOrString.optional(),
+      mission: z.object({ heading: localizedOrString, body: localizedOrString }).optional(),
+      vision: z.object({ heading: localizedOrString, body: localizedOrString }).optional(),
+      history: z
+        .array(
+          z.object({
+            year: z.number(),
+            en: z.string(),
+            'zh-Hant': z.string().optional(),
+            'zh-Hans': z.string().optional(),
+            images: z.array(z.string()).optional(),
+          }),
+        )
+        .optional(),
+      testimonies: z.array(z.object({
+        name: z.string(),
+        file: z.string(),
+        /** Still image shown before play; omit to auto-seek past black video leaders. */
+        poster: z.string().optional(),
+      })).optional(),
+      pastors: z.array(aboutPastorEntry).optional(),
+      contactPhone: z.string().optional(),
+      draft: z.boolean().default(false),
+    })
+    .superRefine((data, ctx) => {
+      const isAboutUs =
+        data.mission != null && data.vision != null && data.history != null;
+      const isPastorsPage =
+        data.title != null &&
+        data.pastors != null &&
+        data.pastors.length > 0;
+      if (isAboutUs === isPastorsPage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [],
+          message:
+            'about: use either about-us (mission, vision, history) or about-pastors (title, pastors[]).',
+        });
+      }
+    }),
+});
+
 export const collections = {
   staff: staffCollection,
   events: eventsCollection,
   sermons: sermonsCollection,
   ministries: ministriesCollection,
-  blog: blogCollection,
   siteInfo: siteInfoCollection,
   campus: campusCollection,
   giving: givingCollection,
+  about: aboutCollection,
   pages: pagesCollection,
   navigation: navigationCollection,
 };

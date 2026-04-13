@@ -23,7 +23,7 @@ const staffMembers = allStaff
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
       {staffMembers.map(staff => (
-        <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col h-full">
+        <div class="xp-panel-inner bg-white overflow-hidden flex flex-col h-full">
           <!-- Foto (4:3) -->
           <div class="relative w-full pb-[100%]">
             <img
@@ -36,7 +36,7 @@ const staffMembers = allStaff
             <div>
               <h3 class="text-xl font-semibold mb-1">{staff.data.name}</h3>
               <p class="text-primary-600 mb-2">{staff.data.title}</p>
-              <p class="text-ink-3 text-sm">{staff.data.bio}</p>
+              <p class="body-copy text-sm">{staff.data.bio}</p>
             </div>
             <div class="mt-4 space-y-1 text-sm">
               {staff.data.email && (

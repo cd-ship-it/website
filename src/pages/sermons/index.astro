@@ -12,7 +12,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   <PageHeader
     title="Sermons"
     subtitle="Messages from our Sunday services"
-    backgroundImage="/uploads/sermons-header-bg.webp"
+    backgroundImage="/uploads/microphone.webp"
   />
 
   <section class="py-16">
@@ -21,7 +21,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
 
         <!-- Filters Sidebar -->
         <div class="lg:col-span-1">
-          <div class="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+          <div class="xp-panel-inner bg-white p-6 sticky top-24">
             <h2 class="text-xl font-bold mb-6">Filter Sermons</h2>
 
             <!-- Location -->
@@ -167,7 +167,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
 
     return `
       <a href="/sermons/${esc(sermon.youtube_id)}"
-         class="card group overflow-hidden block bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+         class="xp-panel-inner group overflow-hidden block bg-white hover:shadow-xl transition-all duration-300">
         <div class="relative w-full overflow-hidden pb-[56.25%]">
           <img src="${thumb}" alt="${esc(sermon.sermon_title)}"
                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 block"
@@ -214,6 +214,24 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   let requestSeq = 0;
   let activeController = null;
 
+  async function fetchWithRetry(url, options = {}, retries = 1) {
+    let lastError = null;
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response;
+      } catch (error) {
+        lastError = error;
+        if (attempt === retries) break;
+        await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+      }
+    }
+
+    throw lastError ?? new Error('Unknown fetch error');
+  }
+
   function getFilters() {
     return {
       location: document.getElementById('filter-location').value,
@@ -245,7 +263,11 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
     if (activeController) activeController.abort();
     const controller = new AbortController();
     activeController = controller;
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    let timeoutTriggered = false;
+    const timeoutId = setTimeout(() => {
+      timeoutTriggered = true;
+      controller.abort();
+    }, 20000);
 
     loading.classList.remove('hidden');
     grid.classList.add('hidden');
@@ -254,11 +276,10 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
     pagEl.classList.add('hidden');
 
     try {
-      const res = await fetch(`${API_URL}?${buildParams(page)}`, {
+      const res = await fetchWithRetry(`${API_URL}?${buildParams(page)}`, {
         signal: controller.signal,
         cache: 'no-store',
-      });
-      if (!res.ok) throw new Error();
+      }, 1);
       const json = await res.json();
       if (thisRequest !== requestSeq) return;
 
@@ -285,6 +306,13 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
       // Ignore stale/aborted requests when a newer one is already in flight.
       if (thisRequest !== requestSeq) return;
       if (error?.name === 'AbortError' && activeController !== controller) return;
+      if (error?.name === 'AbortError' && timeoutTriggered) {
+        // Treat request timeout as transient; keep prior content if any.
+        if (!grid.classList.contains('hidden')) {
+          loading.classList.add('hidden');
+          return;
+        }
+      }
       loading.classList.add('hidden');
       errEl.classList.remove('hidden');
     } finally {

@@ -1,11 +1,22 @@
 ---
-import { getEntry, getCollection } from "astro:content";
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import { filterCampusesForOrangeKids } from "../config/site";
 
-const page = await getEntry("pages", "orange-kids");
-if (!page) throw new Error('Content entry "pages/orange-kids" not found.');
+const page = (await getCollection("pages")).find(
+  (entry) =>
+    entry.data.pageKind === "orange-kids" ||
+    entry.id === "orange-kids" ||
+    entry.slug === "orange-kids" ||
+    entry.id === "orangekids" ||
+    entry.slug === "orangekids",
+);
+
+
+if (!page || page.data.pageKind !== "orange-kids") {
+  throw new Error('Content entry "pages/orange-kids" not found or wrong pageKind.');
+}
 const {
   title,
   seo,
@@ -80,11 +91,11 @@ const headerSubtitle = pageHeader?.subtitle
           {/* <h2 class="text-3xl md:text-4xl font-bold mb-6">
             <LocalizedInline value={title} />
           </h2> */}
-          <p class="text-xl text-ink-3 leading-relaxed mb-6">
+          <p class="body-copy text-xl mb-6">
             <LocalizedInline value={missionStatement} />
           </p>
           {coreCommitment && (
-            <p class="text-lg text-ink-3 leading-relaxed">
+            <p class="body-copy text-lg">
               <LocalizedInline value={coreCommitment} />
             </p>
           )}
@@ -99,14 +110,14 @@ const headerSubtitle = pageHeader?.subtitle
       <div class="container">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {pillars.map((pillar) => (
-            <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+            <div class="xp-panel-inner bg-white p-8 text-center">
               <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary-100 flex items-center justify-center"
                 set:html={pillarIcons[pillar.icon] ?? pillarIcons.faith}
               />
               <h3 class="text-xl font-bold mb-3">
                 <LocalizedInline value={pillar.title} />
               </h3>
-              <p class="text-ink-3">
+              <p class="body-copy">
                 <LocalizedInline value={pillar.description} />
               </p>
             </div>
@@ -131,7 +142,7 @@ const headerSubtitle = pageHeader?.subtitle
               <h2 class="text-3xl md:text-4xl font-bold mb-6">
                 <LocalizedInline value={{ en: "What Your Kids Will Discover", "zh-Hant": "孩子將學到什麼", "zh-Hans": "孩子将学到什么" }} />
               </h2>
-              <p class="text-lg text-ink-3 mb-6">
+              <p class="body-copy text-lg mb-6">
                 <LocalizedInline value={sundayMorning.description} />
               </p>
 
@@ -141,7 +152,7 @@ const headerSubtitle = pageHeader?.subtitle
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    <span class="text-ink-3 text-lg">
+                    <span class="body-copy text-lg mb-0 flex-1">
                       <LocalizedInline value={point} />
                     </span>
                   </li>
@@ -149,7 +160,7 @@ const headerSubtitle = pageHeader?.subtitle
               </ul>
 
               {sundayMorning.childcareNote && (
-                <div class="bg-cream-2 rounded-lg px-5 py-4 text-ink-3">
+                <div class="bg-cream-2 rounded-lg px-5 py-4 body-copy mb-0">
                   <LocalizedInline value={sundayMorning.childcareNote} />
                 </div>
               )}
@@ -157,7 +168,7 @@ const headerSubtitle = pageHeader?.subtitle
 
             <!-- Image -->
             {sundayMorning.image && (
-              <div class="rounded-xl overflow-hidden shadow-md">
+              <div class="xp-panel-inner overflow-hidden">
                 <img
                   src={sundayMorning.image.src}
                   alt={typeof sundayMorning.image.alt === "string" ? sundayMorning.image.alt : sundayMorning.image.alt.en}
@@ -189,7 +200,7 @@ const headerSubtitle = pageHeader?.subtitle
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {orangeKidsCampuses.map((campus) => (
-            <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="xp-panel-inner bg-white p-6">
               <div class="flex items-center gap-3 mb-4">
                 <span class="inline-block px-2 py-0.5 bg-secondary-100 text-secondary-800 text-xs font-semibold rounded-full uppercase tracking-wide">
                   <LocalizedInline value={campus.worshipDate} />
@@ -200,7 +211,7 @@ const headerSubtitle = pageHeader?.subtitle
               </div>
               <ul class="space-y-2">
                 {campus.services.map((service) => (
-                  <li class="flex items-center gap-2 text-ink-3">
+                  <li class="flex items-center gap-2 body-copy mb-0">
                     <svg class="h-4 w-4 text-secondary-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>

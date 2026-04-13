@@ -62,57 +62,47 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
         <Ticker />
     </section>
     
-    <section class="panel panel--services">
-      <div class="panel-inner">
-         {sectionHeading && campuses.length > 0 && (
+    <section class="panel panel--services xp-panel-shell">
+      <div class="xp-panel-inner">
+        {sectionHeading && campuses.length > 0 && (
           <ServiceTimesCampuses sectionHeading={sectionHeading} campuses={campuses} />
         )}
-      
-
       </div>
     </section>
 
-    <!-- PANEL 2 — MISSION -->
-    <section class="panel panel--secondhero">
-      <div class="panel-inner">
+    <!-- PANEL 2 — Second hero -->
+    <section class="panel panel--secondhero xp-panel-shell">
+      <div class="xp-panel-inner">
         <HomeSecondHero />
-
       </div>
     </section>
 
-    <!-- PANEL 3 — SERVICES -->
-    <section class="panel panel--pathways">
-
+    <!-- PANEL 3 — Newtocrosspoint -->
+    <section class="panel panel--pathways xp-panel-shell">
+      <div class="xp-panel-inner">
         <NewToCrosspoint variant="pathways" />
-      
-       
-      
+      </div>
     </section>
 
-
-
-    <!-- PANEL 4 — STORY -->
-    <section class="panel panel--events">
-      <div class="panel-inner">
+    <!-- PANEL 4 — events -->
+    <section class="panel panel--events xp-panel-shell">
+      <div class="xp-panel-inner">
         <EventList />
-
+      </div>
     </section>
 
-   
-
-    <!-- PANEL 6 — SERMONS -->
-    <section class="panel panel--sermons">
-      <div class="panel-inner">
+    <!-- PANEL 6 — sermons -->
+    <section class="panel panel--sermons xp-panel-shell">
+      <div class="xp-panel-inner">
         <SermonList variant="home" />
-
       </div>
     </section>
 
     <!-- PANEL 7 — CTA -->
-    <section class="panel panel--cta">
-      <div class="panel-inner">
+    <section class="panel panel--cta xp-panel-shell">
+      <div class="xp-panel-inner">
         <FinalCTA />
-
+      </div>
     </section>
   </div>
   

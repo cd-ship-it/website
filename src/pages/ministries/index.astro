@@ -36,8 +36,8 @@ const ministries = all.sort((a, b) =>
         <a
           href={`/ministries/${m.slug}`}
           class="
-          g-white rounded-lg shadow 
-          flex flex-col overflow-hidden 
+          xp-panel-inner bg-white
+          flex flex-col overflow-hidden
           hover:shadow-lg transition
           min-h-[370px]
           "
@@ -56,7 +56,7 @@ const ministries = all.sort((a, b) =>
             <div class="p-4 flex flex-col flex-1 justify-between">
               <div>
                 <h3 class="text-xl font-semibold mb-2">{m.data.name}</h3>
-                <p class="text-ink-3">{m.data.summary}</p>
+                <p class="body-copy">{m.data.summary}</p>
               </div>
               {(m.data.coordinator || m.data.schedule) && (
                 <div class="mt-4 space-y-1 text-sm text-muted">

@@ -40,11 +40,11 @@ function rangeLabel(startDate: string, endDate?: string, time?: string) {
 
 <a
   href={`/events/${encodeURIComponent(event.slug)}`}
-  class="group block bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-lg hover:border-primary-200 hover:-translate-y-0.5 transition-all duration-300 p-5 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"
+  class="group block xp-panel-inner bg-white border border-gray-100 hover:shadow-lg hover:border-primary-200 hover:-translate-y-0.5 transition-all duration-300 p-5 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"
 >
   <div class="flex gap-4 items-start">
     <div class="shrink-0 rounded-lg overflow-hidden border border-gray-200 w-20 h-20 text-center bg-white">
-      <div class="bg-secondary-500 text-ink text-[11px] font-semibold tracking-wide py-1">{monthLabel(event.startDate)}</div>
+      <div class="bg-secondary-500 text-ink text-micro-label py-1">{monthLabel(event.startDate)}</div>
       <div class="text-2xl font-bold text-heading leading-tight pt-2">{dayNum(event.startDate)}</div>
       <div class="text-xs text-muted pb-2">{weekDay(event.startDate)}</div>
     </div>

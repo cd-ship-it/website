@@ -1,378 +1,463 @@
 ---
+import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
-import StaffList from "../components/Sections/StaffList.astro";
-import LocalizedContent from "../components/UI/LocalizedContent.astro";
-import type { SiteLang } from "../lib/i18n";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import { pickLocalizedText, resolveLocalizedSlot } from "../lib/i18n";
 
-const aboutPageContent: Record<
-  SiteLang,
-  {
-    pageTitle: string;
-    pageSubtitle: string;
-    missionVision: {
-      sections: Array<{ heading: string; paragraphs: string[] }>;
-    };
-  }
-> = {
-  en: {
-    pageTitle: "About Us",
-    pageSubtitle: "Our History, Mission, and Values",
-    missionVision: {
-      sections: [
-        {
-          heading: "Our Mission",
-          paragraphs: [
-            "To know Christ and to make Him known through worship, discipleship, fellowship, and service.",
-          ],
-        },
-        {
-          heading: "Our Vision",
-          paragraphs: [
-            "To be a vibrant, growing community of believers who are transformed by the Gospel and transforming our community with the love of Christ.",
-          ],
-        },
-      ],
-    },
-  },
-  "zh-Hant": {
-    pageTitle: "關於我們",
-    pageSubtitle: "我們的歷史、使命與核心價值",
-    missionVision: {
-      sections: [
-        {
-          heading: "我們的使命",
-          paragraphs: [
-            "藉著敬拜、門徒訓練、團契與服事，認識基督並使人認識祂。",
-          ],
-        },
-        {
-          heading: "我們的異象",
-          paragraphs: [
-            "成為一個充滿生命力、持續成長的信徒群體，因福音被改變，並以基督的愛轉化我們的社區。",
-          ],
-        },
-      ],
-    },
-  },
-  "zh-Hans": {
-    pageTitle: "关于我们",
-    pageSubtitle: "我们的历史、使命与核心价值",
-    missionVision: {
-      sections: [
-        {
-          heading: "我们的使命",
-          paragraphs: [
-            "借着敬拜、门徒训练、团契与服事，认识基督并使人认识祂。",
-          ],
-        },
-        {
-          heading: "我们的异象",
-          paragraphs: [
-            "成为一个充满生命力、持续成长的信徒群体，因福音被改变，并以基督的爱转化我们的社区。",
-          ],
-        },
-      ],
-    },
-  },
-};
+const page = await getEntry("about", "about-us");
+if (!page) throw new Error('Content entry "about/about-us" not found.');
 
-/** For static prerender: sync header text in the browser from stored language (no SSR cookies). */
-const aboutHeaderI18n: Record<SiteLang, { pageTitle: string; pageSubtitle: string }> = {
-  en: { pageTitle: aboutPageContent.en.pageTitle, pageSubtitle: aboutPageContent.en.pageSubtitle },
-  "zh-Hant": {
-    pageTitle: aboutPageContent["zh-Hant"].pageTitle,
-    pageSubtitle: aboutPageContent["zh-Hant"].pageSubtitle,
-  },
-  "zh-Hans": {
-    pageTitle: aboutPageContent["zh-Hans"].pageTitle,
-    pageSubtitle: aboutPageContent["zh-Hans"].pageSubtitle,
-  },
-};
+const { seo, pageHeader, mission, vision, history, testimonies = [] } = page.data;
+
+if (!mission || !vision || !history) {
+  throw new Error('about-us.md must define mission, vision, and history.');
+}
 ---
 
-<BaseLayout
-  title="About Us - Church Name"
-  description="Learn about our church's history, mission, values, and the people who make our community special."
->
-  <PageHeader 
-    title={aboutPageContent.en.pageTitle}
-    subtitle={aboutPageContent.en.pageSubtitle}
-    titleDataI18n="about-page-title"
-    subtitleDataI18n="about-page-subtitle"
-    backgroundImage="https://images.unsplash.com/photo-1438032005730-c779502df39b?w=1920&h=600&fit=crop&crop=center"
+<BaseLayout title={seo.title} description={seo.description}>
+
+  <!-- ── Page Header (same fixed height as other pages using PageHeader) ─── -->
+  <PageHeader
+    title={pageHeader.title}
+    subtitle={pageHeader.subtitle}
+    backgroundImage={pageHeader.backgroundImage}
   />
-  
-  <!-- Mission & Vision -->
-  <section class="py-16">
-    <div class="container">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div>
-          <LocalizedContent
-            clientLocaleSync
-            content={{
-              en: aboutPageContent.en.missionVision,
-              "zh-Hant": aboutPageContent["zh-Hant"].missionVision,
-              "zh-Hans": aboutPageContent["zh-Hans"].missionVision,
-            }}
-          />
-        </div>
-        
-        <div>
-          <img 
-            src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&crop=center" 
-            alt="Worship at our church" 
-            class="rounded-lg shadow-lg object-cover w-full h-full"
-          />
+
+  <!-- ── Mission + Vision (two rows, ~50/50 text + image) ───────────────── -->
+  <section class="xp-panel">
+    <div class="container-xp-stack">
+      <!-- Card 1: Mission — text left, image right (same chrome as index `xp-panel-inner`) -->
+      <div class="xp-panel-inner">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
+          <div class="p-8 lg:p-10 flex flex-col justify-center">
+            <h2 class="section-heading">
+              <LocalizedInline value={mission.heading} />
+            </h2>
+            <p class="body-copy">
+              <LocalizedInline value={mission.body} />
+            </p>
+          </div>
+          <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
+            <img
+              src="/uploads/about/mission.png"
+              alt={pickLocalizedText(mission.heading, "en")}
+              class="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
+
+      <!-- Card 2: Vision — image left, text right (mobile: text first, then image) -->
+      <div class="xp-panel-inner">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
+          <div class="order-2 md:order-1 relative min-h-[14rem] md:min-h-0 bg-cream-2">
+            <img
+              src="/uploads/about/vision.png"
+              alt={pickLocalizedText(vision.heading, "en")}
+              class="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="order-1 md:order-2 p-8 lg:p-10 flex flex-col justify-center">
+
+            <h2 class="section-heading">
+              <LocalizedInline value={vision.heading} />
+            </h2>
+            <p class="body-copy">
+              <LocalizedInline value={vision.body} />
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
-  
-  <!-- Core Values -->
-  <section class="py-16 bg-cream">
+
+
+  <!-- ── History Timeline ───────────────────────────────────────────────── -->
+  <section class="py-20 bg-white">
     <div class="container">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Core Values</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          These principles guide everything we do as a church community
+
+      <!-- Section heading -->
+      <div
+        class="relative mb-16 overflow-hidden rounded-2xl bg-cover bg-center px-4 py-14 text-center text-white md:py-16"
+        style="background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(/uploads/about/25-years-faith-growth.png)"
+      >
+        <p class="eyebrow mb-3 text-white/90">
+          <LocalizedInline value={{ en: "Our Amazing Story", "zh-Hant": "我們的奇妙故事", "zh-Hans": "我们的奇妙故事" }} />
         </p>
+        <h2 class="font-serif font-bold text-white" style="font-size: var(--font-section-major);">
+          <LocalizedInline value={{ en: "25 Years of Faith", "zh-Hant": "25年的信心與成長", "zh-Hans": "25年的信心与成长" }} />
+        </h2>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Biblical Teaching</h3>
-          <p class="text-ink-3">
-            We are committed to teaching God's Word faithfully and helping people apply it to their lives. We believe the Bible is God's inspired, inerrant Word and our ultimate authority.
-          </p>
-        </div>
-        
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Authentic Community</h3>
-          <p class="text-ink-3">
-            We believe spiritual growth happens best in community. We foster genuine relationships where people can be known, loved, and challenged to grow in their faith.
-          </p>
-        </div>
-        
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-accent-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Missional Living</h3>
-          <p class="text-ink-3">
-            We believe every follower of Jesus is called to share His love with others. We equip and encourage our members to live on mission in their neighborhoods, workplaces, and beyond.
-          </p>
-        </div>
-        
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Spiritual Growth</h3>
-          <p class="text-ink-3">
-            We are committed to helping people grow in their relationship with Christ, becoming more like Him in their thoughts, words, and actions through discipleship and spiritual practices.
-          </p>
-        </div>
-        
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Spirit-Led Worship</h3>
-          <p class="text-ink-3">
-            We value authentic, heartfelt worship that glorifies God and transforms lives. We seek to create environments where people can encounter God's presence.
-          </p>
-        </div>
-        
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-          <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-            </svg>
-          </div>
-          <h3 class="text-xl font-bold mb-3">Servant Leadership</h3>
-          <p class="text-ink-3">
-            We believe leadership is about service, not status. We develop and empower leaders who model Christ-like humility and sacrifice as they guide others.
-          </p>
-        </div>
+
+      <!-- Timeline -->
+      <div class="timeline-root">
+        {history.map((entry, i) => {
+          const isLeft = i % 2 === 0;
+          const hasImages = entry.images && entry.images.length > 0;
+          return (
+            <div class={`timeline-entry timeline-entry--${isLeft ? "left" : "right"}`} data-year={entry.year}>
+
+              {/* ── Card ── */}
+              <div class="timeline-card">
+                {/* Year pill (mobile only) */}
+                <span class="timeline-year-pill">
+                  {entry.year}
+                </span>
+
+                {/* Description */}
+                <p class="text-ink-3 leading-relaxed text-sm md:text-base">
+                  <span class="st-i18n">
+                    <span class="st-lang st-lang-en">{resolveLocalizedSlot(entry, "en")}</span>
+                    <span class="st-lang st-lang-zh-Hant">{resolveLocalizedSlot(entry, "zh-Hant")}</span>
+                    <span class="st-lang st-lang-zh-Hans">{resolveLocalizedSlot(entry, "zh-Hans")}</span>
+                  </span>
+                </p>
+
+                {/* Images */}
+                {hasImages && (
+                  <div class="mt-4 flex flex-col gap-2">
+                    {entry.images!.map((src) => (
+                      <img
+                        src={src}
+                        alt={`Crosspoint Church ${entry.year}`}
+                        class="w-full rounded-lg object-cover max-h-44"
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Year Badge (desktop) ── */}
+              <div class="timeline-badge" aria-hidden="true">
+                <span>{entry.year}</span>
+              </div>
+
+              {/* ── Spacer column (desktop) ── */}
+              <div class="timeline-spacer" aria-hidden="true" />
+
+            </div>
+          );
+        })}
       </div>
+
     </div>
   </section>
-  
-  <!-- Church History -->
-  <section class="py-16">
+
+  <!-- ── Testimonies ───────────────────────────────────────────────────── -->
+  <section class="py-20 bg-[#0d1b2e]">
     <div class="container">
+
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Our History</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          The story of how our church has grown and evolved over the years
+        <p class="eyebrow text-secondary-400 mb-3">
+          <LocalizedInline value={{ en: "Hear from Our Members", "zh-Hant": "聆聽弟兄姊妹的見證", "zh-Hans": "聆听弟兄姊妹的见证" }} />
         </p>
+        <h2 class="font-serif font-bold text-white" style="font-size: var(--font-section-major);">
+          <LocalizedInline value={{ en: "Our Testimonies", "zh-Hant": "信仰見證", "zh-Hans": "信仰见证" }} />
+        </h2>
       </div>
-      
-      <div class="max-w-4xl mx-auto">
-        <div class="relative pl-8 sm:pl-16 py-6 group">
-          <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-7 before:h-full before:px-px before:bg-gray-300 before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-7 after:w-4 after:h-4 after:bg-primary-600 after:border-4 after:border-white after:rounded-full after:-translate-x-1/2 after:translate-y-1.5">
-            <time class="sm:w-28 text-xs text-muted uppercase">1950</time>
-            <div>
-              <h3 class="text-xl font-bold text-heading">Church Founded</h3>
-              <p class="text-ink-3">
-                Our church was founded by a small group of dedicated believers who met in homes for Bible study and prayer.
-              </p>
-            </div>
+
+      <div class="testimonies-grid">
+        {testimonies.map((t) => (
+          <div class="testimony-card">
+            <video
+              controls
+              preload="metadata"
+              playsinline
+              class="testimony-video"
+              {...(t.poster ? { poster: t.poster } : {})}
+              data-thumb-offset={t.poster ? undefined : "1"}
+              aria-label={`Testimony by ${t.name}`}
+            >
+              <source src={`/uploads/testimonies/${encodeURIComponent(t.file)}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <p class="testimony-name">{t.name}</p>
           </div>
-          
-          <div class="relative pl-8 sm:pl-16 py-6 group">
-            <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-7 before:h-full before:px-px before:bg-gray-300 before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-7 after:w-4 after:h-4 after:bg-primary-600 after:border-4 after:border-white after:rounded-full after:-translate-x-1/2 after:translate-y-1.5">
-              <time class="sm:w-28 text-xs text-muted uppercase">1965</time>
-              <div>
-                <h3 class="text-xl font-bold text-heading">First Building</h3>
-                <p class="text-ink-3">
-                  As the congregation grew, we purchased our first building and expanded our ministries to serve the community.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="relative pl-8 sm:pl-16 py-6 group">
-            <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-7 before:h-full before:px-px before:bg-gray-300 before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-7 after:w-4 after:h-4 after:bg-primary-600 after:border-4 after:border-white after:rounded-full after:-translate-x-1/2 after:translate-y-1.5">
-              <time class="sm:w-28 text-xs text-muted uppercase">1988</time>
-              <div>
-                <h3 class="text-xl font-bold text-heading">New Campus</h3>
-                <p class="text-ink-3">
-                  We moved to our current location and built a larger sanctuary to accommodate our growing congregation.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="relative pl-8 sm:pl-16 py-6 group">
-            <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-7 before:h-full before:px-px before:bg-gray-300 before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-7 after:w-4 after:h-4 after:bg-primary-600 after:border-4 after:border-white after:rounded-full after:-translate-x-1/2 after:translate-y-1.5">
-              <time class="sm:w-28 text-xs text-muted uppercase">2010</time>
-              <div>
-                <h3 class="text-xl font-bold text-heading">Community Center</h3>
-                <p class="text-ink-3">
-                  We opened our community center to better serve our neighbors through various outreach programs and ministries.
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="relative pl-8 sm:pl-16 py-6 group">
-            <div class="flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-7 before:h-full before:px-px before:bg-gray-300 before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-7 after:w-4 after:h-4 after:bg-primary-600 after:border-4 after:border-white after:rounded-full after:-translate-x-1/2 after:translate-y-1.5">
-              <time class="sm:w-28 text-xs text-muted uppercase">Present</time>
-              <div>
-                <h3 class="text-xl font-bold text-heading">Continuing the Mission</h3>
-                <p class="text-ink-3">
-                  Today, we continue to grow and adapt while staying true to our mission of knowing Christ and making Him known.
-                </p>
-              </div>
-            </div>
-          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── CTA ────────────────────────────────────────────────────────────── -->
+  <section
+    class="py-20 bg-cover bg-center text-white"
+    style={`background-image: linear-gradient(rgba(13,59,106,0.88), rgba(31,110,179,0.80)), url(${pageHeader.backgroundImage})`}
+  >
+    <div class="container">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="font-serif font-bold text-white mb-4" style="font-size: var(--font-section-major);">
+          <LocalizedInline value={{ en: "Come Visit Us", "zh-Hant": "歡迎蒞臨", "zh-Hans": "欢迎莅临" }} />
+        </h2>
+        <p class="text-white/80 text-lg mb-8">
+          <LocalizedInline value={{
+            en: "We'd love to meet you. Find a campus near you and join us this Sunday.",
+            "zh-Hant": "我們很期待與您見面。尋找離您最近的會堂，這個主日與我們同聚。",
+            "zh-Hans": "我们很期待与您见面。寻找离您最近的会堂，这个主日与我们同聚。"
+          }} />
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/campus" class="btn btn-secondary">
+            <LocalizedInline value={{ en: "Find a Campus", "zh-Hant": "尋找會堂", "zh-Hans": "寻找会堂" }} />
+          </a>
+          <a href="/contact" class="btn btn-ghost-white">
+            <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
+          </a>
         </div>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Leadership Team Preview -->
-  <section class="py-16 bg-cream">
-    <div class="container">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Meet Our Leadership</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          Our dedicated staff and leadership team serve our congregation with passion and commitment
-        </p>
-      </div>
-      
-      <!-- Show limited staff preview -->
-      <StaffList showAll={false} limit={3} />
-      
-      <div class="mt-12 text-center">
-        <a 
-          href="/staff" 
-          class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-white bg-primary-900 rounded-md shadow-sm hover:bg-primary-950 focus:outline-none focus:ring-2 focus:ring-primary-700 focus:ring-offset-2"
-        >
-          Meet All Our Staff
-        </a>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Statement of Faith -->
-  <section class="py-16">
-    <div class="container">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">What We Believe</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          Our church adheres to these fundamental Christian beliefs
-        </p>
-      </div>
-      
-      <div class="max-w-4xl mx-auto prose prose-lg">
-        <h3>The Bible</h3>
-        <p>
-          We believe the Bible is God's Word, inspired by the Holy Spirit, without error in the original manuscripts, and the final authority for all Christian faith and life.
-        </p>
-        
-        <h3>God</h3>
-        <p>
-          We believe in one God who exists eternally in three persons: Father, Son, and Holy Spirit. Each person is fully God, yet there is one God.
-        </p>
-        
-        <h3>Jesus Christ</h3>
-        <p>
-          We believe Jesus Christ is fully God and fully human. He was born of a virgin, lived a sinless life, died on the cross as the substitute for sinners, rose bodily from the grave, and ascended to heaven where He now serves as our High Priest and Advocate.
-        </p>
-        
-        <h3>Holy Spirit</h3>
-        <p>
-          We believe the Holy Spirit convicts the world of sin, regenerates believers, indwells them, and empowers them for godly living and service.
-        </p>
-        
-        <h3>Salvation</h3>
-        <p>
-          We believe salvation is by grace alone, through faith alone, in Christ alone. Good works are the necessary fruit of true faith but are not the basis of our right standing before God.
-        </p>
-        
-        <h3>The Church</h3>
-        <p>
-          We believe the church is the body of Christ, consisting of all true believers. Its mission is to worship God, build up believers in their faith, and share the gospel with the world.
-        </p>
-        
-        <h3>The Future</h3>
-        <p>
-          We believe in the personal, visible return of Jesus Christ, the resurrection of the dead, the final judgment, and the eternal state of blessing for the righteous and punishment for the unrighteous.
-        </p>
       </div>
     </div>
   </section>
 
-  <script define:vars={{ aboutHeaderI18n }}>
-    function normalizeAboutLang(value) {
-      return ["en", "zh-Hant", "zh-Hans"].includes(value) ? value : "en";
-    }
-    document.addEventListener("DOMContentLoaded", () => {
-      const lang = normalizeAboutLang(document.documentElement.dataset.lang || "en");
-      const block = aboutHeaderI18n[lang] ?? aboutHeaderI18n.en;
-      const h1 = document.querySelector('[data-i18n="about-page-title"]');
-      const sub = document.querySelector('[data-i18n="about-page-subtitle"]');
-      if (h1) h1.textContent = block.pageTitle;
-      if (sub) sub.textContent = block.pageSubtitle;
-    });
-  </script>
 </BaseLayout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".testimony-video[data-thumb-offset]").forEach((el) => {
+      const v = el;
+      if (!(v instanceof HTMLVideoElement)) return;
+      const raw = v.getAttribute("data-thumb-offset");
+      const offset = raw ? parseFloat(raw, 10) : 1;
+
+      v.addEventListener("play", function jumpToStartFromThumbPreview() {
+        if (v.dataset.thumbPreview === "1") {
+          v.currentTime = 0;
+          delete v.dataset.thumbPreview;
+          v.removeEventListener("play", jumpToStartFromThumbPreview);
+        }
+      });
+
+      const seek = () => {
+        if (!(v.duration > 0) || Number.isNaN(offset)) return;
+        const t = Math.min(offset, Math.max(0, v.duration - 0.05));
+        v.addEventListener(
+          "seeked",
+          () => {
+            v.dataset.thumbPreview = "1";
+          },
+          { once: true },
+        );
+        v.currentTime = t;
+      };
+      if (v.readyState >= 1) seek();
+      else v.addEventListener("loadedmetadata", seek, { once: true });
+    });
+  });
+</script>
+
+<!-- ─────────────────────────────────────────────────────────────────────────
+     Timeline styles
+     ─────────────────────────────────────────────────────────────────────── -->
+<style>
+/* ── Testimonies ── */
+.testimonies-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .testimonies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* 5th item: center it spanning both columns */
+  .testimonies-grid > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 0.75rem);
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
+.testimony-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.testimony-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  background: #000;
+}
+
+.testimony-name {
+  padding: 0.75rem 1rem;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.85);
+  text-align: center;
+}
+
+/* ── Shared ── */
+.timeline-root {
+  position: relative;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.timeline-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(26,20,16,0.08);
+  padding: 1.5rem;
+  transition: box-shadow 0.25s var(--ease, ease);
+}
+.timeline-card:hover {
+  box-shadow: 0 6px 28px rgba(26,20,16,0.13);
+}
+
+/* ── Mobile: single-column ── */
+.timeline-entry {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+/* Same chrome as desktop `.timeline-badge` (blue circle + cream ring), for mobile stack */
+.timeline-year-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: #1f6eb3;
+  color: #fff;
+  font-weight: 700;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--cream-3, #e8ded0);
+}
+
+/* Hide desktop badge on mobile */
+.timeline-badge { display: none; }
+.timeline-spacer { display: none; }
+
+/* ── Desktop: three-column grid with centre line ── */
+@media (min-width: 768px) {
+  /* Vertical centre line */
+  .timeline-root::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--cream-3, #e8ded0);
+    transform: translateX(-50%);
+  }
+
+  .timeline-year-pill { display: none; }
+  .timeline-badge { display: flex; }
+  .timeline-spacer { display: block; }
+
+  .timeline-entry {
+    display: grid;
+    grid-template-columns: 1fr 5rem 1fr;
+    grid-template-rows: auto;
+    column-gap: 1.5rem;
+    align-items: start;
+    margin-bottom: 3rem;
+    flex-direction: unset;
+  }
+
+  /* LEFT entries: card col-1, badge col-2, spacer col-3 */
+  .timeline-entry--left .timeline-card    { grid-column: 1; grid-row: 1; text-align: right; }
+  .timeline-entry--left .timeline-badge   { grid-column: 2; grid-row: 1; }
+  .timeline-entry--left .timeline-spacer  { grid-column: 3; grid-row: 1; }
+
+  /* RIGHT entries: spacer col-1, badge col-2, card col-3 */
+  .timeline-entry--right .timeline-spacer { grid-column: 1; grid-row: 1; }
+  .timeline-entry--right .timeline-badge  { grid-column: 2; grid-row: 1; }
+  .timeline-entry--right .timeline-card   { grid-column: 3; grid-row: 1; text-align: left; }
+
+  /* Year badge circle (center column on timeline) */
+  .timeline-badge {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: #1f6eb3;
+    color: #fff;
+    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--cream-3, #e8ded0);
+    z-index: 1;
+    position: relative;
+    margin-top: 0.375rem; /* align with first line of card text */
+    flex-shrink: 0;
+    line-height: 1.1;
+  }
+
+  /* Connector lines from badge to card */
+  .timeline-entry--left .timeline-badge::before,
+  .timeline-entry--right .timeline-badge::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 1.5rem;
+    height: 2px;
+    background: var(--cream-3, #e8ded0);
+    transform: translateY(-50%);
+  }
+  .timeline-entry--left .timeline-badge::before  { right: 100%; }
+  .timeline-entry--right .timeline-badge::after  { left: 100%; }
+}
+
+/* ── Scroll-entrance animation ── */
+@media (prefers-reduced-motion: no-preference) {
+  .timeline-card {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s ease;
+  }
+  .timeline-card.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
+<script>
+  // Trigger scroll-entrance animation for timeline cards
+  const cards = document.querySelectorAll<HTMLElement>('.timeline-card');
+  if (typeof IntersectionObserver !== 'undefined') {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    cards.forEach((card) => io.observe(card));
+  } else {
+    // Fallback: show all immediately
+    cards.forEach((card) => card.classList.add('is-visible'));
+  }
+</script>

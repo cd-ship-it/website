@@ -11,7 +11,6 @@ export interface LocaleStrings {
     ministries: string;
     sermons: string;
     events: string;
-    blog: string;
     imNew: string;
     contact: string;
     giving: string;
@@ -36,7 +35,6 @@ export const I18N: Record<SiteLang, LocaleStrings> = {
       ministries: "Ministries",
       sermons: "Sermons",
       events: "Events",
-      blog: "Blog",
       imNew: "I'm New",
       contact: "Contact",
       giving: "Giving",
@@ -53,7 +51,6 @@ export const I18N: Record<SiteLang, LocaleStrings> = {
       ministries: "事工",
       sermons: "講道",
       events: "活動",
-      blog: "文章",
       imNew: "新朋友",
       contact: "聯絡",
       giving: "奉獻",
@@ -70,7 +67,6 @@ export const I18N: Record<SiteLang, LocaleStrings> = {
       ministries: "事工",
       sermons: "讲道",
       events: "活动",
-      blog: "文章",
       imNew: "新朋友",
       contact: "联络",
       giving: "奉献",
@@ -95,9 +91,20 @@ export type LocalizedText = {
   "zh-Hans"?: string;
 };
 
+function nonEmptyLocalized(s: string | undefined): s is string {
+  return s != null && String(s).trim() !== "";
+}
+
 /**
- * Resolves text for a language slot. Missing, empty, or whitespace-only
- * `zh-Hant` / `zh-Hans` values fall back to `en` so nothing renders blank.
+ * Resolves text for one language slot from trilingual content (or a plain string).
+ *
+ * Fallbacks (empty or whitespace-only counts as missing):
+ * - `en` → always `value.en` (when `value` is an object).
+ * - `zh-Hant` → `zh-Hant` if set, else `en`.
+ * - `zh-Hans` → `zh-Hans` if set, else `zh-Hant` if set, else `en`.
+ *
+ * Used by `LocalizedInline`, `LocalizedHtml`, `pickLocalizedText`, and any code
+ * that renders per-slot strings for `html[data-lang]`.
  */
 export function resolveLocalizedSlot(
   value: string | LocalizedText,
@@ -105,8 +112,11 @@ export function resolveLocalizedSlot(
 ): string {
   if (typeof value === "string") return value;
   if (slot === "en") return value.en;
-  const raw = value[slot];
-  if (raw != null && String(raw).trim() !== "") return raw;
+  if (slot === "zh-Hant") {
+    return nonEmptyLocalized(value["zh-Hant"]) ? value["zh-Hant"]! : value.en;
+  }
+  if (nonEmptyLocalized(value["zh-Hans"])) return value["zh-Hans"]!;
+  if (nonEmptyLocalized(value["zh-Hant"])) return value["zh-Hant"]!;
   return value.en;
 }
 

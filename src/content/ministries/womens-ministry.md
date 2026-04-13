@@ -114,6 +114,10 @@ To create a community where women of all ages and life stages can grow in their 
 - Devotional groups
 - Fiction with faith themes
 
+<p>
+  <a href="https://example.com/form" class="btn btn-primary">Register</a>
+</p>
+
 ### Hobby Groups
 - Crafting and sewing circles
 - Cooking and baking clubs

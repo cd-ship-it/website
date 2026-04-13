@@ -2,7 +2,7 @@
 campusId: "Tracy"
 wpEventCategoryId: "tracy"
 hero:
-  image: "https://crosspointchurchsv.org/wp-content/uploads/2023/09/TracyHero.jpg"
+  image: "../uploads/tracy-hero.webp"
   alt:
     en: "Tracy campus of Crosspoint Church"
     zh-Hant: "匯點教會 Tracy 會堂"

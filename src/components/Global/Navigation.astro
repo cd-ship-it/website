@@ -33,7 +33,6 @@ function fallbackNavFromI18n(): NavMenuTop[] {
     { id: "ministries", label: L("ministries"), href: "/ministries" },
     { id: "sermons", label: L("sermons"), href: "/sermons" },
     { id: "events", label: L("events"), href: "/events" },
-    { id: "blog", label: L("blog"), href: "/blog" },
     { id: "imNew", label: L("imNew"), href: "/im-new" },
     { id: "contact", label: L("contact"), href: "/contact" },
     { id: "giving", label: L("giving"), href: "/giving" },
@@ -102,57 +101,103 @@ function firstNavigableHref(item: NavMenuTop): string {
             <li class="relative group">
               <a
                 href={parentHref}
-                class={`text-base font-medium transition-colors hover:text-primary-600 flex items-center gap-0.5 ${
-                  isActive ? "text-primary-600" : "text-ink"
+                class={`text-base font-medium transition-colors flex items-center gap-1 ${
+                  isActive ? "text-[#3b71b8]" : "text-[#555555] hover:text-[#3b71b8]"
                 }`}
                 aria-haspopup="true"
                 aria-expanded="false"
               >
                 <LocalizedInline value={item.label} />
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-3.5 w-3.5 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                 </svg>
               </a>
               <ul
-                class="absolute left-0 top-full pt-1 min-w-[220px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 bg-white rounded-lg shadow-lg border border-gray-100 py-1"
+                class="nav-desktop-dropdown absolute left-0 top-full z-50 min-w-[280px] max-w-[min(100vw-2rem,22rem)] border-x border-b border-gray-200 border-t-[3px] border-t-[#3b71b8] bg-white py-0 opacity-0 shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-all duration-150 invisible group-hover:visible group-hover:opacity-100"
                 role="menu"
               >
                 {item.children.map((child) => {
                   const childActive = isL2Active(child);
                   const hasGrand = child.children && child.children.length > 0;
+                  if (!hasGrand) {
+                    return (
+                      <li role="none" class="border-b border-[#f0f0f0] last:border-b-0">
+                        <a
+                          href={child.href}
+                          class:list={[
+                            "block px-5 py-[15px] text-base font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
+                            childActive && "font-semibold",
+                          ]}
+                          role="menuitem"
+                          aria-current={childActive ? "page" : undefined}
+                        >
+                          <LocalizedInline value={child.label} />
+                        </a>
+                      </li>
+                    );
+                  }
                   return (
-                    <li role="none" class={hasGrand ? "border-b border-gray-50 last:border-0 pb-1 last:pb-0" : ""}>
+                    <li role="none" class="group/sub relative border-b border-[#f0f0f0] last:border-b-0">
                       <a
-                        href={child.href}
-                        class={`block px-4 py-2 text-sm font-medium transition-colors hover:bg-primary-50 hover:text-primary-600 ${
-                          childActive && !hasGrand ? "text-primary-600 bg-primary-50" : "text-ink"
-                        }`}
+                        href={child.href || "#"}
+                        class:list={[
+                          "flex items-center justify-between gap-2 px-5 py-[15px] text-base font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
+                          childActive && "font-semibold",
+                        ]}
                         role="menuitem"
-                        aria-current={childActive && !hasGrand ? "page" : undefined}
+                        aria-current={isLinkActive(child.href) ? "page" : undefined}
                       >
-                        <LocalizedInline value={child.label} />
+                        <span class="min-w-0 flex-1">
+                          <LocalizedInline value={child.label} />
+                        </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4 shrink-0 text-[#3b71b8]/80"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
                       </a>
-                      {hasGrand && (
-                        <ul class="pb-1" role="menu">
-                          {child.children!.map((g) => {
-                            const gActive = isL3Active(g);
-                            return (
-                              <li role="none">
+                      <ul
+                        role="menu"
+                        class="invisible absolute left-full top-0 z-[60] ml-0 min-w-[260px] max-w-[min(100vw-2rem,20rem)] border-x border-b border-gray-200 border-t-[3px] border-t-[#3b71b8] bg-white py-0 opacity-0 shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-all duration-150 group-hover/sub:visible group-hover/sub:opacity-100"
+                      >
+                        {child.children!.map((g) => {
+                          const gActive = isL3Active(g);
+                          const gh = g.href?.trim();
+                          return (
+                            <li role="none" class="border-b border-[#f0f0f0] last:border-b-0">
+                              {gh ? (
                                 <a
-                                  href={g.href}
-                                  class={`block pl-6 pr-4 py-1.5 text-xs font-medium transition-colors hover:bg-primary-50 hover:text-primary-600 ${
-                                    gActive ? "text-primary-600 bg-primary-50" : "text-ink"
-                                  }`}
+                                  href={gh}
+                                  class:list={[
+                                    "block px-5 py-2.5 text-sm font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
+                                    gActive && "font-semibold",
+                                  ]}
                                   role="menuitem"
                                   aria-current={gActive ? "page" : undefined}
                                 >
                                   <LocalizedInline value={g.label} />
                                 </a>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
+                              ) : (
+                                <span class="block px-5 py-2.5 text-sm font-medium leading-snug text-muted">
+                                  <LocalizedInline value={g.label} />
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </li>
                   );
                 })}
@@ -166,8 +211,8 @@ function firstNavigableHref(item: NavMenuTop): string {
           <li>
             <a
               href={href}
-              class={`text-base font-medium transition-colors hover:text-primary-600 ${
-                isActive ? "text-primary-600" : "text-ink"
+              class={`text-base font-medium transition-colors ${
+                isActive ? "text-[#3b71b8]" : "text-[#555555] hover:text-[#3b71b8]"
               }`}
               aria-current={isActive ? "page" : undefined}
             >
@@ -178,17 +223,29 @@ function firstNavigableHref(item: NavMenuTop): string {
       })
     }
     
-    <li>
+    <li class="relative">
       <label for="language-select-desktop" class="sr-only"><LocalizedInline value={navLabel("language")} /></label>
-      <select
-        id="language-select-desktop"
-        class="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-ink focus:outline-none focus:ring-2 focus:ring-primary-500"
-        data-language-select
-      >
-        {languageOptions.map((opt) => (
-          <option value={opt.value} selected={opt.value === "en"}>{opt.label}</option>
-        ))}
-      </select>
+      <div class="relative">
+        <select
+          id="language-select-desktop"
+          class="nav-language-select nav-language-select--desktop"
+          data-language-select
+        >
+          {languageOptions.map((opt) => (
+            <option value={opt.value} selected={opt.value === "en"}>{opt.label}</option>
+          ))}
+        </select>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="nav-language-chevron h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </li>
   </ul>
 </nav>
@@ -196,7 +253,7 @@ function firstNavigableHref(item: NavMenuTop): string {
 <!-- Mobile Menu Button -->
 <button
   id="mobile-menu-button"
-  class="lg:hidden p-2 text-ink hover:text-primary-600 focus:outline-none transition-colors relative"
+  class="relative p-2 text-[#555555] transition-colors hover:text-[#3b71b8] focus:outline-none lg:hidden"
   aria-label="Toggle Menu"
   aria-expanded="false"
 >
@@ -208,7 +265,7 @@ function firstNavigableHref(item: NavMenuTop): string {
 <!-- Mobile Menu Dropdown - Compact & Clean -->
 <div
   id="mobile-menu"
-  class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-100 transform scale-y-0 origin-top transition-transform duration-200 ease-out lg:hidden z-50"
+  class="absolute top-full left-0 right-0 z-50 origin-top scale-y-0 transform border-t-[3px] border-t-[#3b71b8] bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-transform duration-200 ease-out lg:hidden"
   role="menu"
   aria-labelledby="mobile-menu-button"
 >
@@ -224,10 +281,10 @@ function firstNavigableHref(item: NavMenuTop): string {
               <div class="flex flex-col gap-1 mobile-nav-parent">
                 <button
                   type="button"
-                  class={`mobile-submenu-trigger flex items-center justify-between w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors text-left border border-transparent ${
+                  class={`mobile-submenu-trigger flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-3 text-left text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-primary-50 text-primary-600 border-primary-200"
-                      : "text-ink hover:bg-cream hover:text-primary-600"
+                      ? "border-[#cfe0f5] bg-[#f3f7fc] text-[#3b71b8]"
+                      : "text-[#555555] hover:bg-gray-50 hover:text-[#3b71b8]"
                   }`}
                   aria-expanded="false"
                   aria-controls={subId}
@@ -244,19 +301,18 @@ function firstNavigableHref(item: NavMenuTop): string {
                   role="menu"
                   aria-hidden="true"
                 >
-                  <div class="flex flex-col gap-1 pl-2 pt-1 pb-2 border-l-2 border-gray-200 ml-3">
+                  <div class="ml-3 flex flex-col gap-0 border-l-2 border-[#e8e8e8] pb-2 pl-2 pt-1">
                     {item.children.map((child) => {
                       const hasGrand = child.children && child.children.length > 0;
-                      const l2Active = isL2Active(child);
                       if (!hasGrand) {
                         const childActive = isLinkActive(child.href);
                         return (
                           <a
                             href={child.href}
-                            class={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                            class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-medium leading-snug transition-colors ${
                               childActive
-                                ? "bg-primary-50 text-primary-600 border border-primary-200"
-                                : "text-ink hover:bg-cream hover:text-primary-600 border border-transparent"
+                                ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
+                                : "text-[#3b71b8] hover:bg-gray-50"
                             }`}
                             role="menuitem"
                             aria-current={childActive ? "page" : undefined}
@@ -265,40 +321,80 @@ function firstNavigableHref(item: NavMenuTop): string {
                           </a>
                         );
                       }
+                      const nestedSubId = `mobile-sub-${index}-nested-${child.id}`;
                       return (
                         <div class="flex flex-col gap-0.5">
-                          <a
-                            href={child.href}
-                            class={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-                              isLinkActive(child.href)
-                                ? "bg-primary-50 text-primary-600 border border-primary-200"
-                                : l2Active
-                                  ? "text-primary-600 border border-transparent"
-                                  : "text-ink hover:bg-cream hover:text-primary-600 border border-transparent"
-                            }`}
-                            role="menuitem"
-                            aria-current={isLinkActive(child.href) ? "page" : undefined}
+                          <button
+                            type="button"
+                            class="mobile-submenu-trigger flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-2.5 text-left text-sm font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50"
+                            aria-expanded="false"
+                            aria-controls={nestedSubId}
+                            data-submenu-id={nestedSubId}
                           >
-                            <LocalizedInline value={child.label} />
-                          </a>
-                          <div class="flex flex-col gap-0.5 pl-3 border-l border-gray-200 ml-2 mb-1">
-                            {child.children!.map((g) => {
-                              const gActive = isLinkActive(g.href);
-                              return (
+                            <span class="min-w-0 flex-1 text-left">
+                              <LocalizedInline value={child.label} />
+                            </span>
+                            <svg
+                              class="mobile-submenu-chevron h-4 w-4 shrink-0"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              aria-hidden="true"
+                            >
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          <div
+                            id={nestedSubId}
+                            class="mobile-submenu overflow-hidden transition-all duration-200 ease-out"
+                            role="menu"
+                            aria-hidden="true"
+                          >
+                            <div class="mb-1 ml-3 flex flex-col gap-0.5 border-l-2 border-[#e8e8e8] pb-1 pl-2 pt-0">
+                              {child.href && child.href !== "#" && (
                                 <a
-                                  href={g.href}
-                                  class={`block px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
-                                    gActive
-                                      ? "bg-primary-50 text-primary-600 border border-primary-200"
-                                      : "text-ink hover:bg-cream hover:text-primary-600 border border-transparent"
+                                  href={child.href}
+                                  class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-medium leading-snug transition-colors ${
+                                    isLinkActive(child.href)
+                                      ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
+                                      : "text-[#3b71b8] hover:bg-gray-50"
                                   }`}
                                   role="menuitem"
-                                  aria-current={gActive ? "page" : undefined}
+                                  aria-current={isLinkActive(child.href) ? "page" : undefined}
                                 >
-                                  <LocalizedInline value={g.label} />
+                                  <LocalizedInline
+                                    value={{
+                                      en: "Overview",
+                                      "zh-Hant": "概覽",
+                                      "zh-Hans": "概览",
+                                    }}
+                                  />
                                 </a>
-                              );
-                            })}
+                              )}
+                              {child.children!.map((g) => {
+                                const gActive = isLinkActive(g.href);
+                                const gh = g.href?.trim();
+                                return gh ? (
+                                  <a
+                                    href={gh}
+                                    class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-medium leading-snug transition-colors ${
+                                      gActive
+                                        ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
+                                        : "text-[#3b71b8] hover:bg-gray-50"
+                                    }`}
+                                    role="menuitem"
+                                    aria-current={gActive ? "page" : undefined}
+                                  >
+                                    <LocalizedInline value={g.label} />
+                                  </a>
+                                ) : (
+                                  <span class="block rounded-lg px-3 py-2 text-xs font-medium leading-snug text-muted">
+                                    <LocalizedInline value={g.label} />
+                                  </span>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
                       );
@@ -313,10 +409,10 @@ function firstNavigableHref(item: NavMenuTop): string {
           return (
             <a
               href={href}
-              class={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-primary-50 text-primary-600 border border-primary-200"
-                  : "text-ink hover:bg-cream hover:text-primary-600 border border-transparent"
+                  ? "border-[#cfe0f5] bg-[#f3f7fc] text-[#3b71b8]"
+                  : "text-[#555555] hover:bg-gray-50 hover:text-[#3b71b8]"
               }`}
               role="menuitem"
               aria-current={isActive ? "page" : undefined}
@@ -328,20 +424,21 @@ function firstNavigableHref(item: NavMenuTop): string {
       }
     </div>
     
-    <div class="mt-3 pt-3 border-t border-gray-100">
-      <label for="language-select-mobile" class="block px-4 pb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+    <div class="mt-3 border-t border-gray-100 pt-3">
+      <p class="mb-2 px-4 text-xs font-semibold uppercase tracking-wide text-muted" id="mobile-lang-heading">
         <LocalizedInline value={navLabel("language")} />
-      </label>
-      <div class="px-4">
-        <select
-          id="language-select-mobile"
-          class="w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-white text-ink focus:outline-none focus:ring-2 focus:ring-primary-500"
-          data-language-select
-        >
-          {languageOptions.map((opt) => (
-            <option value={opt.value} selected={opt.value === "en"}>{opt.label}</option>
-          ))}
-        </select>
+      </p>
+      <div class="flex flex-col gap-2 px-4" role="group" aria-labelledby="mobile-lang-heading">
+        {languageOptions.map((opt) => (
+          <button
+            type="button"
+            data-language-option={opt.value}
+            class="block w-full rounded-lg border border-transparent px-4 py-3 text-left text-sm font-medium text-[#555555] transition-colors hover:bg-gray-50 hover:text-[#3b71b8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b71b8]/30"
+            aria-pressed="false"
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
     </div>
   </div>
@@ -357,9 +454,16 @@ function firstNavigableHref(item: NavMenuTop): string {
     transition: transform 0.2s ease;
   }
   
-  /* Mobile menu show/hide states */
+  /* Mobile menu show/hide — transform alone can leave a hit target; clip + disable pointer events when closed */
+  #mobile-menu {
+    overflow: hidden;
+  }
+  #mobile-menu:not(.show) {
+    pointer-events: none;
+  }
   #mobile-menu.show {
     transform: scaleY(1);
+    pointer-events: auto;
   }
   
   /* Smooth hover effects */
@@ -385,6 +489,46 @@ function firstNavigableHref(item: NavMenuTop): string {
   
   .mobile-submenu-trigger[aria-expanded="true"] .mobile-submenu-chevron {
     transform: rotate(180deg);
+  }
+
+  .nav-language-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--ink);
+    font-weight: 500;
+    line-height: 1.25rem;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .nav-language-select--desktop {
+    font-size: 1rem;
+    padding: 0.35rem 1.75rem 0.35rem 0.6rem;
+  }
+
+  .nav-language-select:hover {
+    color: var(--blue);
+    background-color: #fff;
+    border-color: #d1d5db;
+  }
+
+  .nav-language-select:focus-visible {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 2px rgba(31, 110, 179, 0.2);
+  }
+
+  .nav-language-chevron {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
   }
 </style>
 
@@ -424,8 +568,20 @@ function firstNavigableHref(item: NavMenuTop): string {
   }
 
   function syncLanguageSelects(lang) {
+    const L = normalizeLang(lang);
     document.querySelectorAll("[data-language-select]").forEach((el) => {
-      if (el instanceof HTMLSelectElement) el.value = lang;
+      if (el instanceof HTMLSelectElement) el.value = L;
+    });
+    document.querySelectorAll("[data-language-option]").forEach((el) => {
+      if (!(el instanceof HTMLButtonElement)) return;
+      const v = el.getAttribute("data-language-option");
+      const isSel = v === L;
+      el.setAttribute("aria-pressed", isSel ? "true" : "false");
+      el.classList.toggle("border-[#cfe0f5]", isSel);
+      el.classList.toggle("bg-[#f3f7fc]", isSel);
+      el.classList.toggle("font-semibold", isSel);
+      el.classList.toggle("text-[#3b71b8]", isSel);
+      el.classList.toggle("text-[#555555]", !isSel);
     });
   }
 
@@ -469,6 +625,28 @@ function firstNavigableHref(item: NavMenuTop): string {
     
     let isMenuOpen = false;
     
+    const collapseMobileSubmenus = () => {
+      mobileMenu?.querySelectorAll(".mobile-submenu.mobile-submenu-open").forEach((el) => {
+        el.classList.remove("mobile-submenu-open");
+        el.setAttribute("aria-hidden", "true");
+      });
+      mobileMenu?.querySelectorAll('.mobile-submenu-trigger[aria-expanded="true"]').forEach((btn) => {
+        btn.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    /** Prefer this over toggling from `isMenuOpen` — keeps DOM + state in sync if they ever drift. */
+    const closeMobileMenu = () => {
+      if (!mobileMenu?.classList.contains("show")) {
+        isMenuOpen = false;
+        return;
+      }
+      isMenuOpen = false;
+      mobileMenu.classList.remove("show");
+      mobileMenuButton?.setAttribute("aria-expanded", "false");
+      collapseMobileSubmenus();
+    };
+
     // Function to toggle mobile menu
     const toggleMobileMenu = () => {
       isMenuOpen = !isMenuOpen;
@@ -479,16 +657,19 @@ function firstNavigableHref(item: NavMenuTop): string {
       } else {
         mobileMenu?.classList.remove('show');
         mobileMenuButton?.setAttribute('aria-expanded', 'false');
-        // Close any open submenus
-        mobileMenu?.querySelectorAll('.mobile-submenu.mobile-submenu-open').forEach((el) => {
-          el.classList.remove('mobile-submenu-open');
-          el.setAttribute('aria-hidden', 'true');
-        });
-        mobileMenu?.querySelectorAll('.mobile-submenu-trigger[aria-expanded="true"]').forEach((btn) => {
-          btn.setAttribute('aria-expanded', 'false');
-        });
+        collapseMobileSubmenus();
       }
     };
+
+    document.querySelectorAll("[data-language-option]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const v = el.getAttribute("data-language-option");
+        if (!v) return;
+        applyLanguage(v);
+        closeMobileMenu();
+      });
+    });
     
     mobileMenuButton?.addEventListener('click', (e) => {
       e.stopPropagation();

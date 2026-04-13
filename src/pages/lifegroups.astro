@@ -1,0 +1,128 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import PageRailSection from "../components/UI/PageRailSection.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import Button from "../components/UI/Button.astro";
+import { pickLocalizedText } from "../lib/i18n";
+
+const page = await getEntry("pages", "lifegroups");
+if (!page || page.data.pageKind !== "lifegroups") {
+  throw new Error('Content entry "pages/lifegroups" not found or wrong pageKind.');
+}
+const data = page.data;
+
+/** Alt text object (fallback if older content cache omits `whatIsImageAlt`). */
+const whatIsImageAltResolved = data.whatIsImageAlt ?? data.whatIsHeading;
+const joinImageResolved = data.joinImage ?? data.joinImage;
+
+const title = pickLocalizedText(data.seo.title, "en");
+const description = pickLocalizedText(data.seo.description, "en");
+const headerBg = data.pageHeader.backgroundImage;
+
+
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHeader
+    title={data.pageHeader.title}
+    subtitle={data.pageHeader.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <!-- ── What is a LIFE Group? (same two-column pattern as About Us “Mission”) ── -->
+  <section class="xp-panel xp-panel-shell">
+    <div class="container-xp-stack">
+      <div class="xp-panel-inner">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
+          <div class="p-8 lg:p-10 flex flex-col justify-center">
+            <h2 class="section-heading">
+              <LocalizedInline value={data.whatIsHeading} />
+            </h2>
+            <p class="body-copy">
+              <LocalizedInline value={data.whatIsBody} />
+            </p>
+            <p class="gap-4 mb-3">
+              <LocalizedInline value={data.commitmentsEyebrow} />
+              <div class="grid grid-cols-1 sm:grid-cols-1 gap-4 mb-2">
+                {data.lifeLetters.map(({ letter, text }) => (
+                  <div class="xp-panel-inner bg-cream-2 p-4 flex gap-3 items-start">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-500 text-white font-serif font-bold text-lg">
+                      {letter}
+                    </span>
+                    <p class="body-copy mb-0">
+                      <LocalizedInline value={text} />
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </p>
+          </div>
+          <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
+            <img
+              src={data.whatIsImage}
+              alt={pickLocalizedText(whatIsImageAltResolved, "en")}
+              class="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  
+  </section>
+
+  <section class="xp-panel xp-panel-shell">
+    <div class="container-xp-stack">
+      <div class="xp-panel-inner">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
+          <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
+            <img
+              src={joinImageResolved}
+              alt={pickLocalizedText(whatIsImageAltResolved, "en")}
+              class="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="p-8 lg:p-10 flex flex-col justify-center">
+            <h2 class="section-heading">
+              <LocalizedInline value={data.joinSectionHeading} />
+            </h2>
+            <p class="body-copy">
+              <LocalizedInline value={data.joinSectionBody} />
+            </p>
+          <a 
+            href="/contact"
+            class="btn btn-primary mt-6 inline-block"
+          >
+            Contact us to join a Life Group
+          </a>
+   
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <PageRailSection>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.covenantHeading} />
+    </h2>
+    <p class="body-copy mb-4">
+      <LocalizedInline value={data.covenantIntro} />
+    </p>
+    <ul class="list-disc pl-6 space-y-3 body-copy">
+      {data.covenantItems.map((item) => (
+        <li>
+          <LocalizedInline value={item} />
+        </li>
+      ))}
+    </ul>
+  </PageRailSection>
+
+  
+</BaseLayout>

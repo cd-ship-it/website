@@ -109,7 +109,7 @@ const EVENTS_API_URL = getEventsApiUrl();
             <LocalizedInline value={{ en: "Service Times", "zh-Hant": "崇拜時間", "zh-Hans": "崇拜时间" }} />
           </h2>
           {campusServiceData ? (
-            <div class="bg-white rounded-xl shadow-sm p-8">
+            <div class="xp-panel-inner bg-white p-8">
               <span class="inline-block px-3 py-1 bg-primary-100 text-primary-800 text-xs font-semibold rounded-full uppercase tracking-widest mb-6">
                 <LocalizedInline value={campusServiceData.worshipDate} />
               </span>
@@ -136,12 +136,12 @@ const EVENTS_API_URL = getEventsApiUrl();
               <h2 class="text-2xl font-bold mb-6">
                 <LocalizedInline value={{ en: "Childcare and Children's Program", "zh-Hant": "托兒服務及兒童活動", "zh-Hans": "托儿服務及儿童活动" }} />
               </h2>
-              <div class="bg-white rounded-xl shadow-sm p-8">
-                <p class="text-base mb-6 leading-relaxed">
+              <div class="xp-panel-inner bg-white p-8">
+                <p class="body-copy mb-6">
  <LocalizedInline value={{ en: "We provide childcare services and children's programs for your little ones during worship service times.", 
  "zh-Hant": "我們提供托兒服務及兒童活動，讓您的小孩在我們的主日崇拜時間得到照顧。", "zh-Hans": "我们提供托儿服务及儿童活动，让您的小孩在我们的主日崇拜时间得到照顾。" }} />
                 </p>
-                <a class="btn btn-blue" href="/orangekids">
+                <a class="btn btn-primary" href="/orangekids">
                   <LocalizedInline value={{ en: "Learn more >", "zh-Hant": "查看更多 >", "zh-Hans": "查看更多 >" }} />
                 </a>
               </div>
@@ -181,7 +181,7 @@ const EVENTS_API_URL = getEventsApiUrl();
           <h2 class="text-2xl font-bold mb-6">
             <LocalizedInline value={{ en: "Location", "zh-Hant": "地點", "zh-Hans": "地点" }} />
           </h2>
-          <div class="rounded-xl overflow-hidden shadow-sm aspect-video bg-cream-2 flex items-center justify-center">
+          <div class="xp-panel-inner overflow-hidden aspect-video bg-cream-2 flex items-center justify-center">
             {googleMapsUrl ? (
               <iframe
                 src={mapIframeSrc}
@@ -443,7 +443,7 @@ const EVENTS_API_URL = getEventsApiUrl();
     return `
       <div class="flex gap-4 items-start bg-cream-2 rounded-lg p-4">
         <div class="shrink-0 rounded-lg overflow-hidden border border-gray-200 w-16 h-16 text-center bg-white">
-          <div class="bg-secondary-500 text-ink text-[10px] font-semibold tracking-wide py-0.5">
+          <div class="bg-secondary-500 text-ink text-micro-label py-0.5">
             ${esc(monthLabel(event.startDate))}
           </div>
           <div class="text-xl font-bold text-heading leading-tight pt-1">

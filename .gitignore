@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Local / large media (paths referenced by site; not versioned here)
+public/uploads/
+uploads/

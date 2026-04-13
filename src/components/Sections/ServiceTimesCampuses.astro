@@ -16,7 +16,7 @@ export interface CampusRow {
 }
 
 export interface Props {
-  sectionHeading: LocalizedText;
+  sectionHeading?: LocalizedText;
   campuses: CampusRow[];
   /** Defaults match the homepage mockup. */
   eyebrow?: LocalizedText;
@@ -69,16 +69,22 @@ for (const c of campuses) {
 
 <section
   id="service-times-home"
-  class="service-section"
-  aria-labelledby="service-times-heading"
+  class="section-default home-section-block"
+  aria-labelledby={sectionHeading ? "service-times-heading" : undefined}
 >
-  <p class="eyebrow"><LocalizedInline value={eyebrow} /></p>
-  <h2 id="service-times-heading" class="section-heading">
-    <LocalizedInline value={sectionHeading} />
-  </h2>
-  <p class="section-sub"><LocalizedInline value={sectionSub} /></p>
+  <div>
+    <div class="home-section-intro">
+      <p class="eyebrow"><LocalizedInline value={eyebrow} /></p>
+      {sectionHeading && (
+        <h2 id="service-times-heading" class="section-heading">
+          <LocalizedInline value={sectionHeading} />
+        </h2>
+      )}
+      <p class="section-sub"><LocalizedInline value={sectionSub} /></p>
+    </div>
 
-  <div class="campus-grid">
+    <div class="home-section-body">
+      <div class="campus-grid">
     {orderedCampuses.map((campus) => (
       <a class="campus-row" href={campusPageHref(campus.campusName)}>
         <div>
@@ -99,10 +105,12 @@ for (const c of campuses) {
         <div class="campus-arrow" aria-hidden="true">›</div>
       </a>
     ))}
+      </div>
+    </div>
   </div>
 
   <!-- <div class="service-cta">
-    <a class="btn btn-blue" href={planVisitHref}>
+    <a class="btn btn-primary" href={planVisitHref}>
       <LocalizedInline value={planVisitLabel} />
     </a>
   </div> -->

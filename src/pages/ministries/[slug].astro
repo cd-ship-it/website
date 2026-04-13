@@ -41,14 +41,14 @@ const { Content } = await entry.render();
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <!-- Main Content -->
         <div class="lg:col-span-2">
-          <div class="prose prose-lg max-w-none prose-headings:text-heading prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-p:text-ink-3 prose-li:text-ink-3 prose-strong:text-gray-900">
+          <div class="prose-content">
             <Content />
           </div>
         </div>
         
         <!-- Sidebar -->
         <div>
-          <div class="bg-cream p-6 rounded-lg shadow-sm sticky top-24">
+          <div class="xp-panel-inner bg-cream p-6 sticky top-24">
             {
               entry.data.logo && (
                 <div class="mb-6 flex justify-center">

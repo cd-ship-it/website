@@ -1,0 +1,96 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import PageRailSection from "../components/UI/PageRailSection.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import { pickLocalizedText } from "../lib/i18n";
+
+const page = await getEntry("pages", "membership");
+if (!page || page.data.pageKind !== "membership") {
+  throw new Error('Content entry "pages/membership" not found or wrong pageKind.');
+}
+const data = page.data;
+
+const title = pickLocalizedText(data.seo.title, "en");
+const description = pickLocalizedText(data.seo.description, "en");
+const headerBg = data.pageHeader.backgroundImage;
+
+const digitsOnly = data.phoneDisplay.replace(/\D/g, "");
+const telHref =
+  digitsOnly.length === 10 ? `tel:+1${digitsOnly}` : `tel:+${digitsOnly}`;
+---
+
+<BaseLayout title={title} description={description}>
+  <PageHeader
+    title={data.pageHeader.title}
+    subtitle={data.pageHeader.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <PageRailSection>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.introHeading} />
+    </h2>
+    <p class="body-copy">
+      <LocalizedInline value={data.introBody} />
+    </p>
+    <p class="body-copy font-medium text-ink">
+      <LocalizedInline value={data.questionHeading} />
+    </p>
+    <p class="body-copy">
+      <LocalizedInline value={data.questionLead} />
+    </p>
+    <ol class="space-y-8 list-decimal pl-6 marker:font-serif marker:text-heading marker:font-bold">
+      {data.reasons.map((r) => (
+        <li class="pl-2">
+          <h3 class="subhead-sm mb-2">
+            <LocalizedInline value={r.title} />
+          </h3>
+          <p class="body-copy mb-0">
+            <LocalizedInline value={r.body} />
+          </p>
+        </li>
+      ))}
+    </ol>
+  </PageRailSection>
+
+
+  <PageRailSection>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.requirementsHeading} />
+    </h2>
+    <ul class="list-disc pl-6 space-y-3 body-copy">
+      {data.requirements.map((req) => (
+        <li>
+          <LocalizedInline value={req} />
+        </li>
+      ))}
+    </ul>
+    <p class="body-copy mt-6 mb-0">
+      <LocalizedInline value={data.zonePastorNote} />
+    </p>
+  </PageRailSection>
+
+  <PageRailSection cream centerPanel>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={data.contactHeading} />
+    </h2>
+    <p class="body-copy mb-2">
+      <a
+        href={telHref}
+        class="font-serif font-bold text-heading text-xl hover:text-primary-600"
+      >
+        {data.phoneDisplay}
+      </a>
+    </p>
+    <p class="body-copy mb-0">
+      <a
+        href={`mailto:${data.contactEmail}`}
+        class="text-primary-600 font-medium hover:text-primary-700"
+      >
+        {data.contactEmail}
+      </a>
+    </p>
+  </PageRailSection>
+</BaseLayout>

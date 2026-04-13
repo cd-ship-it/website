@@ -1,0 +1,40 @@
+---
+/**
+ * Wraps the standard marketing layout: section strip → container → centered rail → white panel.
+ * Styles live in `global.css` (`.page-rail-section`, `.page-rail`, `.surface-panel`).
+ */
+export interface Props {
+  /** Pale cream background band for alternating sections. */
+  cream?: boolean;
+  /** Use `max-w-3xl` rail instead of `max-w-4xl`. */
+  narrow?: boolean;
+  /** Center-align content in the white panel. */
+  centerPanel?: boolean;
+  /** Extra classes on the root `<section>`. */
+  class?: string;
+  /** Extra classes on the inner `.surface-panel`. */
+  panelClass?: string;
+}
+
+const {
+  cream = false,
+  narrow = false,
+  centerPanel = false,
+  class: sectionClass = "",
+  panelClass = "",
+} = Astro.props;
+---
+
+<section
+  class:list={["page-rail-section", { "page-rail-section--cream": cream }, sectionClass]}
+>
+  <div class="container">
+    <div class:list={["page-rail", { "page-rail--narrow": narrow }]}>
+      <div
+        class:list={["surface-panel", { "surface-panel--center": centerPanel }, panelClass]}
+      >
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>

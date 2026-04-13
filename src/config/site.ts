@@ -34,6 +34,11 @@ export function getEventsApiUrl(): string {
   return import.meta.env.PUBLIC_EVENTS_API_URL ?? "/api/events.php";
 }
 
+/** POST target for the contact form (PHP on SiteGround or any host that runs `public/api/contact.php`). */
+export function getContactFormActionUrl(): string {
+  return import.meta.env.PUBLIC_CONTACT_FORM_URL ?? "/api/contact.php";
+}
+
 /**
  * Base URL for resolving relative API paths (e.g. `/api/events.php`) when fetching.
  * Order matches previous behavior: WordPress origin → Astro `site` → local dev.

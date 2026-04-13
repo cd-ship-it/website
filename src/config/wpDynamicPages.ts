@@ -1,0 +1,66 @@
+/**
+ * WordPress-backed pages served at `/{slug}`.
+ * Add entries here and they will be prebuilt as static shells; content loads on each visit.
+ */
+export type WpDynamicPageKind =
+  | "wordpress_page"
+  | "wordpress_category_latest_post";
+
+export type WpDynamicPageConfig = {
+  /** URL segment, e.g. `/weekly-prayer` */
+  slug: string;
+  kind: WpDynamicPageKind;
+  /** `wordpress_page`: REST `pages?slug=` value */
+  wpPageSlug?: string;
+  /** `wordpress_category_latest_post`: REST `categories?slug=` then latest `posts` */
+  wpCategorySlug?: string;
+  pageHeader: {
+    title: string;
+    subtitle?: string;
+  };
+  seo: {
+    title: string;
+    description: string;
+  };
+  /**
+   * `wordpress_category_latest_post` only: show the post title above content.
+   * (Word of Your Pastor hides it because the body already includes headings.)
+   */
+  showPostTitle?: boolean;
+};
+
+export const WP_DYNAMIC_PAGES: WpDynamicPageConfig[] = [
+  {
+    slug: "weekly-prayer",
+    kind: "wordpress_page",
+    wpPageSlug: "weekly-prayer",
+    pageHeader: {
+      title: "Weekly Prayer",
+      subtitle: "Latest weekly prayer updates",
+    },
+    seo: {
+      title: "Weekly Prayer - Crosspoint Church",
+      description: "Latest Weekly Prayer content from Crosspoint Church.",
+    },
+  },
+  {
+    slug: "heart-of-a-shepherd",
+    kind: "wordpress_category_latest_post",
+    wpCategorySlug: "word-of-your-pastor",
+    pageHeader: {
+      title: "Heart of a Shepherd",
+      subtitle: "Word of Your Pastor",
+    },
+    seo: {
+      title: "Word of Your Pastor - Crosspoint Church",
+      description: "Latest Word of Your Pastor post from Crosspoint Church.",
+    },
+    showPostTitle: false,
+  },
+];
+
+export function getWpDynamicPageConfig(
+  slug: string,
+): WpDynamicPageConfig | undefined {
+  return WP_DYNAMIC_PAGES.find((p) => p.slug === slug);
+}

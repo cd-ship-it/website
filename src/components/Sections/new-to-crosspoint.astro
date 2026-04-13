@@ -3,7 +3,7 @@ import LocalizedInline from "../UI/LocalizedInline.astro";
 import { getCollection } from "astro:content";
 
 export interface Props {
-  /** `pathways` = mockup2 photo cards + theme.css `.pathways`; `default` = icon overlay grid */
+  /** `pathways` = photo cards + pathway grid (styles in global.css); `default` = icon overlay grid */
   variant?: "default" | "pathways";
 }
 
@@ -111,9 +111,9 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
 
 
 {block && cards.length > 0 && variant === "pathways" && (
-  <section class="section-default">
-    <div class="">
-      <div class="">
+  <section class="section-default home-section-block">
+    <div>
+      <div class="home-section-intro">
         <p class="eyebrow">Get Connected</p>
         {sectionTitle && (
           <h2 class="section-heading">
@@ -126,6 +126,7 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
           </p>
         )}
       </div>
+      <div class="home-section-body">
       <div class="pathways-grid">
         {cards.map((card) => (
           <a href={card.href} class="pathway-card">
@@ -153,6 +154,7 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
             </div>
           </a>
         ))}
+      </div>
       </div>
     </div>
   </section>
