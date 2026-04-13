@@ -24,5 +24,7 @@ pnpm-debug.log*
 .idea/
 
 # Local / large media (paths referenced by site; not versioned here)
-public/uploads/
-uploads/
+# Note: if files were committed before being listed here, run:
+#   git rm -r --cached public/uploads/
+public/uploads/**
+uploads/**
