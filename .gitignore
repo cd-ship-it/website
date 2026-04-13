@@ -28,3 +28,6 @@ pnpm-debug.log*
 #   git rm -r --cached public/uploads/
 public/uploads/**
 uploads/**
+
+# Stock / local assets at repo root (not versioned)
+kane-reinholdtsen-LETdkk7wHQk-unsplash.jpg
