@@ -62,47 +62,35 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
         <Ticker />
     </section>
     
-    <section class="panel panel--services xp-panel-shell">
-      <div class="xp-panel-inner">
-        {sectionHeading && campuses.length > 0 && (
-          <ServiceTimesCampuses sectionHeading={sectionHeading} campuses={campuses} />
-        )}
-      </div>
+    <section class="panel panel--services">
+      {sectionHeading && campuses.length > 0 && (
+        <ServiceTimesCampuses sectionHeading={sectionHeading} campuses={campuses} />
+      )}
     </section>
 
     <!-- PANEL 2 — Second hero -->
-    <section class="panel panel--secondhero xp-panel-shell">
-      <div class="xp-panel-inner">
-        <HomeSecondHero />
-      </div>
+    <section class="panel panel--secondhero">
+      <HomeSecondHero />
     </section>
 
     <!-- PANEL 3 — Newtocrosspoint -->
-    <section class="panel panel--pathways xp-panel-shell">
-      <div class="xp-panel-inner">
-        <NewToCrosspoint variant="pathways" />
-      </div>
+    <section class="panel panel--pathways">
+      <NewToCrosspoint variant="pathways" />
     </section>
 
     <!-- PANEL 4 — events -->
-    <section class="panel panel--events xp-panel-shell">
-      <div class="xp-panel-inner">
-        <EventList />
-      </div>
+    <section class="panel panel--events">
+      <EventList />
     </section>
 
     <!-- PANEL 6 — sermons -->
-    <section class="panel panel--sermons xp-panel-shell">
-      <div class="xp-panel-inner">
-        <SermonList variant="home" />
-      </div>
+    <section class="panel panel--sermons">
+      <SermonList variant="home" />
     </section>
 
     <!-- PANEL 7 — CTA -->
-    <section class="panel panel--cta xp-panel-shell">
-      <div class="xp-panel-inner">
-        <FinalCTA />
-      </div>
+    <section class="panel panel--cta">
+      <FinalCTA />
     </section>
   </div>
   

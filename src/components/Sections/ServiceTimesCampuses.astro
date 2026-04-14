@@ -84,27 +84,31 @@ for (const c of campuses) {
     </div>
 
     <div class="home-section-body">
-      <div class="campus-grid">
-    {orderedCampuses.map((campus) => (
-      <a class="campus-row" href={campusPageHref(campus.campusName)}>
-        <div>
-          <div class="campus-day-tag">
-            <LocalizedInline value={campus.worshipDate} />
-          </div>
-          <div class="campus-name">
-            <LocalizedInline value={campus.campusName} />
-          </div>
-          <div class="campus-times-list">
-            {campus.services.map((service) => (
-              <div class="campus-time">
-                <LocalizedInline value={service} />
+      <div class="campus-card-grid">
+        {orderedCampuses.map((campus) => (
+          <a class="campus-card" href={campusPageHref(campus.campusName)}>
+            <div class="campus-card-accent" aria-hidden="true"></div>
+            <div class="campus-card-body">
+              <div class="campus-card-day">
+                <LocalizedInline value={campus.worshipDate} />
               </div>
-            ))}
-          </div>
-        </div>
-        <div class="campus-arrow" aria-hidden="true">›</div>
-      </a>
-    ))}
+              <h3 class="campus-card-name">
+                <LocalizedInline value={campus.campusName} />
+              </h3>
+              <div class="campus-card-times">
+                {campus.services.map((service) => (
+                  <div class="campus-card-time">
+                    <LocalizedInline value={service} />
+                  </div>
+                ))}
+              </div>
+              <div class="campus-card-cta">
+                <LocalizedInline value={{ en: "Learn more", "zh-Hant": "了解更多", "zh-Hans": "了解更多" }} />
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </div>

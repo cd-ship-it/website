@@ -420,43 +420,88 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
   margin-bottom: 0;
 }
 
-/* Campus row (service times home) */
-.campus-grid {
-  display: flex; flex-direction: column;
-  border-top: 1px solid var(--cream-3);
-}
-.campus-row {
+/* Campus card grid (service times home) */
+.campus-card-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start; gap: 016px;
-  padding: 22px 0;
-  border-bottom: 1px solid var(--cream-3);
-  transition: background 0.15s;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
 }
-.campus-day-tag {
-  font-size: 12px; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--orange); margin-bottom: 4px;
+.campus-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 0.875rem;
+  border: 1.5px solid var(--cream-3);
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
 }
-.campus-name {
+.campus-card:hover {
+  box-shadow: 0 8px 32px rgba(15, 20, 40, 0.13);
+  border-color: var(--orange);
+  transform: translateY(-3px);
+}
+.campus-card-accent {
+  height: 4px;
+  background: var(--cream-3);
+  flex-shrink: 0;
+  transition: background 0.22s ease;
+}
+.campus-card:hover .campus-card-accent {
+  background: var(--orange);
+}
+.campus-card-body {
+  padding: 1.25rem 1.25rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.campus-card-day {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 0.3rem;
+}
+.campus-card-name {
   font-family: var(--serif);
-  font-size: 22px; font-weight: 700;
-  color: var(--ink); margin-bottom: 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+  line-height: 1.2;
 }
-.campus-times-list { display: flex; flex-direction: column; gap: 3px; }
-.campus-time { 
-  font-size: 14px; color: var(--ink-3); 
+.campus-card-times {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1rem;
+  flex: 1;
 }
-.campus-time b { color: var(--blue); font-weight: 600; }
-.campus-arrow {
-  width: 36px; height: 36px;
-  background: var(--cream-3); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--muted); font-size: 18px;
-  flex-shrink: 0; margin-top: 2px;
-  transition: background 0.15s, color 0.15s;
+.campus-card-time {
+  font-size: 0.875rem;
+  color: var(--ink-3);
 }
-.campus-row:hover .campus-arrow { background: var(--orange); color: white; }
+.campus-card-cta {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--orange-dark);
+  transition: color 0.15s ease, gap 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.campus-card:hover .campus-card-cta {
+  color: var(--orange);
+  gap: 0.5rem;
+}
+@media (max-width: 640px) {
+  .campus-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* Pathways photo card grid */
 .pathways {
@@ -479,9 +524,18 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 }
 .pathways-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 3rem;
+}
+/* First card: wide landscape hero */
+.pathways-grid .pathway-card:first-child {
+  grid-column: span 2;
+  aspect-ratio: 16 / 9;
+}
+/* First card: slightly smaller title to fit landscape ratio */
+.pathways-grid .pathway-card:first-child .pathway-card-title {
+  font-size: 2.5rem;
 }
 .pathway-card {
   position: relative;
@@ -554,10 +608,18 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
   .pathways-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .pathways-grid .pathway-card:first-child {
+    grid-column: span 2;
+    aspect-ratio: 2 / 1;
+  }
 }
 @media (max-width: 520px) {
   .pathways-grid {
     grid-template-columns: 1fr;
+  }
+  .pathways-grid .pathway-card:first-child {
+    grid-column: span 1;
+    aspect-ratio: 16 / 9;
   }
 }
 

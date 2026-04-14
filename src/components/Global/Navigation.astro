@@ -223,28 +223,18 @@ function firstNavigableHref(item: NavMenuTop): string {
       })
     }
     
-    <li class="relative">
-      <label for="language-select-desktop" class="sr-only"><LocalizedInline value={navLabel("language")} /></label>
-      <div class="relative">
-        <select
-          id="language-select-desktop"
-          class="nav-language-select nav-language-select--desktop"
-          data-language-select
-        >
-          {languageOptions.map((opt) => (
-            <option value={opt.value} selected={opt.value === "en"}>{opt.label}</option>
-          ))}
-        </select>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="nav-language-chevron h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
+    <li>
+      <div class="nav-lang-pills" role="group" aria-label="Language">
+        {languageOptions.map((opt) => (
+          <button
+            type="button"
+            class="nav-lang-pill"
+            data-language-option={opt.value}
+            aria-pressed="false"
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
     </li>
   </ul>
@@ -491,50 +481,37 @@ function firstNavigableHref(item: NavMenuTop): string {
     transform: rotate(180deg);
   }
 
-  .nav-language-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: 1px solid transparent;
-    border-radius: 0.5rem;
-    background: transparent;
-    color: rgba(255,255,255,0.82);
+  /* Language pill switcher (desktop nav) */
+  .nav-lang-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 9999px;
+    padding: 0.2rem;
+  }
+  .nav-lang-pill {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8125rem;
     font-weight: 500;
-    line-height: 1.25rem;
+    border-radius: 9999px;
+    color: rgba(255,255,255,0.55);
+    background: transparent;
+    border: none;
     cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
+    line-height: 1.4;
+    white-space: nowrap;
   }
-
-  .nav-language-select--desktop {
-    font-size: 1rem;
-    padding: 0.35rem 1.75rem 0.35rem 0.6rem;
+  .nav-lang-pill:hover {
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.1);
   }
-
-  .nav-language-select:hover {
-    color: var(--orange);
-    background-color: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.25);
-  }
-
-  .nav-language-select:focus-visible {
-    outline: none;
-    border-color: var(--orange);
-    box-shadow: 0 0 0 2px rgba(232, 150, 31, 0.35);
-  }
-
-
-  /* option elements inherit OS styling — force readable text in the dropdown */
-  .nav-language-select option {
+  .nav-lang-pill[aria-pressed="true"] {
+    background: var(--orange);
     color: var(--ink);
-    background-color: #fff;
-  }
-  .nav-language-chevron {
-    position: absolute;
-    right: 0.6rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255,255,255,0.45);
-    pointer-events: none;
+    font-weight: 700;
   }
 </style>
 
@@ -575,19 +552,22 @@ function firstNavigableHref(item: NavMenuTop): string {
 
   function syncLanguageSelects(lang) {
     const L = normalizeLang(lang);
-    document.querySelectorAll("[data-language-select]").forEach((el) => {
-      if (el instanceof HTMLSelectElement) el.value = L;
-    });
+    // Pill buttons (desktop + mobile)
     document.querySelectorAll("[data-language-option]").forEach((el) => {
       if (!(el instanceof HTMLButtonElement)) return;
       const v = el.getAttribute("data-language-option");
       const isSel = v === L;
       el.setAttribute("aria-pressed", isSel ? "true" : "false");
-      el.classList.toggle("border-secondary-200", isSel);
-      el.classList.toggle("bg-secondary-50", isSel);
-      el.classList.toggle("font-semibold", isSel);
-      el.classList.toggle("text-primary-700", isSel);
-      el.classList.toggle("text-ink-3", !isSel);
+      const isDesktopPill = el.classList.contains("nav-lang-pill");
+      if (!isDesktopPill) {
+        // Mobile list buttons
+        el.classList.toggle("border-secondary-200", isSel);
+        el.classList.toggle("bg-secondary-50", isSel);
+        el.classList.toggle("font-semibold", isSel);
+        el.classList.toggle("text-primary-700", isSel);
+        el.classList.toggle("text-ink-3", !isSel);
+      }
+      // Desktop pills are styled purely via CSS [aria-pressed="true"]
     });
   }
 
@@ -603,8 +583,6 @@ function firstNavigableHref(item: NavMenuTop): string {
   document.addEventListener('DOMContentLoaded', () => {
     initLangUi();
 
-    const languageSelects = document.querySelectorAll("[data-language-select]");
-
     const applyLanguage = (nextLang) => {
       const lang = normalizeLang(nextLang);
       try {
@@ -617,14 +595,6 @@ function firstNavigableHref(item: NavMenuTop): string {
       syncLanguageSelects(lang);
       window.dispatchEvent(new CustomEvent("site-lang-change", { detail: { lang } }));
     };
-
-    languageSelects.forEach((el) => {
-      if (!(el instanceof HTMLSelectElement)) return;
-      el.addEventListener("change", (event) => {
-        const target = event.target;
-        if (target instanceof HTMLSelectElement) applyLanguage(target.value);
-      });
-    });
 
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
