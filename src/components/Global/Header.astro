@@ -2,7 +2,10 @@
 import Navigation from "./Navigation.astro";
 ---
 
-<header class="sticky top-0 z-50 w-full bg-primary-900 border-b border-primary-800/60 shadow-[0_1px_0_rgba(255,255,255,0.06)]">
+<header
+  id="site-header"
+  class="sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow] duration-300 ease-in-out bg-primary-900 border-b border-primary-800/60 shadow-[0_1px_0_rgba(255,255,255,0.06)]"
+>
   <div class="container flex items-center justify-between h-18">
     <a href="/" class="flex items-center shrink-0">
       <span class="sr-only">Crosspoint Church</span>
@@ -12,7 +15,39 @@ import Navigation from "./Navigation.astro";
         class="h-14 w-auto brightness-0 invert opacity-90"
       />
     </a>
-
     <Navigation />
   </div>
 </header>
+
+<script>
+  const header = document.getElementById("site-header");
+  const hero   = document.querySelector(".panel--hero");
+
+  if (header && hero) {
+    // Make header transparent while the hero is in the viewport.
+    // IntersectionObserver fires as soon as the hero top edge leaves the screen.
+    const makeTransparent = () => {
+      header.style.backgroundColor  = "transparent";
+      header.style.borderBottomColor = "transparent";
+      header.style.boxShadow         = "none";
+    };
+    const makeSolid = () => {
+      header.style.backgroundColor  = "";
+      header.style.borderBottomColor = "";
+      header.style.boxShadow         = "";
+    };
+
+    const obs = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? makeTransparent() : makeSolid()),
+      { rootMargin: "-72px 0px 0px 0px", threshold: 0 }
+    );
+    obs.observe(hero);
+
+    // Apply immediately on load so there's no flash of solid bar
+    if (hero.getBoundingClientRect().top <= 72) {
+      makeSolid();
+    } else {
+      makeTransparent();
+    }
+  }
+</script>

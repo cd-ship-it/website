@@ -3,9 +3,9 @@ import LocalizedInline from "../UI/LocalizedInline.astro";
 import type { LocalizedText } from "../../lib/i18n";
 
 export interface Props {
-  /** Plain string or trilingual object (same pattern as content `localizedOrString`). */
   title: string | LocalizedText;
   subtitle?: string | LocalizedText;
+  /** Kept in signature for backward-compat — no longer used (typographic header). */
   backgroundImage?: string;
   titleDataI18n?: string;
   subtitleDataI18n?: string;
@@ -14,7 +14,6 @@ export interface Props {
 const {
   title,
   subtitle,
-  backgroundImage = "/uploads/page-header-bg.webp",
   titleDataI18n,
   subtitleDataI18n,
 } = Astro.props;
@@ -24,21 +23,40 @@ function isLocalized(v: string | LocalizedText): v is LocalizedText {
 }
 ---
 
-<section
-  class="relative h-[250px] flex items-center bg-cover bg-center overflow-hidden"
-  style={`background-image: linear-gradient(rgba(26,20,16,0.55) 0%, rgba(26,20,16,0.80) 100%), url(${backgroundImage})`}
->
-  <div class="container">
+<!--
+  Typographic page header — deep navy panel with:
+  • Amber-gold 3px accent bar at top
+  • Subtle dot-grid texture for depth without busyness
+  • Clean white serif title on dark field
+  Deliberately no photo overlay — that pattern reads as "church template" immediately.
+-->
+<section class="relative py-14 md:py-18 bg-primary-900 overflow-hidden">
+  <!-- Amber accent bar -->
+  <div class="absolute top-0 left-0 w-full h-[3px] bg-secondary-500"></div>
+
+  <!-- Dot-grid texture (very subtle, adds depth) -->
+  <div
+    class="absolute inset-0 pointer-events-none"
+    style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.045) 1px, transparent 0); background-size: 28px 28px;"
+  ></div>
+
+  <!-- Faint navy-to-primary radial glow behind title -->
+  <div
+    class="absolute -top-32 -left-32 w-[40rem] h-[40rem] rounded-full pointer-events-none"
+    style="background: radial-gradient(circle, rgba(27,58,107,0.55) 0%, transparent 65%);"
+  ></div>
+
+  <div class="container relative z-10">
     <div class="max-w-2xl">
       <h1
-        class="font-serif font-bold text-white mb-4 leading-tight text-page-title"
+        class="font-serif font-bold text-white mb-3 leading-tight text-page-title"
         {...(!isLocalized(title) && titleDataI18n ? { "data-i18n": titleDataI18n } : {})}
       >
         {isLocalized(title) ? <LocalizedInline value={title} /> : title}
       </h1>
       {subtitle !== undefined && subtitle !== "" && (
         <p
-          class="text-white/75 text-lg leading-relaxed"
+          class="text-white/55 text-base md:text-lg leading-relaxed"
           {...(!isLocalized(subtitle) && subtitleDataI18n ? { "data-i18n": subtitleDataI18n } : {})}
         >
           {isLocalized(subtitle) ? <LocalizedInline value={subtitle} /> : subtitle}

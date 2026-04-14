@@ -563,10 +563,10 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 
 /* Homepage panel deck (below hero) */
 .panel-deck {
-  --off-white: #f5f3ef;
-  --off-white-2: #eceae4;
-  --off-black: #0f0e0c;
-  --warm-gray: #9c9086;
+  --off-white: #F9FAFB;    /* was warm cream — now neutral near-white */
+  --off-white-2: #F1F3F5;  /* was warm cream-2 */
+  --off-black: #091529;    /* was generic near-black — now deep navy */
+  --warm-gray: #6B7280;
   --panel-radius: 28px;
   /**
    * Stacked section cards (everything below the hero).
