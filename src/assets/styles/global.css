@@ -6,19 +6,19 @@
 
 /* ─── Design Tokens ───────────────────────────────────────────────────────── */
 :root {
-  --blue:         #1f6eb3;
-  --blue-dark:    #0D3B6A;
-  --orange:       #f5a020;
-  --orange-dark:  #D98810;
+  --blue:         #1B3A6B;   /* deep navy */
+  --blue-dark:    #0F2040;
+  --orange:       #E8961F;   /* amber-gold */
+  --orange-dark:  #D4820A;
   /** Alias for legacy panel/pathway rules (same as --orange-dark). */
-  --orange-dk:    #d98810;
-  --ink:          #1A1410;
-  --ink-2:        #2D2118;
-  --ink-3:        #4A3C32;
-  --cream:        #FDFAF6;
-  --cream-2:      #F4EEE4;
-  --cream-3:      #E8DED0;
-  --muted:        #9A8A7E;
+  --orange-dk:    #D4820A;
+  --ink:          #111827;   /* cool near-black */
+  --ink-2:        #1F2937;
+  --ink-3:        #374151;
+  --cream:        #F9FAFB;   /* near-white */
+  --cream-2:      #F1F3F5;
+  --cream-3:      #E5E7EB;
+  --muted:        #6B7280;
   --white:        #FFFFFF;
 
   --radius-sm:    0.375rem;
@@ -222,7 +222,7 @@
 
   /* Typography utilities */
   .eyebrow {
-    @apply text-xs font-semibold tracking-widest uppercase text-secondary-500;
+    @apply text-xs font-semibold tracking-widest uppercase text-secondary-600;
   }
 
   .section-heading {

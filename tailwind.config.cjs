@@ -4,37 +4,37 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /** Dark ink text — new brand dark */
-        heading: '#1A1410',
-        /** Brand blue — primary actions, links */
+        /** Dark ink text — cool near-black */
+        heading: '#111827',
+        /** Brand navy — primary structural color */
         primary: {
-          50:  '#EBF4FF',
-          100: '#D3E8FF',
-          200: '#A7D1FF',
-          300: '#7ABAFF',
-          400: '#4DA0F0',
-          500: '#2D87D8',
-          600: '#1f6eb3',
-          700: '#195C99',
-          800: '#124B82',
-          900: '#0D3B6A',
-          950: '#082C52',
+          50:  '#EFF4FF',
+          100: '#D9E6FF',
+          200: '#B3CCFF',
+          300: '#8AADEE',
+          400: '#5A84D4',
+          500: '#2D60AA',
+          600: '#1B3A6B',
+          700: '#142D54',
+          800: '#0F2040',
+          900: '#091529',
+          950: '#050C1A',
         },
-        /** Brand orange — CTAs, highlights */
+        /** Brand amber-gold — CTAs, accents (use sparingly) */
         secondary: {
-          50:  '#FFF8EB',
-          100: '#FEF0CA',
-          200: '#FDDD95',
-          300: '#FCC85C',
-          400: '#FAB230',
-          500: '#F5A020',
-          600: '#D98810',
-          700: '#BB720A',
-          800: '#9D5D07',
-          900: '#804905',
-          950: '#623603',
+          50:  '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#E8961F',
+          600: '#D4820A',
+          700: '#B86B08',
+          800: '#9A5706',
+          900: '#7C4405',
+          950: '#5E3303',
         },
-        /** Warm amber — accent icons, tags */
+        /** Accent — kept for backward-compat with existing badge/tag uses */
         accent: {
           50:  '#FFF7EB',
           100: '#FEECD2',
@@ -48,20 +48,20 @@ module.exports = {
           900: '#7B2504',
           950: '#5C1A03',
         },
-        /** Ink / dark backgrounds */
+        /** Ink / dark text — cool dark */
         ink: {
-          DEFAULT: '#1A1410',
-          2: '#2D2118',
-          3: '#4A3C32',
+          DEFAULT: '#111827',
+          2: '#1F2937',
+          3: '#374151',
         },
-        /** Warm cream backgrounds */
+        /** Near-white surface backgrounds */
         cream: {
-          DEFAULT: '#FDFAF6',
-          2: '#F4EEE4',
-          3: '#E8DED0',
+          DEFAULT: '#F9FAFB',
+          2: '#F1F3F5',
+          3: '#E5E7EB',
         },
         /** Muted / placeholder text */
-        muted: '#9A8A7E',
+        muted: '#6B7280',
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
