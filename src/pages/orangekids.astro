@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
 import { filterCampusesForOrangeKids } from "../config/site";
 
 const page = (await getCollection("pages")).find(
@@ -42,14 +43,6 @@ const pillarIcons: Record<string, string> = {
   fun: `<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
 };
 
-const titleEn = typeof title === "string" ? title : title.en;
-const headerBg = pageHeader?.backgroundImage ?? "/uploads/page-header-bg.webp";
-const headerTitle = pageHeader?.title
-  ? (typeof pageHeader.title === "string" ? pageHeader.title : pageHeader.title.en)
-  : titleEn;
-const headerSubtitle = pageHeader?.subtitle
-  ? (typeof pageHeader.subtitle === "string" ? pageHeader.subtitle : pageHeader.subtitle.en)
-  : undefined;
 ---
 
 <BaseLayout
@@ -58,23 +51,10 @@ const headerSubtitle = pageHeader?.subtitle
   image={heroImage ? { url: heroImage.src, alt: typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en } : undefined}
 >
   <!-- ── Page Header ─────────────────────────────────────────────────────── -->
-  <section
-    class="relative py-24 md:py-32 bg-cover bg-center"
-    style={`background-image: linear-gradient(rgba(26,20,16,0.55) 0%, rgba(26,20,16,0.80) 100%), url(${headerBg})`}
-  >
-    <div class="container">
-      <div class="max-w-2xl">
-        <h1 class="font-serif font-bold text-white mb-4 leading-tight text-page-title">
-          <LocalizedInline value={title} />
-        </h1>
-        {pageHeader?.subtitle && (
-          <p class="text-white/75 text-lg leading-relaxed">
-            <LocalizedInline value={pageHeader.subtitle} />
-          </p>
-        )}
-      </div>
-    </div>
-  </section>
+  <PageHeader
+    title={title}
+    subtitle={pageHeader?.subtitle}
+  />
 
   <!-- ── Mission Statement ──────────────────────────────────────────────── -->
   {missionStatement && (
