@@ -3,15 +3,16 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
 import { getCollection } from "astro:content";
 
-// Fetch all ministries
 const all = await getCollection("ministries", ({ data }) =>
   import.meta.env.PROD ? !data.draft : true
 );
-// Sort by order or name
 const ministries = all.sort((a, b) =>
   (a.data.order ?? 0) - (b.data.order ?? 0) ||
   a.data.name.localeCompare(b.data.name)
 );
+
+const featured = ministries[0];
+const rest = ministries.slice(1);
 ---
 
 <BaseLayout title="Our Ministries" description="Discover our ministries.">
@@ -21,101 +22,260 @@ const ministries = all.sort((a, b) =>
     backgroundImage="/uploads/ministries-header-bg.webp"
   />
 
-  <!-- Ministries Grid -->
-  <section class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Connect With a Ministry</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          Explore our ministries to grow in faith, connect with community, and serve.
-        </p>
+  <section class="ministries-index">
+    <div class="container">
+      <div class="ministries-intro">
+        <p class="eyebrow">Get Involved</p>
+        <h2 class="section-heading">Find Your Place</h2>
+        <p class="section-sub">Every ministry is an opportunity to grow in faith, build real community, and serve alongside others.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {ministries.map(m => (
-        <a
-          href={`/ministries/${m.slug}`}
-          class="
-          xp-panel-inner bg-white
-          flex flex-col overflow-hidden
-          hover:shadow-lg transition
-          min-h-[370px]
-          "
-        >
-            <!-- gambar fixed height 200px -->
-            {m.data.logo && (
-              <div class="w-full h-[200px] overflow-hidden">
-                <img
-                  src={m.data.logo}
-                  alt={m.data.name}
-                  class="w-full h-full object-cover"
-                />
-              </div>
-            )}
+      {/* Featured ministry — full-width hero card */}
+      {featured && (
+        <a href={`/ministries/${featured.slug}`} class="ministry-hero group">
+          {featured.data.logo && (
+            <div class="ministry-hero-img">
+              <img src={featured.data.logo} alt={featured.data.name} loading="lazy" />
+              <div class="ministry-hero-scrim"></div>
+            </div>
+          )}
+          <div class="ministry-hero-body">
+            <h3 class="ministry-hero-title">{featured.data.name}</h3>
+            <p class="ministry-hero-summary">{featured.data.summary}</p>
+            <span class="ministry-hero-link">Learn more →</span>
+          </div>
+        </a>
+      )}
 
-            <div class="p-4 flex flex-col flex-1 justify-between">
-              <div>
-                <h3 class="text-xl font-semibold mb-2">{m.data.name}</h3>
-                <p class="body-copy">{m.data.summary}</p>
-              </div>
-              {(m.data.coordinator || m.data.schedule) && (
-                <div class="mt-4 space-y-1 text-sm text-muted">
-                  {m.data.coordinator && (
-                    <div class="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg"
-                           class="h-4 w-4 mr-1" fill="none"
-                           viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Coordinator: {m.data.coordinator}
-                    </div>
-                  )}
-                  {m.data.schedule && (
-                    <div class="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg"
-                           class="h-4 w-4 mr-1 align-text-top" fill="none"
-                           viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {m.data.schedule}
-                    </div>
-                  )}
+      {/* Remaining ministries — offset card grid */}
+      {rest.length > 0 && (
+        <div class="ministry-grid">
+          {rest.map((m) => (
+            <a href={`/ministries/${m.slug}`} class="ministry-card group">
+              {m.data.logo && (
+                <div class="ministry-card-img">
+                  <img src={m.data.logo} alt={m.data.name} loading="lazy" />
                 </div>
               )}
-            </div>
-          </a>
-        ))}
-      </div>
+              <div class="ministry-card-body">
+                <h3 class="ministry-card-title">{m.data.name}</h3>
+                <p class="ministry-card-summary">{m.data.summary}</p>
+                {m.data.schedule && (
+                  <p class="ministry-card-schedule">{m.data.schedule}</p>
+                )}
+                <span class="ministry-card-link">Learn more →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   </section>
 
-  <!-- Volunteer CTA -->
-  <section
-    class="py-20 bg-cover bg-center text-white"
-    style="background-image:
-      linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
-      url(/uploads/volunteer-bg.webp)"
-  >
-    <div class="container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Get Involved?</h2>
-        <p class="text-xl mb-8">
-          We believe everyone has been gifted by God to serve in some way. Discover how you can use your unique gifts and passions to make a difference.
-        </p>
-        <a
-          href="/contact?subject=Volunteering"
-          class="inline-flex items-center justify-center px-5 py-3
-                 text-base font-medium text-white bg-primary-900 rounded-md
-                 shadow-sm hover:bg-primary-950 focus:outline-none
-                 focus:ring-2 focus:ring-primary-700 focus:ring-offset-2"
-        >
+  <section class="ministries-cta">
+    <div class="container">
+      <div class="ministries-cta-inner">
+        <div class="ministries-cta-text">
+          <h2 class="ministries-cta-heading">Ready to Get Involved?</h2>
+          <p class="ministries-cta-sub">We believe everyone has been gifted by God to serve. Discover how you can use your unique gifts and passions to make a difference.</p>
+        </div>
+        <a href="/contact?subject=Volunteering" class="btn btn-ghost-white">
           Start Volunteering
         </a>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .ministries-index {
+    background: var(--cream);
+    padding: 4rem 0 5rem;
+  }
+  .ministries-intro {
+    max-width: 36rem;
+    margin-bottom: 3rem;
+  }
+  .ministries-intro .section-heading { margin-bottom: 0.5rem; }
+
+  /* ── Hero card ────────────────────────────────── */
+  .ministry-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--cream-3);
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 2rem;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .ministry-hero:hover {
+    box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+    border-color: var(--orange);
+  }
+  @media (min-width: 768px) {
+    .ministry-hero { grid-template-columns: 1.1fr 1fr; }
+  }
+
+  .ministry-hero-img {
+    position: relative;
+    min-height: 14rem;
+    overflow: hidden;
+  }
+  .ministry-hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .ministry-hero:hover .ministry-hero-img img { transform: scale(1.04); }
+  .ministry-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent 60%, rgba(255,255,255,0.6) 100%);
+    pointer-events: none;
+  }
+  @media (max-width: 767px) {
+    .ministry-hero-scrim { display: none; }
+  }
+
+  .ministry-hero-body {
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .ministry-hero-title {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .ministry-hero-summary {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .ministry-hero-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--orange-dk);
+    transition: color 0.15s;
+  }
+  .ministry-hero:hover .ministry-hero-link { color: var(--orange); }
+
+  /* ── Card grid ────────────────────────────────── */
+  .ministry-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .ministry-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .ministry-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  }
+
+  .ministry-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--cream-3);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .ministry-card:hover {
+    box-shadow: 0 10px 36px rgba(0,0,0,0.08);
+    border-color: var(--orange);
+    transform: translateY(-3px);
+  }
+
+  .ministry-card-img {
+    width: 100%;
+    height: 12rem;
+    overflow: hidden;
+  }
+  .ministry-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .ministry-card:hover .ministry-card-img img { transform: scale(1.05); }
+
+  .ministry-card-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .ministry-card-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    line-height: 1.25;
+  }
+  .ministry-card-summary {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--muted);
+    flex: 1;
+    margin-bottom: 0.75rem;
+  }
+  .ministry-card-schedule {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--cream-3);
+    margin-bottom: 0.75rem;
+  }
+  .ministry-card-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--orange-dk);
+    transition: color 0.15s;
+  }
+  .ministry-card:hover .ministry-card-link { color: var(--orange); }
+
+  /* ── Volunteer CTA ─────────────────────────────── */
+  .ministries-cta {
+    background: linear-gradient(135deg, #091529 0%, #13284b 100%);
+    padding: 5rem 0;
+  }
+  .ministries-cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+    max-width: 38rem;
+    margin: 0 auto;
+  }
+  .ministries-cta-heading {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .ministries-cta-sub {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.6);
+  }
+</style>

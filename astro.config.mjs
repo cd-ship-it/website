@@ -5,7 +5,13 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://crosspointweb3.0.pages.dev', // Update to your production URL
+  /** Origin only (no path). Used for sitemap, canonical URLs, RSS, etc. */
+  site: 'https://crosspointchurchsv.org',
+  /**
+   * Required when the built site is served under a subpath (e.g. /v2/).
+   * Without this, CSS/JS links point to /_astro/... and 404 at the domain root.
+   */
+  base: '',
   integrations: [
     tailwind(),
     sitemap(),

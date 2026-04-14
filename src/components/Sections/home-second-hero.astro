@@ -2,6 +2,7 @@
 import Button from "../UI/Button.astro";
 import LocalizedInline from "../UI/LocalizedInline.astro";
 import { getCollection } from "astro:content";
+import type { LocalizedText } from "../../lib/i18n";
 
 const entries = await getCollection("siteInfo");
 const entry = entries.find(
@@ -13,56 +14,102 @@ const entry = entries.find(
     item.id === "home-second-hero.md",
 );
 const s = entry?.data.secondHero;
+const serviceTimesEntry = entries.find(
+  (item) =>
+    item.id === "service-times" ||
+    item.slug === "service-times" ||
+    item.id.endsWith("/service-times") ||
+    item.id.endsWith("/service-times.md") ||
+    item.id === "service-times.md",
+);
+const campusCount = serviceTimesEntry?.data.campuses?.length ?? 0;
+const storyStats: Array<{ value: string; label: LocalizedText }> = [
+  {
+    value: String(campusCount || 5),
+    label: {
+      en: "Bay Area campuses",
+      "zh-Hant": "灣區會堂",
+      "zh-Hans": "湾区会堂",
+    },
+  },
+  {
+    value: "3",
+    label: {
+      en: "worship languages",
+      "zh-Hant": "敬拜語言",
+      "zh-Hans": "敬拜语言",
+    },
+  },
+  {
+    value: "1",
+    label: {
+      en: "church family",
+      "zh-Hant": "教會家庭",
+      "zh-Hans": "教会家庭",
+    },
+  },
+];
 ---
 
 {s && (
-  <section class="py-24 bg-primary-900 relative overflow-hidden">
-    <!-- Shared dot-grid texture (ties to PageHeader + FinalCTA visual language) -->
-    <div
-      class="absolute inset-0 pointer-events-none"
-      style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0); background-size: 28px 28px;"
-    ></div>
-
-    <div class="container relative z-10">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
-
-        <div class="relative">
+  <section class="section-default bg-white">
+    <div class="container">
+      <div class="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div class="relative overflow-hidden rounded-[1.75rem] bg-primary-950 min-h-[22rem] lg:min-h-[34rem]">
           <img
             src={s.image}
             alt={s.imageAlt?.en ?? ""}
-            class="rounded-2xl object-cover w-full aspect-[4/3] shadow-2xl"
+            class="absolute inset-0 h-full w-full object-cover"
           />
-          <!-- Amber-gold accent border offset -->
-          <div class="absolute -bottom-4 -right-4 w-full h-full rounded-2xl border-2 border-secondary-500/35 pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-b from-primary-950/10 via-primary-950/25 to-primary-950/75"></div>
+          <div class="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
+            <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm">
+              <span class="inline-block h-1.5 w-1.5 rounded-full bg-secondary-400"></span>
+              Building Family Bliss
+            </div>
+          </div>
         </div>
 
-        <div>
+        <div class="flex flex-col justify-center">
           <div class="flex items-center gap-3 mb-4">
-            <span class="inline-block w-6 h-px bg-secondary-400 opacity-75"></span>
-            <p class="text-secondary-400 text-xs font-semibold tracking-[0.22em] uppercase">Our Story</p>
+            <span class="inline-block h-px w-8 bg-secondary-400 opacity-75"></span>
+            <p class="text-secondary-600 text-xs font-semibold tracking-[0.22em] uppercase">Our Story</p>
           </div>
           {s.heading && (
-            <h2 class="font-serif font-bold text-white leading-tight text-second-hero mb-6">
+            <h2 class="font-serif font-bold text-heading leading-tight text-second-hero mb-6">
               <LocalizedInline value={s.heading} />
             </h2>
           )}
           {s.paragraph1 && (
-            <p class="text-white/60 mb-4 text-base leading-relaxed">
+            <p class="body-copy text-lg mb-5 max-w-xl">
               <LocalizedInline value={s.paragraph1} />
             </p>
           )}
           {s.paragraph2 && (
-            <p class="text-white/60 mb-8 text-base leading-relaxed">
+            <p class="body-copy text-base mb-8 max-w-xl">
               <LocalizedInline value={s.paragraph2} />
             </p>
           )}
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-2xl">
+            {storyStats.map((stat) => (
+              <div class="rounded-2xl border border-cream-3 bg-cream px-5 py-4">
+                <div class="font-serif text-3xl font-bold leading-none text-primary-700">{stat.value}</div>
+                <div class="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted">
+                  <LocalizedInline value={stat.label} />
+                </div>
+              </div>
+            ))}
+          </div>
+
           {s.ctaText && s.ctaLink && (
-            <Button href={s.ctaLink} variant="secondary">
-              <LocalizedInline value={s.ctaText} />
-            </Button>
+            <div>
+              <Button href={s.ctaLink} variant="primary" size="lg">
+                <LocalizedInline value={s.ctaText} />
+              </Button>
+            </div>
           )}
         </div>
-
       </div>
     </div>
   </section>

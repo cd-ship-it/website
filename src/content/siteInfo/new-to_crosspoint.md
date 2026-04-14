@@ -33,7 +33,7 @@ newToCrosspoint:
         en: ""
         zh-Hant: ""
         zh-Hans: ""
-      href: "/ministries/childrens-ministry"
+      href: "/events"
     - icon: question_mark
       tag:
         en: "First Visit"
@@ -48,7 +48,7 @@ newToCrosspoint:
         en: ""
         zh-Hant: ""
         zh-Hans: ""
-      href: "/ministries/worship-ministry"
+      href: "/im-new"
     - icon: thunder
       tag:
         en: "Culture"
@@ -63,7 +63,7 @@ newToCrosspoint:
         en: ""
         zh-Hant: ""
         zh-Hans: ""
-      href: "/ministries/community-outreach"
+      href: "/about-us"
     - icon: sparkles
       tag:
         en: "Who We Are"
@@ -78,6 +78,6 @@ newToCrosspoint:
         en: ""
         zh-Hant: ""
         zh-Hans: ""
-      href: "/im-new"
+      href: "/about-us"
 draft: false
 ---

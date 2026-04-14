@@ -18,52 +18,55 @@ const {
   primaryCtaLink = "/im-new",
   secondaryCtaText = "Contact Us",
   secondaryCtaLink = "/contact",
-  backgroundImage,
+  backgroundImage = "https://crosspointchurchsv.org/wp-content/uploads/2026/03/IMG_9240-scaled.jpg",
 } = Astro.props;
 ---
 
 <section
-  class="py-24 relative overflow-hidden"
-  style={backgroundImage
-    ? `background-image: linear-gradient(rgba(9,21,41,0.88), rgba(9,21,41,0.95)), url(${backgroundImage}); background-size: cover; background-position: center;`
-    : "background: linear-gradient(135deg, #091529 0%, #1B3A6B 50%, #091529 100%);"}
+  class="relative overflow-hidden py-24"
+  style={`background-image: linear-gradient(rgba(9,21,41,0.68), rgba(9,21,41,0.88)), url(${backgroundImage}); background-size: cover; background-position: center;`}
 >
-  <!-- Amber-gold glow blobs — brand accent on dark field -->
   <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-[0.12] translate-x-1/2 -translate-y-1/2 pointer-events-none" style="background: radial-gradient(circle, #E8961F, transparent 70%);"></div>
   <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-[0.08] -translate-x-1/2 translate-y-1/2 pointer-events-none" style="background: radial-gradient(circle, #E8961F, transparent 70%);"></div>
 
-  <!-- Dot-grid texture matching PageHeader -->
   <div
     class="absolute inset-0 pointer-events-none"
     style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0); background-size: 28px 28px;"
   ></div>
 
   <div class="container relative z-10">
-    <div class="max-w-2xl mx-auto text-center">
-      <div class="flex items-center justify-center gap-3 mb-5">
-        <span class="inline-block w-8 h-px bg-secondary-400 opacity-70"></span>
-        <p class="text-secondary-400 text-xs font-semibold tracking-[0.22em] uppercase">You're Welcome Here</p>
-        <span class="inline-block w-8 h-px bg-secondary-400 opacity-70"></span>
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+      <div class="max-w-2xl">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="inline-block w-8 h-px bg-secondary-400 opacity-70"></span>
+          <p class="text-secondary-400 text-xs font-semibold tracking-[0.22em] uppercase">You're Welcome Here</p>
+        </div>
+        <h2 class="font-serif font-bold text-white mb-6 leading-tight text-cta-band">
+          {heading}
+        </h2>
+        <p class="text-white/70 text-lg max-w-xl leading-relaxed">
+          {subtext}
+        </p>
       </div>
-      <h2 class="font-serif font-bold text-white mb-6 leading-tight text-cta-band">
-        {heading}
-      </h2>
-      <p class="text-white/60 text-lg mb-10 leading-relaxed">
-        {subtext}
-      </p>
 
-      <div class="flex flex-wrap justify-center gap-4">
-        <Button href={primaryCtaLink} variant="secondary" size="lg">
-          {primaryCtaText}
-        </Button>
-        <Button
-          href={secondaryCtaLink}
-          variant="outline"
-          size="lg"
-          class="!border-white/30 !text-white hover:!bg-white/10 hover:!border-white/60"
-        >
-          {secondaryCtaText}
-        </Button>
+      <div class="rounded-[1.75rem] border border-white/12 bg-white/8 p-6 backdrop-blur-md md:p-8">
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-secondary-300 mb-3">Take the next step</p>
+        <p class="text-sm leading-relaxed text-white/65 mb-6">
+          Whether you're visiting for the first time or looking for a place to belong, we'll help you find the right next step.
+        </p>
+        <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+          <Button href={primaryCtaLink} variant="secondary" size="lg" class="w-full">
+            {primaryCtaText}
+          </Button>
+          <Button
+            href={secondaryCtaLink}
+            variant="outline"
+            size="lg"
+            class="w-full !border-white/30 !text-white hover:!bg-white/10 hover:!border-white/60"
+          >
+            {secondaryCtaText}
+          </Button>
+        </div>
       </div>
     </div>
   </div>

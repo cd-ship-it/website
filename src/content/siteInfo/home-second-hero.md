@@ -1,7 +1,7 @@
 ---
 title: "Home Second Hero"
 secondHero:
-  image: "uploads/Theme_Hero.webp"
+  image: "/uploads/Theme_Hero.webp"
   imageAlt:
     en: "Our Focus this year"
     zh-Hant: "今年目標"

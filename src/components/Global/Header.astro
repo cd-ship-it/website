@@ -4,7 +4,7 @@ import Navigation from "./Navigation.astro";
 
 <header
   id="site-header"
-  class="sticky top-0 z-50 w-full bg-white border-b border-gray-200 transition-shadow duration-300"
+  class="sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-in-out"
 >
   <div class="container flex items-center justify-between h-18">
     <a href="/" class="flex items-center shrink-0">
@@ -19,18 +19,50 @@ import Navigation from "./Navigation.astro";
   </div>
 </header>
 
+<style>
+  /* Default (over hero): frosted glass so colored logo stays readable */
+  #site-header {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  /* Solid state (past hero / inner pages) */
+  #site-header.is-solid {
+    background-color: #ffffff;
+    border-bottom-color: #e5e7eb;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+</style>
+
 <script>
-  // Add a drop-shadow once the user scrolls past the hero
   const header = document.getElementById("site-header");
+  const hero = document.querySelector(".panel--hero");
+
   if (header) {
-    const onScroll = () => {
-      if (window.scrollY > 8) {
-        header.classList.add("shadow-md");
-      } else {
-        header.classList.remove("shadow-md");
+    if (hero) {
+      // Transition: frosted glass over hero → solid white when scrolled past
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            header.classList.remove("is-solid");
+          } else {
+            header.classList.add("is-solid");
+          }
+        },
+        { rootMargin: "-72px 0px 0px 0px", threshold: 0 }
+      );
+      obs.observe(hero);
+      // Apply immediately
+      if (hero.getBoundingClientRect().top <= 72) {
+        header.classList.add("is-solid");
       }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    } else {
+      // No hero on this page — always solid
+      header.classList.add("is-solid");
+    }
   }
 </script>
