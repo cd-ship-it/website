@@ -16,7 +16,12 @@ const { entry } = Astro.props;
 const {
   campusId,
   hero,
+  introTagline,
   description,
+  emotionalHighlights,
+  quickFacts,
+  firstVisitNotes,
+  photoShowcase,
   googleMapsUrl,
   googleMapsZoom,
   lifeGroupDirectoryUrl,
@@ -57,6 +62,29 @@ const showHeroOrangeBlueGradient =
 const campusDisplayName =
   campusServiceData?.campusName ?? { en: campusId };
 
+function getEnglishValue(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "en" in value && typeof (value as { en?: unknown }).en === "string") {
+    return (value as { en: string }).en;
+  }
+  return "";
+}
+
+function languageTagsFromServices(services: unknown[] | undefined): string[] {
+  if (!services?.length) return [];
+  const found = new Set<string>();
+  for (const item of services) {
+    const text = getEnglishValue(item).toLowerCase();
+    if (text.includes("cantonese")) found.add("Cantonese");
+    if (text.includes("mandarin")) found.add("Mandarin");
+    if (text.includes("english")) found.add("English");
+    if (text.includes("youth")) found.add("Youth");
+  }
+  return Array.from(found);
+}
+
+const languageTags = languageTagsFromServices(campusServiceData?.services as unknown[] | undefined);
+
 const SERMON_API_URL = getSermonApiUrl();
 const EVENTS_API_URL = getEventsApiUrl();
 ---
@@ -67,7 +95,7 @@ const EVENTS_API_URL = getEventsApiUrl();
   image={{ url: hero.image, alt: heroAlt }}
 >
   <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
-  <section class="relative h-[250px] flex items-center justify-center overflow-hidden">
+  <section class="relative min-h-[320px] md:min-h-[380px] flex items-center justify-center overflow-hidden">
     <img
       src={hero.image}
       alt={heroAlt}
@@ -86,20 +114,112 @@ const EVENTS_API_URL = getEventsApiUrl();
       <h1 class="text-5xl md:text-7xl font-bold text-white leading-none">
         <LocalizedInline value={campusDisplayName} />
       </h1>
+      {introTagline && (
+        <p class="mt-5 text-base md:text-lg text-white/85 max-w-3xl mx-auto leading-relaxed">
+          <LocalizedInline value={introTagline} />
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="bg-white border-b border-cream-3">
+    <div class="container py-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="xp-panel-inner bg-cream p-4">
+          <p class="text-xs uppercase tracking-widest text-muted mb-1">
+            <LocalizedInline value={{ en: "Worship Day", "zh-Hant": "聚會日", "zh-Hans": "聚会日" }} />
+          </p>
+          <p class="font-semibold text-ink">
+            <LocalizedInline value={campusServiceData?.worshipDate ?? { en: "See service times below", "zh-Hant": "請參考下方崇拜時間", "zh-Hans": "请参考下方崇拜时间" }} />
+          </p>
+        </div>
+        <div class="xp-panel-inner bg-cream p-4">
+          <p class="text-xs uppercase tracking-widest text-muted mb-1">
+            <LocalizedInline value={{ en: "Languages", "zh-Hant": "語言", "zh-Hans": "语言" }} />
+          </p>
+          <p class="font-semibold text-ink">
+            {languageTags.length > 0 ? languageTags.join(" • ") : "See service times"}
+          </p>
+        </div>
+        <div class="xp-panel-inner bg-cream p-4">
+          <p class="text-xs uppercase tracking-widest text-muted mb-1">
+            <LocalizedInline value={{ en: "Address", "zh-Hant": "地址", "zh-Hans": "地址" }} />
+          </p>
+          <p class="font-semibold text-ink">
+            <LocalizedInline value={quickFacts?.address ?? { en: "See map below", "zh-Hant": "請參考下方地圖", "zh-Hans": "请参考下方地图" }} />
+          </p>
+        </div>
+        <div class="xp-panel-inner bg-cream p-4 flex items-center justify-between gap-3">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-muted mb-1">
+              <LocalizedInline value={{ en: "Plan Your Visit", "zh-Hant": "規劃你的行程", "zh-Hans": "规划你的行程" }} />
+            </p>
+            <p class="text-sm text-muted">
+              <LocalizedInline value={quickFacts?.region ?? { en: "Get directions before you come", "zh-Hant": "先查看路線更方便", "zh-Hans": "先查看路线更方便" }} />
+            </p>
+          </div>
+          {googleMapsUrl ? (
+            <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary whitespace-nowrap">
+              <LocalizedInline value={{ en: "Directions", "zh-Hant": "路線", "zh-Hans": "路线" }} />
+            </a>
+          ) : null}
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ── Campus Description ───────────────────────────────────────────────── -->
   <section class="py-16 bg-white">
-    <div class="container max-w-3xl mx-auto text-center">
-      <p class="text-xl text-muted leading-relaxed">
-        <LocalizedInline value={description} />
-      </p>
+    <div class="container max-w-5xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-10 items-start">
+        <div class="xp-panel-inner bg-cream p-6 md:p-7">
+          <p class="text-xs uppercase tracking-widest text-muted mb-3">
+            <LocalizedInline value={{ en: "About this campus", "zh-Hant": "關於這個會堂", "zh-Hans": "关于这个会堂" }} />
+          </p>
+          <p class="text-lg md:text-xl text-muted leading-relaxed max-w-[68ch]">
+            <LocalizedInline value={description} />
+          </p>
+        </div>
+        {emotionalHighlights?.length ? (
+          <div class="xp-panel-inner bg-cream p-6">
+            <h2 class="text-lg font-bold mb-4">
+              <LocalizedInline value={{ en: "Why people stay here", "zh-Hant": "為何大家留在這裡", "zh-Hans": "为何大家留在这里" }} />
+            </h2>
+            <ul class="space-y-3 text-sm text-muted leading-relaxed">
+              {emotionalHighlights.map((item) => (
+                <li class="flex gap-2">
+                  <span class="mt-1 h-1.5 w-1.5 rounded-full bg-secondary-500 shrink-0" aria-hidden="true"></span>
+                  <span><LocalizedInline value={item} /></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
     </div>
   </section>
 
+  {photoShowcase?.length ? (
+    <section class="py-16 bg-cream">
+      <div class="container">
+        <div class="flex items-end justify-between gap-4 mb-8">
+          <h2 class="text-2xl font-bold">
+            <LocalizedInline value={{ en: "Campus Life", "zh-Hant": "會堂生活", "zh-Hans": "会堂生活" }} />
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {photoShowcase.map((photo) => (
+            <figure class="xp-panel-inner bg-white overflow-hidden">
+              <img src={photo.image} alt={typeof photo.alt === "string" ? photo.alt : photo.alt.en} class="h-52 w-full object-cover" loading="lazy" />
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : null}
+
   <!-- ── Service Times + Google Map ───────────────────────────────────────── -->
-  <section class="py-16 bg-cream">
+  <section class="py-16 bg-white">
     <div class="container">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
@@ -199,6 +319,39 @@ const EVENTS_API_URL = getEventsApiUrl();
               </p>
             )}
           </div>
+          {firstVisitNotes && (
+            <div class="xp-panel-inner bg-cream p-6 mt-6">
+              <h3 class="text-lg font-bold mb-4">
+                <LocalizedInline value={{ en: "First visit tips", "zh-Hant": "第一次來的提示", "zh-Hans": "第一次来的提示" }} />
+              </h3>
+              <ul class="space-y-3 text-sm text-muted">
+                {firstVisitNotes.parking && (
+                  <li>
+                    <strong class="text-ink">
+                      <LocalizedInline value={{ en: "Parking:", "zh-Hant": "停車：", "zh-Hans": "停车：" }} />
+                    </strong>{" "}
+                    <LocalizedInline value={firstVisitNotes.parking} />
+                  </li>
+                )}
+                {firstVisitNotes.arrival && (
+                  <li>
+                    <strong class="text-ink">
+                      <LocalizedInline value={{ en: "Arrival:", "zh-Hant": "抵達：", "zh-Hans": "抵达：" }} />
+                    </strong>{" "}
+                    <LocalizedInline value={firstVisitNotes.arrival} />
+                  </li>
+                )}
+                {firstVisitNotes.kidsCheckIn && (
+                  <li>
+                    <strong class="text-ink">
+                      <LocalizedInline value={{ en: "Kids check-in:", "zh-Hant": "兒童報到：", "zh-Hans": "儿童报到：" }} />
+                    </strong>{" "}
+                    <LocalizedInline value={firstVisitNotes.kidsCheckIn} />
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
 
       </div>

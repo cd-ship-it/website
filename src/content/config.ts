@@ -133,10 +133,35 @@ const campusCollection = defineCollection({
       image: z.string(),
       alt: localizedOrString,
     }),
+    /** One-line campus personality statement shown near the hero. */
+    introTagline: localizedOrString.optional(),
     /** Short paragraph displayed below the hero. */
     description: localizedOrString,
+    /** Two to four quick bullets answering "what is this campus like?" */
+    emotionalHighlights: z.array(localizedOrString).min(2).max(4).optional(),
+    /** Quick facts shown near top of page. */
+    quickFacts: z.object({
+      address: localizedOrString,
+      region: localizedOrString.optional(),
+    }).optional(),
+    /** Practical notes for first-time visitors. */
+    firstVisitNotes: z.object({
+      parking: localizedOrString.optional(),
+      arrival: localizedOrString.optional(),
+      kidsCheckIn: localizedOrString.optional(),
+    }).optional(),
+    /** Curated campus photo slots; use placeholders until final assets are ready. */
+    photoShowcase: z.array(z.object({
+      image: z.string(),
+      alt: localizedOrString,
+      placementHint: z.enum(['hero', 'community', 'worship', 'families']),
+    })).max(4).optional(),
     /** Google Maps embed src URL (iframe). Leave empty for placeholder. */
     googleMapsUrl: z.string().optional(),
+    /** Optional zoom for Google Maps Embed API style URLs. */
+    googleMapsZoom: z.number().optional(),
+    /** Optional external life group directory link for this campus. */
+    lifeGroupDirectoryUrl: z.string().url().optional(),
     seo: z.object({
       title: z.string(),
       description: z.string(),
