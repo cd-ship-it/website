@@ -100,7 +100,7 @@ const allPastors = pastors ?? [];
                 <div class="shrink-0 flex justify-center sm:justify-start pt-6 pb-2 sm:py-6 sm:pl-6 sm:pr-0">
                   <div class="h-32 w-32 sm:h-36 sm:w-36 rounded-2xl overflow-hidden bg-cream-2 shadow-sm shrink-0">
                     <img
-                      src={pastor.image}
+                      src={`${import.meta.env.BASE_URL}${pastor.image}`}
                       alt={pickLocalizedText(pastor.name, "en")}
                       class="h-full w-full object-cover object-center"
                       loading="lazy"
