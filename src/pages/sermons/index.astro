@@ -15,7 +15,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
     backgroundImage="/uploads/microphone.webp"
   />
 
-  <section class="py-16">
+  <section class="py-16" data-sermons-root data-api-url={API_URL}>
     <div class="container">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
@@ -121,36 +121,14 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   </section>
 </BaseLayout>
 
-<script define:vars={{ API_URL }}>
-  const LANG_LABELS = { English: 'English', Cantonese: '粵語', Mandarin: '國語' };
-  const LANG_COLORS = {
-    English:  'bg-primary-100 text-primary-800',
-    Cantonese: 'bg-secondary-100 text-secondary-800',
-    Mandarin:  'bg-accent-100 text-accent-800',
-  };
+<script>
+  import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
+  import { formatDateLong, preacherLabel, summaryPreview } from "../../lib/sermons/format";
+
+  const API_URL = document.querySelector('[data-sermons-root]')?.dataset.apiUrl ?? '';
 
   function esc(str) {
     return (str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function formatDate(dateStr) {
-    const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
-
-  function preacherLabel(chi, eng) {
-    const parts = [chi, eng].filter(Boolean);
-    return parts.join(' · ') || '—';
-  }
-
-  function summaryPreview(html, limit = 30) {
-    const text = (html ?? '')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (!text) return '';
-    const words = text.split(' ');
-    return words.length > limit ? `${words.slice(0, limit).join(' ')}...` : text;
   }
 
   function langBadge(lang) {
@@ -162,7 +140,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   function sermonCard(sermon) {
     const thumb = `https://img.youtube.com/vi/${esc(sermon.youtube_id)}/mqdefault.jpg`;
     const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
-    const date = formatDate(sermon.date);
+    const date = formatDateLong(sermon.date);
     const summaryText = summaryPreview(sermon.summary, 30);
 
     return `

@@ -11,7 +11,12 @@
       "Bash(ffmpeg -i 'web_Sharing Peony.mp4' -vf trim=start_frame=2,setpts=PTS-STARTPTS -af atrim=start=0.033367,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y 'web_Sharing Peony.mp4.tmp.mp4')",
       "Bash(ffmpeg -i 'web_Sharing Pastor Fung.mp4' -vf trim=start_frame=1,setpts=PTS-STARTPTS -af atrim=start=0.016683,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y 'web_Sharing Pastor Fung.mp4.tmp.mp4')",
       "Bash(ffmpeg -i web_Sharing_Pastor_Fung.mp4 -vf trim=start_frame=1,setpts=PTS-STARTPTS -af atrim=start=0.016683,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y web_Sharing_Pastor_Fung.mp4.tmp.mp4)",
-      "Bash(ffmpeg -i web_Sharing_Pastor_Fung.mp4 -vf trim=start_frame=2,setpts=PTS-STARTPTS -af atrim=start=0.033367,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y web_Sharing_Pastor_Fung.mp4.tmp.mp4)"
+      "Bash(ffmpeg -i web_Sharing_Pastor_Fung.mp4 -vf trim=start_frame=2,setpts=PTS-STARTPTS -af atrim=start=0.033367,asetpts=PTS-STARTPTS -c:v libx264 -crf 24 -c:a aac -b:a 128k -movflags +faststart -y web_Sharing_Pastor_Fung.mp4.tmp.mp4)",
+      "Bash(grep -oE '\\(January|February|March|April|May|June|July|August|September|October|November|December\\) [0-9]+, 20[0-9]{2}|bg-primary-100|bg-secondary-100|bg-accent-100|粵語|國語|English')",
+      "Bash(grep -oE '\\(Mon|Tue|Wed|Thu|Fri|Sat|Sun\\), \\(January|February|March|April|May|June|July|August|September|October|November|December\\) [0-9]+, 20[0-9]{2}')",
+      "Bash(PLATFORM=production npm run build)",
+      "Bash(git -C /Users/fredng/projects/crosspointweb3.0 remote -v)",
+      "Bash(chmod +x /Users/fredng/projects/crosspointweb3.0/build2prod.sh)"
     ]
   }
 }

@@ -64,7 +64,7 @@ function compactSlug(input: string): string {
     .replace(/[^a-z0-9]/g, "");
 }
 
-function normalizeEvent(raw: unknown): EventItem {
+export function normalizeEvent(raw: unknown): EventItem {
   const rec = asRecord(raw);
   const acf = asRecord(rec.acf);
   const meta = asRecord(rec.meta);
@@ -156,6 +156,14 @@ function normalizeEvent(raw: unknown): EventItem {
     image,
     registrationLink,
   };
+}
+
+export function parseEventsPayload(payload: unknown): EventItem[] {
+  if (Array.isArray(payload)) return payload.map(normalizeEvent);
+  const root = asRecord(payload);
+  if (Array.isArray(root.data)) return (root.data as unknown[]).map(normalizeEvent);
+  if (Array.isArray(root.events)) return (root.events as unknown[]).map(normalizeEvent);
+  return [];
 }
 
 export function getEventsApiUrl(): string {

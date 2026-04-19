@@ -2,6 +2,8 @@
 import Button from "../UI/Button.astro";
 import { fetchSermons } from "../../lib/sermonApi";
 import type { Sermon } from "../../lib/sermonApi";
+import { LANG_LABELS } from "../../lib/sermons/constants";
+import { fmtDate, preacherLabel } from "../../lib/sermons/format";
 
 export interface Props {
   count?: number;
@@ -16,17 +18,6 @@ try {
   sermons = res.data;
 } catch {}
 
-const LANG_LABELS: Record<string, string> = {
-  English: "English",
-  Cantonese: "粵語",
-  Mandarin: "國語",
-};
-
-function fmtDate(d: string) {
-  return new Date(`${d}T00:00:00`).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric",
-  });
-}
 ---
 
 {sermons.length > 0 && (
@@ -59,7 +50,7 @@ function fmtDate(d: string) {
               {sermon.location && <p class="sermon-card-dark-campus">{sermon.location}</p>}
               <h3 class="sermon-card-dark-title">{sermon.sermon_title}</h3>
               <p class="sermon-card-dark-meta">
-                {[sermon.preacher_chi, sermon.preacher_eng].filter(Boolean).join(" · ")}
+                {preacherLabel(sermon.preacher_chi, sermon.preacher_eng)}
               </p>
               <p class="sermon-card-dark-date">{fmtDate(sermon.date)}</p>
             </div>

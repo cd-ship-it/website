@@ -1,6 +1,7 @@
 ---
 import { fetchAllEvents } from "../../lib/eventApi";
 import type { EventItem } from "../../lib/eventApi";
+import { monthLabel, dayNum, fullDate } from "../../lib/events/format";
 import Button from "../UI/Button.astro";
 
 export interface Props {
@@ -20,19 +21,6 @@ try {
 
 const compactEvents = events.slice(0, 6);
 
-function monthLabel(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`)
-    .toLocaleDateString("en-US", { month: "short" })
-    .toUpperCase();
-}
-function dayNum(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { day: "2-digit" });
-}
-function fullDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
-    weekday: "short", month: "short", day: "numeric",
-  });
-}
 ---
 
 <section

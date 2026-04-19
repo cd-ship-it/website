@@ -4,6 +4,8 @@
   import Button from "../../components/UI/Button.astro";
   import { fetchAllSermons } from "../../lib/sermonApi";
   import type { Sermon } from "../../lib/sermonApi";
+  import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
+  import { formatDateLong, preacherLabel } from "../../lib/sermons/format";
 
   export async function getStaticPaths() {
     const sermons = await fetchAllSermons();
@@ -15,26 +17,8 @@
 
   const { sermon } = Astro.props as { sermon: Sermon };
 
-  const preacher = [sermon.preacher_chi, sermon.preacher_eng].filter(Boolean).join(' · ') || '—';
-
-  const formattedDate = new Date(sermon.date + 'T00:00:00').toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
-  const LANG_LABELS: Record<string, string> = {
-    English: 'English',
-    Cantonese: 'Cantonese 粵語',
-    Mandarin: 'Mandarin 國語',
-  };
-
-  const LANG_COLORS: Record<string, string> = {
-    English:  'bg-primary-100 text-primary-800',
-    Cantonese: 'bg-secondary-100 text-secondary-800',
-    Mandarin:  'bg-accent-100 text-accent-800',
-  };
-
+  const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
+  const formattedDate = formatDateLong(sermon.date);
   const langLabel = LANG_LABELS[sermon.language] ?? sermon.language;
   const langColor = LANG_COLORS[sermon.language] ?? 'bg-cream-2 text-ink-3';
   ---

@@ -1,17 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
+
+const env = loadEnv('', process.cwd(), '');
+const isProduction = env.PLATFORM === 'production';
 
 // https://astro.build/config
 export default defineConfig({
   /** Origin only (no path). Used for sitemap, canonical URLs, RSS, etc. */
   site: 'https://crosspointchurchsv.org',
-  /**
-   * Required when the built site is served under a subpath (e.g. /v2/).
-   * Without this, CSS/JS links point to /_astro/... and 404 at the domain root.
-   */
-  base: '',
+  /** /v2 in production, / in development */
+  base: isProduction ? '/v2' : '/',
   integrations: [
     tailwind(),
     sitemap(),

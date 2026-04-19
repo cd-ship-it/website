@@ -1,5 +1,7 @@
 ---
 import type { Sermon } from "../../lib/sermonApi";
+import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
+import { formatDateLong, preacherLabel, summaryPreview, sermonThumb } from "../../lib/sermons/format";
 
 export interface Props {
   sermon: Sermon;
@@ -12,35 +14,9 @@ const { sermon, summaryWordLimit = 30, variant = "default" } = Astro.props as Pr
 const isHome = variant === "home";
 const showDescription = !isHome;
 
-const LANG_COLORS: Record<string, string> = {
-  English: "bg-primary-100 text-primary-800",
-  Cantonese: "bg-secondary-100 text-secondary-800",
-  Mandarin: "bg-accent-100 text-accent-800",
-};
-
-const LANG_LABELS: Record<string, string> = {
-  English: "English",
-  Cantonese: "粵語",
-  Mandarin: "國語",
-};
-
-function summaryPreview(html: string, limit = 30) {
-  const text = (html ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (!text) return "";
-  const words = text.split(" ");
-  return words.length > limit ? `${words.slice(0, limit).join(" ")}...` : text;
-}
-
-const thumb = `https://img.youtube.com/vi/${sermon.youtube_id}/mqdefault.jpg`;
-const preacher = [sermon.preacher_chi, sermon.preacher_eng].filter(Boolean).join(" · ") || "—";
-const date = new Date(`${sermon.date}T00:00:00`).toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const thumb = sermonThumb(sermon.youtube_id);
+const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
+const date = formatDateLong(sermon.date);
 const langLabel = LANG_LABELS[sermon.language] ?? sermon.language;
 const langColor = LANG_COLORS[sermon.language] ?? "bg-cream-2 text-ink-3";
 const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWordLimit) : "";

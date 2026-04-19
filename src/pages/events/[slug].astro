@@ -3,15 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Button from "../../components/UI/Button.astro";
 import { fetchAllEvents } from "../../lib/eventApi";
 import type { EventItem } from "../../lib/eventApi";
-
-function formatDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-  });
-}
+import { formatDateLong } from "../../lib/events/format";
 
 export async function getStaticPaths() {
   try {
@@ -26,8 +18,8 @@ export async function getStaticPaths() {
 }
 
 const { event } = Astro.props as { event: EventItem };
-const formattedDate = formatDate(event.startDate);
-const formattedEndDate = event.endDate ? formatDate(event.endDate) : null;
+const formattedDate = formatDateLong(event.startDate);
+const formattedEndDate = event.endDate ? formatDateLong(event.endDate) : null;
 const isFutureEvent = new Date(event.startDate) > new Date();
 ---
 

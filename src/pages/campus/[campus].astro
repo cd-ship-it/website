@@ -481,9 +481,29 @@ const EVENTS_API_URL = getEventsApiUrl();
       </div>
     </div>
   </section>
+
+  <div
+    hidden
+    id="campus-config"
+    data-campus-id={campusId}
+    data-sermon-api={SERMON_API_URL}
+    data-events-api={EVENTS_API_URL}
+    data-category-id={wpEventCategoryId ?? ""}
+  ></div>
 </BaseLayout>
 
-<script define:vars={{ SERMON_API_URL, EVENTS_API_URL, campusId, wpEventCategoryId }}>
+<script>
+  import { normalizeEvent } from "../../lib/eventApi";
+  import { monthLabel, dayNum, weekDay } from "../../lib/events/format";
+  import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
+  import { formatDateLong, preacherLabel } from "../../lib/sermons/format";
+
+  const cfg = (document.getElementById('campus-config') as HTMLElement).dataset;
+  const campusId = cfg.campusId ?? '';
+  const SERMON_API_URL = cfg.sermonApi ?? '';
+  const EVENTS_API_URL = cfg.eventsApi ?? '';
+  const wpEventCategoryId = cfg.categoryId || null;
+
   // ── Shared helpers ─────────────────────────────────────────────────────────
   function esc(str) {
     return (str ?? "")
@@ -493,48 +513,19 @@ const EVENTS_API_URL = getEventsApiUrl();
       .replace(/"/g, "&quot;");
   }
 
-  function formatDate(dateStr) {
-    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  function monthLabel(dateStr) {
-    return new Date(dateStr + "T00:00:00")
-      .toLocaleDateString("en-US", { month: "short" })
-      .toUpperCase();
-  }
-
-  function dayNum(dateStr) {
-    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { day: "2-digit" });
-  }
-
-  function weekDay(dateStr) {
-    return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { weekday: "short" });
-  }
-
   function show(id) { document.getElementById(id)?.classList.remove("hidden"); }
   function hide(id) { document.getElementById(id)?.classList.add("hidden"); }
 
   // ── Sermons ────────────────────────────────────────────────────────────────
-  const LANG_COLORS = {
-    English:   "bg-primary-100 text-primary-800",
-    Cantonese: "bg-secondary-100 text-secondary-800",
-    Mandarin:  "bg-accent-100 text-accent-800",
-  };
-
   function langBadge(lang) {
-    const labels = { English: "English", Cantonese: "粵語", Mandarin: "國語" };
-    const label = labels[lang] ?? lang;
+    const label = LANG_LABELS[lang] ?? lang;
     const color = LANG_COLORS[lang] ?? "bg-cream-2 text-ink-3";
     return `<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full ${color}">${esc(label)}</span>`;
   }
 
   function sermonCard(sermon) {
     const thumb = `https://img.youtube.com/vi/${esc(sermon.youtube_id)}/mqdefault.jpg`;
-    const preacher = [sermon.preacher_chi, sermon.preacher_eng].filter(Boolean).join(" · ") || "—";
+    const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
     return `
       <a href="/sermons/${esc(sermon.youtube_id)}"
          class="flex gap-4 items-start bg-cream-2 hover:bg-cream rounded-lg p-4 transition-colors group">
@@ -549,7 +540,7 @@ const EVENTS_API_URL = getEventsApiUrl();
             <h3 class="font-semibold text-sm leading-snug line-clamp-2 flex-1">${esc(sermon.sermon_title)}</h3>
             ${langBadge(sermon.language)}
           </div>
-          <p class="text-xs text-muted">${esc(formatDate(sermon.date))}</p>
+          <p class="text-xs text-muted">${esc(formatDateLong(sermon.date))}</p>
           <p class="text-xs text-muted">${esc(preacher)}</p>
           <p class="text-xs text-primary-600 font-medium mt-1 group-hover:underline">Watch →</p>
         </div>
@@ -584,56 +575,10 @@ const EVENTS_API_URL = getEventsApiUrl();
   }
 
   // ── Events ─────────────────────────────────────────────────────────────────
-  function rendered(v) {
-    if (typeof v === "string") return v;
-    return typeof v?.rendered === "string" ? v.rendered : "";
-  }
-
-  function pickStr(obj, keys) {
-    for (const k of keys) {
-      const v = obj?.[k];
-      if (typeof v === "string" && v.trim()) return v.trim();
-    }
-    return "";
-  }
-
-  function normalizeDate(input) {
-    if (!input) return "";
-    const m = String(input).match(/^(\d{4}-\d{2}-\d{2})/);
-    if (m) return m[1];
-    const d = new Date(input);
-    return isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
-  }
-
-  function normalizeEvent(raw) {
-    const rec = (raw && typeof raw === "object") ? raw : {};
-    const acf = (rec.acf && typeof rec.acf === "object") ? rec.acf : {};
-    const title =
-      rendered(rec.title) ||
-      pickStr(rec, ["event_title", "name", "title"]) ||
-      pickStr(acf, ["event_title", "name", "title"]) ||
-      "Untitled Event";
-    const startDate = normalizeDate(
-      pickStr(rec, ["start_date", "startDate", "event_start_date", "date"]) ||
-      pickStr(acf, ["start_date", "startDate", "event_start_date", "date"])
-    );
-    const endDate = normalizeDate(
-      pickStr(rec, ["end_date", "endDate", "event_end_date"]) ||
-      pickStr(acf, ["end_date", "endDate", "event_end_date"])
-    ) || undefined;
-    const time =
-      pickStr(rec, ["time", "event_time", "start_time"]) ||
-      pickStr(acf, ["time", "event_time", "start_time"]) || undefined;
-    const location =
-      pickStr(rec, ["location", "venue_name"]) ||
-      pickStr(acf, ["location", "venue_name"]) || undefined;
-    return { title, startDate, endDate, time, location };
-  }
-
   function eventCard(event) {
     const dateRange = event.endDate && event.endDate !== event.startDate
-      ? `${formatDate(event.startDate)} – ${formatDate(event.endDate)}`
-      : formatDate(event.startDate);
+      ? `${formatDateLong(event.startDate)} – ${formatDateLong(event.endDate)}`
+      : formatDateLong(event.startDate);
     const when = event.time ? `${dateRange} • ${event.time}` : dateRange;
 
     return `
@@ -666,7 +611,6 @@ const EVENTS_API_URL = getEventsApiUrl();
     if (wpEventCategoryId) url.searchParams.set("category", String(wpEventCategoryId));
     url.searchParams.set("per_page", "3");
 
-      console.log(url.toString());
     try {
       const res = await fetch(url.toString(), { cache: "no-store" });
       if (!res.ok) throw new Error();

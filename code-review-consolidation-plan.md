@@ -4,6 +4,12 @@ This document consolidates the maintainability follow-up from code review into o
 
 It focuses on the cleanup and refactoring work that will make the codebase easier to reason about, safer to change, and more consistent across pages.
 
+Current repo status:
+
+- the previous work has been merged
+- `main` is now the single active branch
+- this file should be treated as the working refactor plan
+
 Core areas:
 
 - unused code cleanup
@@ -321,6 +327,108 @@ Instead:
 7. Audit repeated CSS patterns.
 8. Promote only genuinely shared styles into global/shared CSS.
 9. Convert heavily repeated UI patterns into reusable components where appropriate.
+
+## Execution Plan
+
+This is the practical sequence I recommend following on `main`.
+
+### Phase 1. Safe cleanup
+
+Goal:
+
+- reduce noise without changing behavior
+
+Work:
+
+- remove `.bak` files and scratch files
+- remove dead commented-out blocks that are no longer part of active work
+- identify obviously unused constants, helpers, and stale markup
+
+Expected outcome:
+
+- cleaner source tree
+- less review noise
+- lower risk of editing stale files
+
+### Phase 2. Shared source-of-truth cleanup
+
+Goal:
+
+- stop content/config drift
+
+Work:
+
+- centralize contact details
+- centralize social links
+- centralize footer navigation data
+- centralize repeated labels and shared constants
+
+Expected outcome:
+
+- updates happen in one place
+- content consistency improves across pages
+
+### Phase 3. Duplicate logic consolidation
+
+Goal:
+
+- remove repeated business/data logic
+
+Work:
+
+- extract shared event normalization and formatting helpers
+- extract shared sermon formatting and label helpers
+- update pages/components to consume those helpers instead of duplicating logic
+
+Expected outcome:
+
+- fewer partial fixes
+- easier future API/content changes
+
+### Phase 4. Error handling cleanup
+
+Goal:
+
+- make failures easier to understand and debug
+
+Work:
+
+- replace empty `catch` blocks
+- add clearer fallback states where needed
+- add development-time logging for hidden failures
+
+Expected outcome:
+
+- easier debugging
+- fewer silent broken states
+
+### Phase 5. CSS consolidation
+
+Goal:
+
+- reduce style drift without over-centralizing
+
+Work:
+
+- audit repeated card, button, form, panel, and layout styles
+- move truly shared patterns into `global.css` or shared primitives
+- keep one-off page art direction local
+- convert repeated visual structures into reusable components when that is cleaner than shared CSS alone
+
+Expected outcome:
+
+- more consistent UI
+- less duplicated styling
+- preserved flexibility for unique pages
+
+## Working Rules During Refactor
+
+- prefer small refactors over one large rewrite
+- do cleanup in behavior-safe passes first
+- consolidate repeated logic before polishing visuals
+- move only truly shared CSS into global/shared styles
+- keep unique page treatments local to their owning page/component
+- when in doubt, choose one source of truth instead of copying values
 
 ## Overall Definition of Done
 

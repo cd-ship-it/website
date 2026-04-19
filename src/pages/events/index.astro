@@ -25,7 +25,12 @@ try {
     backgroundImage="/uploads/events-header-bg.webp"
   />
 
-  <section class="py-16">
+  <section
+    class="py-16"
+    data-events-root
+    data-api-url={EVENTS_API_URL}
+    data-prebuilt-slugs={JSON.stringify(PREBUILT_EVENT_SLUGS)}
+  >
     <div class="container">
       <div class="text-center mb-12">
         <h2 class="section-heading mb-4">All Events</h2>
@@ -61,150 +66,20 @@ try {
   </section>
 </BaseLayout>
 
-<script define:vars={{ EVENTS_API_URL, PREBUILT_EVENT_SLUGS }}>
+<script>
+  import { normalizeEvent, parseEventsPayload } from "../../lib/eventApi";
+  import { monthLabel, dayNum, weekDay, fullDate, rangeLabel } from "../../lib/events/format";
+
+  const root = document.querySelector('[data-events-root]');
+  const EVENTS_API_URL = root?.dataset.apiUrl ?? '';
+  const PREBUILT_EVENT_SLUGS = JSON.parse(root?.dataset.prebuiltSlugs ?? '[]');
+
   function esc(str) {
     return (str ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
-  }
-
-  function asString(v) {
-    if (typeof v === "string") return v;
-    if (typeof v === "number") return String(v);
-    return "";
-  }
-
-  function pickString(obj, keys) {
-    for (const key of keys) {
-      const value = obj?.[key];
-      if (typeof value === "string" && value.trim()) return value.trim();
-    }
-    return "";
-  }
-
-  function rendered(value) {
-    if (typeof value === "string") return value;
-    return asString(value?.rendered);
-  }
-
-  function normalizeDateInput(input) {
-    if (!input) return "";
-    const dateOnly = input.match(/^(\d{4}-\d{2}-\d{2})/);
-    if (dateOnly) return dateOnly[1];
-    const d = new Date(input);
-    return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
-  }
-
-  function compactSlug(input) {
-    return String(input ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  }
-
-  function asRecord(v) {
-    return v && typeof v === "object" ? v : {};
-  }
-
-  function firstImageSrcFromHtml(html) {
-    if (!html) return "";
-    const m = String(html).match(/<img[^>]+src=["']([^"']+)["']/i);
-    return m?.[1]?.trim() ?? "";
-  }
-
-  function normalizeEvent(raw) {
-    const rec = raw && typeof raw === "object" ? raw : {};
-    const acf = rec.acf && typeof rec.acf === "object" ? rec.acf : {};
-    const venue = rec.venue && typeof rec.venue === "object" ? rec.venue : {};
-    const embedded = asRecord(rec._embedded);
-    const mediaList = Array.isArray(embedded["wp:featuredmedia"]) ? embedded["wp:featuredmedia"] : [];
-    const firstMedia = asRecord(mediaList[0]);
-    const imageObj = asRecord(rec.image);
-
-    const id = pickString(rec, ["id", "event_id", "eventId"]) || pickString(acf, ["id", "event_id"]);
-    const title =
-      rendered(rec.title) ||
-      pickString(rec, ["event_title", "name", "title"]) ||
-      pickString(acf, ["event_title", "name", "title"]) ||
-      "Untitled Event";
-    const content =
-      rendered(rec.content) ||
-      pickString(rec, ["description", "body", "event_description"]) ||
-      pickString(acf, ["description", "body", "event_description"]) ||
-      "";
-    const startDate = normalizeDateInput(
-      pickString(rec, ["start_date", "startDate", "event_start_date", "date"]) ||
-      pickString(acf, ["start_date", "startDate", "event_start_date", "date"])
-    );
-    const endDate = normalizeDateInput(
-      pickString(rec, ["end_date", "endDate", "event_end_date"]) ||
-      pickString(acf, ["end_date", "endDate", "event_end_date"])
-    );
-    const time =
-      pickString(rec, ["time", "event_time", "start_time"]) ||
-      pickString(acf, ["time", "event_time", "start_time"]);
-    const location =
-      pickString(rec, ["location", "venue_name"]) ||
-      pickString(acf, ["location", "venue_name"]) ||
-      pickString(venue, ["name", "title"]);
-
-    let image =
-      pickString(imageObj, ["url", "src", "source_url"]) ||
-      pickString(asRecord(rec.featured_image), ["url", "src", "source_url"]) ||
-      pickString(asRecord(acf.featured_image), ["url", "src", "source_url"]) ||
-      pickString(firstMedia, ["source_url"]) ||
-      pickString(rec, ["featured_image", "image"]) ||
-      pickString(acf, ["featured_image", "image"]) ||
-      "";
-    if (!image) image = firstImageSrcFromHtml(content);
-
-    const safeSlug = compactSlug(title);
-
-    return {
-      id: id || safeSlug || "event",
-      slug: safeSlug || "event",
-      title,
-      startDate,
-      endDate: endDate || undefined,
-      time: time || undefined,
-      summary: "",
-      location: location || undefined,
-      image: image || undefined,
-    };
-  }
-
-  function parseEventsPayload(payload) {
-    if (Array.isArray(payload)) return payload.map(normalizeEvent);
-    if (Array.isArray(payload?.data)) return payload.data.map(normalizeEvent);
-    if (Array.isArray(payload?.events)) return payload.events.map(normalizeEvent);
-    return [];
-  }
-
-  function monthLabel(dateStr) {
-    return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { month: "short" }).toUpperCase();
-  }
-
-  function dayNum(dateStr) {
-    return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { day: "2-digit" });
-  }
-
-  function weekDay(dateStr) {
-    return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" });
-  }
-
-  function fullDate(dateStr) {
-    return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      weekday: "short",
-      year: "numeric",
-    });
-  }
-
-  function rangeLabel(startDate, endDate, time) {
-    const start = fullDate(startDate);
-    const end = endDate && endDate !== startDate ? fullDate(endDate) : "";
-    const dateText = end ? `${start} - ${end}` : start;
-    return time ? `${dateText} • ${time}` : dateText;
   }
 
   function cardHtml(event) {
