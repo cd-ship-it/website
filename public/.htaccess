@@ -1,0 +1,17 @@
+# HTML pages — always revalidate so deploys show immediately
+<FilesMatch "\.(html)$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires 0
+</FilesMatch>
+
+# Hashed assets (/_astro/*.js, /_astro/*.css) — safe to cache forever
+# Astro changes the filename hash whenever content changes
+<FilesMatch "\.(js|css|woff2?|ttf|otf|eot)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# Images — cache for 1 week, revalidate with ETag
+<FilesMatch "\.(webp|png|jpg|jpeg|gif|svg|ico|mp4|webm)$">
+  Header set Cache-Control "public, max-age=604800, must-revalidate"
+</FilesMatch>
