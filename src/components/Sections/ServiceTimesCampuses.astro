@@ -6,7 +6,7 @@ import { homeCampusDisplayOrder, normalizeCampusOrderKey } from "../../config/si
 function campusPageHref(campusName: string | LocalizedText): string {
   const id = pickLocalizedText(campusName, "en");
   const slug = id.toLowerCase().replace(/\s+/g, "-");
-  return `/campus/${slug}`;
+  return `${import.meta.env.BASE_URL}campus/${slug}`;
 }
 
 export interface CampusRow {

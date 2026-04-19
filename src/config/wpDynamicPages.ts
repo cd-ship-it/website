@@ -1,6 +1,6 @@
 /**
  * WordPress-backed pages served at `/{slug}`.
- * Add entries here and they will be prebuilt as static shells; content loads on each visit.
+ * Add entries here; content is fetched at build time via `src/lib/wordpress/mirror.ts`.
  */
 export type WpDynamicPageKind =
   | "wordpress_page"

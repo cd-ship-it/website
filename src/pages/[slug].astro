@@ -4,6 +4,12 @@ import PageHeader from "../components/Sections/PageHeader.astro";
 import { WP_DYNAMIC_PAGES, getWpDynamicPageConfig } from "../config/wpDynamicPages";
 import { getWordPressUrl } from "../config/site";
 import { fetchCategoryLatestPostLinkPreview } from "../lib/wpLinkPreview";
+import {
+  fetchWpDynamicPageRecord,
+  shouldShowWpDynamicPostTitle,
+  type WpMirrorItem,
+  wpMirrorDisplayDates,
+} from "../lib/wordpress/mirror";
 
 export function getStaticPaths() {
   return WP_DYNAMIC_PAGES.map((p) => ({ params: { slug: p.slug } }));
@@ -22,7 +28,7 @@ if (!cfg) {
 const wpBaseUrl = getWordPressUrl();
 
 const heartFallbackImage = {
-  url: "/uploads/blog-header-bg.webp",
+  url: `${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`,
   alt: "Heart of a Shepherd — Crosspoint Church",
 };
 
@@ -30,6 +36,7 @@ let layoutTitle = cfg.seo.title;
 let layoutDescription = cfg.seo.description;
 let layoutImage = heartFallbackImage;
 let layoutType: "website" | "article" = "website";
+let record: WpMirrorItem | null = null;
 
 if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategorySlug) {
   try {
@@ -48,6 +55,13 @@ if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategory
     /* build-time fetch unavailable or network error — keep static SEO from config */
   }
 }
+
+if (wpBaseUrl) {
+  record = await fetchWpDynamicPageRecord(cfg);
+}
+
+const { dateIso, dateLong } = wpMirrorDisplayDates(record);
+const showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
 ---
 
 <BaseLayout
@@ -59,7 +73,7 @@ if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategory
   <PageHeader
     title={cfg.pageHeader.title}
     subtitle={cfg.pageHeader.subtitle}
-    backgroundImage="/uploads/blog-header-bg.webp"
+    backgroundImage={`${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`}
   />
 
   <section class="py-16 bg-white">
@@ -71,32 +85,27 @@ if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategory
             in your environment.
           </p>
         </div>
+      ) : !record ? (
+        <div class="xp-panel-inner bg-red-50 p-6 text-red-700">
+          <p>No published content found yet.</p>
+        </div>
       ) : (
-        <>
-          <div id="wp-loading" class="xp-panel-inner bg-cream-2 p-8 animate-pulse space-y-4">
-            <div class="h-4 bg-gray-200 rounded w-1/3" />
-            <div class="h-32 bg-gray-200 rounded w-full" />
-            <div class="h-4 bg-gray-200 rounded w-full" />
-            <div class="h-4 bg-gray-200 rounded w-5/6" />
-          </div>
-
-          <div id="wp-error" class="hidden xp-panel-inner bg-red-50 p-6 text-red-700">
-            <p>Could not load this page right now. Please try again in a moment.</p>
-          </div>
-
-          <article id="wp-article" class="hidden xp-panel-inner bg-white p-6 md:p-8">
-            <p id="wp-date-row" class="text-sm text-muted mb-3 hidden">
-              <time id="wp-date"></time>
+        <article class="xp-panel-inner bg-white p-6 md:p-8">
+          {dateIso && dateLong && (
+            <p class="text-sm text-muted mb-3">
+              <time datetime={dateIso}>{dateLong}</time>
             </p>
-            <h1
-              id="wp-post-title"
-              class="text-3xl md:text-4xl font-bold mb-6 hidden"
-            ></h1>
-            <div id="wp-body" class="prose prose-lg max-w-none"></div>
+          )}
+
+          {showPostTitle && (
+            <h1 class="text-3xl md:text-4xl font-bold mb-6" set:html={record.title?.rendered ?? ""} />
+          )}
+
+          <div class="prose prose-lg max-w-none" set:html={record.content?.rendered ?? ""} />
+          {record.link && (
             <p class="mt-8">
               <a
-                id="wp-source-link"
-                href="#"
+                href={record.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-600 font-medium hover:underline"
@@ -104,143 +113,9 @@ if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategory
                 View on WordPress →
               </a>
             </p>
-          </article>
-        </>
+          )}
+        </article>
       )}
     </div>
   </section>
 </BaseLayout>
-
-<script
-  define:vars={{
-    wpBaseUrl,
-    pageConfig: cfg,
-  }}
->
-  function apiRoot(base) {
-    return new URL("/wp-json/wp/v2/", base).toString();
-  }
-
-  function toIsoDate(input) {
-    return new Date(input).toISOString().slice(0, 10);
-  }
-
-  function toLongDate(input) {
-    return new Date(input).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  async function fetchJson(url) {
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(String(res.status));
-    return res.json();
-  }
-
-  async function loadWordPressPage(base, pageSlug) {
-    const url = new URL("pages", apiRoot(base));
-    url.searchParams.set("slug", pageSlug);
-    url.searchParams.set("per_page", "1");
-    url.searchParams.set("status", "publish");
-    const pages = await fetchJson(url.toString());
-    return pages[0] ?? null;
-  }
-
-  async function loadLatestPostInCategory(base, categorySlug) {
-    const catUrl = new URL("categories", apiRoot(base));
-    catUrl.searchParams.set("slug", categorySlug);
-    catUrl.searchParams.set("per_page", "1");
-    const categories = await fetchJson(catUrl.toString());
-    const categoryId = categories[0]?.id;
-    if (!categoryId) return null;
-
-    const postsUrl = new URL("posts", apiRoot(base));
-    postsUrl.searchParams.set("categories", String(categoryId));
-    postsUrl.searchParams.set("per_page", "1");
-    postsUrl.searchParams.set("orderby", "date");
-    postsUrl.searchParams.set("order", "desc");
-    postsUrl.searchParams.set("status", "publish");
-    const posts = await fetchJson(postsUrl.toString());
-    return posts[0] ?? null;
-  }
-
-  function show(id, on) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.toggle("hidden", !on);
-  }
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    if (!wpBaseUrl) return;
-
-    const loading = document.getElementById("wp-loading");
-    const err = document.getElementById("wp-error");
-    const article = document.getElementById("wp-article");
-    const dateRow = document.getElementById("wp-date-row");
-    const dateEl = document.getElementById("wp-date");
-    const titleEl = document.getElementById("wp-post-title");
-    const bodyEl = document.getElementById("wp-body");
-    const linkEl = document.getElementById("wp-source-link");
-
-    try {
-      let record = null;
-      if (pageConfig.kind === "wordpress_page") {
-        const slug = pageConfig.wpPageSlug;
-        if (!slug) throw new Error("Missing wpPageSlug");
-        record = await loadWordPressPage(wpBaseUrl, slug);
-      } else if (pageConfig.kind === "wordpress_category_latest_post") {
-        const slug = pageConfig.wpCategorySlug;
-        if (!slug) throw new Error("Missing wpCategorySlug");
-        record = await loadLatestPostInCategory(wpBaseUrl, slug);
-      } else {
-        throw new Error("Unknown page kind");
-      }
-
-      if (!record) {
-        loading?.classList.add("hidden");
-        err?.classList.remove("hidden");
-        const emptyMsg = err?.querySelector("p");
-        if (emptyMsg) emptyMsg.textContent = "No published content found yet.";
-        return;
-      }
-
-      const date = record.date;
-      if (dateEl && dateRow) {
-        dateEl.setAttribute("datetime", toIsoDate(date));
-        dateEl.textContent = toLongDate(date);
-        dateRow.classList.remove("hidden");
-      }
-
-      const showTitle =
-        pageConfig.kind === "wordpress_category_latest_post" &&
-        pageConfig.showPostTitle !== false &&
-        record.title?.rendered;
-
-      if (titleEl) {
-        if (showTitle) {
-          titleEl.innerHTML = record.title.rendered;
-          titleEl.classList.remove("hidden");
-        } else {
-          titleEl.textContent = "";
-          titleEl.classList.add("hidden");
-        }
-      }
-
-      if (bodyEl) {
-        bodyEl.innerHTML = record.content?.rendered ?? "";
-      }
-
-      if (linkEl && record.link) {
-        linkEl.setAttribute("href", record.link);
-      }
-
-      loading?.classList.add("hidden");
-      article?.classList.remove("hidden");
-    } catch {
-      loading?.classList.add("hidden");
-      err?.classList.remove("hidden");
-    }
-  });
-</script>

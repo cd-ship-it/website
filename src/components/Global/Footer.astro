@@ -9,33 +9,36 @@ try {
   officeHours = undefined;
 }
 
+const BASE = import.meta.env.BASE_URL;
+const u = (path: string) => (!path || /^https?:\/\//.test(path)) ? path : `${BASE}${path.replace(/^\//, "")}`;
+
 const footerNavs = [
   {
     title: "About",
     items: [
-      { text: "About Us", href: "/about-us" },
-      { text: "I'm New", href: "/im-new" },
-      { text: "Our Pastors", href: "/about-pastors" },
-      { text: "Partners & Affiliations", href: "/disclaimer" },
-      { text: "Contact", href: "/contact" },
+      { text: "About Us", href: u("/about-us") },
+      { text: "I'm New", href: u("/im-new") },
+      { text: "Our Pastors", href: u("/about-pastors") },
+      { text: "Partners & Affiliations", href: u("/disclaimer") },
+      { text: "Contact", href: u("/contact") },
     ],
   },
   {
     title: "Resources",
     items: [
-      { text: "Sermons", href: "/sermons" },
-      { text: "Events", href: "/events" },
-      { text: "Weekly Prayer", href: "/weekly-prayer" },
-      { text: "Heart of a Shepherd", href: "/heart-of-a-shepherd" },
+      { text: "Sermons", href: u("/sermons") },
+      { text: "Events", href: u("/events") },
+      { text: "Weekly Prayer", href: u("/weekly-prayer") },
+      { text: "Heart of a Shepherd", href: u("/heart-of-a-shepherd") },
     ],
   },
   {
     title: "Connect",
     items: [
-      { text: "Giving", href: "/giving" },
-      { text: "Prayer Request", href: "/contact#prayer" },
-      { text: "Life Groups", href: "/ministries/life-groups" },
-      { text: "Campuses", href: "/campus" },
+      { text: "Giving", href: u("/giving") },
+      { text: "Prayer Request", href: u("/contact") + "#prayer" },
+      { text: "Life Groups", href: u("/ministries/life-groups") },
+      { text: "Campuses", href: u("/campus") },
     ],
   },
 ];
@@ -137,9 +140,9 @@ if (officeHours) {
     <div class="container footer-bottom-inner">
       <p>&copy; {currentYear} Crosspoint Church. All rights reserved.</p>
       <div class="footer-legal">
-        <a href="/privacy-policy">Privacy</a>
+        <a href={u("/privacy-policy")}>Privacy</a>
         <span class="footer-legal-sep" aria-hidden="true">&middot;</span>
-        <a href="/terms-of-service">Terms</a>
+        <a href={u("/terms-of-service")}>Terms</a>
       </div>
     </div>
   </div>

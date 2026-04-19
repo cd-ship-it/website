@@ -24,6 +24,8 @@ const entry = entries.find(
     item.id === "new-to-crosspoint.md",
 );
 const block = entry?.data.newToCrosspoint;
+const B = import.meta.env.BASE_URL;
+const p = (path: string) => (!path || /^https?:\/\//.test(path)) ? path : `${B}${path.replace(/^\//, "")}`;
 
 const sectionTitle = block?.sectionTitle;
 const sectionSubtitle = block?.sectionSubtitle;
@@ -140,7 +142,7 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
       <div class="home-section-body">
       <div class="pathways-grid pathways-grid--editorial">
         {cards.map((card, index) => (
-          <a href={card.href} class="pathway-card">
+          <a href={p(card.href)} class="pathway-card">
             <img
               src={card.background ?? ""}
               alt={cardImageAlt(card.title)}
@@ -200,7 +202,7 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
           const d = iconPath[card.icon];
           return (
             <a
-              href={card.href}
+              href={p(card.href)}
               class="group card relative text-center p-8 overflow-hidden block isolate"
               style={`background-image: url(${card.background ?? ""}); background-size: cover; background-position: center;`}
             >

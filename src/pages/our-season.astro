@@ -432,10 +432,10 @@ const t = {
       <p><LocalizedInline value={t.aheadP5} /></p>
 
       <div class="os-cta-block">
-        <Button href="/im-new" variant="primary" size="lg">
+        <Button href={`${import.meta.env.BASE_URL}im-new`} variant="primary" size="lg">
           <LocalizedInline value={t.ctaPrimary} />
         </Button>
-        <Button href="/about-us" variant="outline" size="lg">
+        <Button href={`${import.meta.env.BASE_URL}about-us`} variant="outline" size="lg">
           <LocalizedInline value={t.ctaSecondary} />
         </Button>
       </div>

@@ -19,7 +19,7 @@ const rest = ministries.slice(1);
   <PageHeader
     title="Our Ministries"
     subtitle="Ways to connect, grow, and serve"
-    backgroundImage="/uploads/ministries-header-bg.webp"
+    backgroundImage={`${import.meta.env.BASE_URL}uploads/ministries-header-bg.webp`}
   />
 
   <section class="ministries-index">
@@ -79,7 +79,7 @@ const rest = ministries.slice(1);
           <h2 class="ministries-cta-heading">Ready to Get Involved?</h2>
           <p class="ministries-cta-sub">We believe everyone has been gifted by God to serve. Discover how you can use your unique gifts and passions to make a difference.</p>
         </div>
-        <a href="/contact?subject=Volunteering" class="btn btn-ghost-white">
+        <a href={`${import.meta.env.BASE_URL}contact?subject=Volunteering`} class="btn btn-ghost-white">
           Start Volunteering
         </a>
       </div>

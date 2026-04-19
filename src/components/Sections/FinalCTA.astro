@@ -18,8 +18,13 @@ const {
   primaryCtaLink = "/im-new",
   secondaryCtaText = "Contact Us",
   secondaryCtaLink = "/contact",
-  backgroundImage = "/uploads/PL-2_wide.webp",
+  backgroundImage = `${import.meta.env.BASE_URL}uploads/PL-2_wide.webp`,
 } = Astro.props;
+
+const B = import.meta.env.BASE_URL;
+const p = (path: string) => (!path || /^https?:\/\//.test(path)) ? path : `${B}${path.replace(/^\//, "")}`;
+const resolvedPrimaryLink = p(primaryCtaLink);
+const resolvedSecondaryLink = p(secondaryCtaLink);
 ---
 
 <section
@@ -55,11 +60,11 @@ const {
           Whether you're visiting for the first time or looking for a place to belong, we'll help you find the right next step.
         </p> -->
         <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
-          <Button href={primaryCtaLink} variant="secondary" size="lg" class="w-full">
+          <Button href={resolvedPrimaryLink} variant="secondary" size="lg" class="w-full">
             {primaryCtaText}
           </Button>
           <Button
-            href={secondaryCtaLink}
+            href={resolvedSecondaryLink}
             variant="outline"
             size="lg"
             class="w-full !border-primary-900/35 !bg-white !text-primary-950 !shadow-sm hover:!bg-cream-2 hover:!border-primary-900/55"

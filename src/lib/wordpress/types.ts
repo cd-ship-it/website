@@ -12,6 +12,8 @@ export interface WpBasePost {
   id: number;
   slug: string;
   date: string;
+  /** Canonical URL on WordPress (REST `link`). */
+  link?: string;
   status?: string;
   type?: string;
   title: WpRenderedField;

@@ -16,11 +16,13 @@ function navLabel(key: NavKey) {
   };
 }
 
+const BASE = import.meta.env.BASE_URL;
+const u = (path: string) => `${BASE}${path.replace(/^\//, "")}`;
 const currentPath = Astro.url.pathname;
 
 function isLinkActive(href: string) {
   if (!href || href === "#") return false;
-  return currentPath === href || (href !== "/" && currentPath.startsWith(href));
+  return currentPath === href || (href !== BASE && currentPath.startsWith(href));
 }
 
 const centerLinkClass = (active: boolean) =>
@@ -34,23 +36,23 @@ const centerLinkClass = (active: boolean) =>
   aria-label="Quick links"
 >
   <a
-    href="/events"
-    class={centerLinkClass(isLinkActive("/events"))}
-    aria-current={isLinkActive("/events") ? "page" : undefined}
+    href={u("/events")}
+    class={centerLinkClass(isLinkActive(u("/events")))}
+    aria-current={isLinkActive(u("/events")) ? "page" : undefined}
   >
     <LocalizedInline value={navLabel("events")} />
   </a>
   <a
-    href="/sermons"
-    class={centerLinkClass(isLinkActive("/sermons"))}
-    aria-current={isLinkActive("/sermons") ? "page" : undefined}
+    href={u("/sermons")}
+    class={centerLinkClass(isLinkActive(u("/sermons")))}
+    aria-current={isLinkActive(u("/sermons")) ? "page" : undefined}
   >
     <LocalizedInline value={navLabel("sermons")} />
   </a>
   <a
-    href="/giving"
-    class={centerLinkClass(isLinkActive("/giving"))}
-    aria-current={isLinkActive("/giving") ? "page" : undefined}
+    href={u("/giving")}
+    class={centerLinkClass(isLinkActive(u("/giving")))}
+    aria-current={isLinkActive(u("/giving")) ? "page" : undefined}
   >
     <LocalizedInline value={navLabel("giving")} />
   </a>

@@ -40,7 +40,7 @@ function rangeLabel(startDate: string, endDate?: string, time?: string) {
 ---
 
 <a
-  href={`/events/${encodeURIComponent(event.slug)}`}
+  href={`${import.meta.env.BASE_URL}events/${encodeURIComponent(event.slug)}`}
   class:list={[
     "group block bg-white border border-cream-3 hover:shadow-lg hover:border-secondary-300 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary-400",
     featured

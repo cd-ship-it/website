@@ -18,7 +18,9 @@
       "Bash(git -C /Users/fredng/projects/crosspointweb3.0 remote -v)",
       "Bash(chmod +x /Users/fredng/projects/crosspointweb3.0/build2prod.sh)",
       "Bash(node -e ' *)",
-      "Bash(PLATFORM=production node *)"
+      "Bash(PLATFORM=production node *)",
+      "Bash(grep -n 'href={item\\\\|href=\"/\\\\|href={`/' /Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro)",
+      "Bash(grep -rn '`/campus/\\\\|href.*campusSlug\\\\|href.*entry' /Users/fredng/projects/crosspointweb3.0/src/ --include=\"*.astro\")"
     ]
   }
 }

@@ -11,7 +11,7 @@ if (!page) throw new Error('Content entry "about/about-pastors" not found.');
 
 const { title, seo, pageHeader, pageIntro, pastors, contactPhone } = page.data;
 
-const headerBg = pageHeader?.backgroundImage ?? "/uploads/page-header-bg.webp";
+const headerBg = pageHeader?.backgroundImage ?? `${import.meta.env.BASE_URL}uploads/page-header-bg.webp`;
 
 function escapeHtml(s: string): string {
   return s
@@ -185,7 +185,7 @@ const allPastors = pastors ?? [];
             {contactPhone}
           </a>
         )}
-        <a href="/contact" class="btn btn-primary">
+        <a href={`${import.meta.env.BASE_URL}contact`} class="btn btn-primary">
           <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯繫我們", "zh-Hans": "联系我们" }} />
         </a>
       </div>

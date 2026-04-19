@@ -38,7 +38,7 @@ const compactEvents = events.slice(0, 6);
       {compactEvents.length > 0 ? (
         <div class="events-home-grid">
           {compactEvents.map((event) => (
-            <a href={`/events/${encodeURIComponent(event.slug)}`} class="events-grid-item group">
+            <a href={`${import.meta.env.BASE_URL}events/${encodeURIComponent(event.slug)}`} class="events-grid-item group">
               <div class="events-grid-date">
                 <span class="events-grid-month">{monthLabel(event.startDate)}</span>
                 <span class="events-grid-day">{dayNum(event.startDate)}</span>
@@ -76,7 +76,7 @@ const compactEvents = events.slice(0, 6);
 
       {showViewAll && compactEvents.length > 0 && (
         <div class="mt-8 flex justify-end">            
-          <Button href="/events" variant="primary" size="lg">
+          <Button href={`${import.meta.env.BASE_URL}events`} variant="primary" size="lg">
             View all events
           </Button>
           </div>

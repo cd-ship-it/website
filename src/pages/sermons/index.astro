@@ -12,7 +12,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   <PageHeader
     title="Sermons"
     subtitle="Messages from our Sunday services"
-    backgroundImage="/uploads/microphone.webp"
+    backgroundImage={`${import.meta.env.BASE_URL}uploads/microphone.webp`}
   />
 
   <section class="py-16" data-sermons-root data-api-url={API_URL}>
@@ -125,6 +125,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
   import { formatDateLong, preacherLabel, summaryPreview } from "../../lib/sermons/format";
 
+  const BASE = import.meta.env.BASE_URL;
   const API_URL = document.querySelector('[data-sermons-root]')?.dataset.apiUrl ?? '';
 
   function esc(str) {
@@ -144,12 +145,12 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
     const summaryText = summaryPreview(sermon.summary, 30);
 
     return `
-      <a href="/sermons/${esc(sermon.youtube_id)}"
+      <a href="${BASE}sermons/${esc(sermon.youtube_id)}"
          class="xp-panel-inner group overflow-hidden block bg-white hover:shadow-xl transition-all duration-300">
         <div class="relative w-full overflow-hidden pb-[56.25%]">
           <img src="${thumb}" alt="${esc(sermon.sermon_title)}"
                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 block"
-               loading="lazy" onerror="this.src='/uploads/sermon-placeholder.webp'" />
+               loading="lazy" onerror="this.src='${BASE}uploads/sermon-placeholder.webp'" />
         </div>
         <div class="p-5">
           <div class="flex items-start justify-between gap-2 mb-2">

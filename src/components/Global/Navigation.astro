@@ -43,8 +43,23 @@ const navEntry = await getEntry("navigation", "main-menu");
 const fromFile =
   navEntry && !navEntry.data.draft && navEntry.data.items?.length ? navEntry.data.items : null;
 
-const navItems: NavMenuTop[] = (fromFile ?? fallbackNavFromI18n()).filter(
-  (item) => item.id !== "home",
+const BASE = import.meta.env.BASE_URL;
+const u = (path: string) => (!path || path === "#" || /^https?:\/\//.test(path)) ? path : `${BASE}${path.replace(/^\//, "")}`;
+
+function prefixItems(items: NavMenuTop[]): NavMenuTop[] {
+  return items.map((item) => ({
+    ...item,
+    href: u(item.href),
+    children: item.children?.map((child) => ({
+      ...child,
+      href: u(child.href),
+      children: child.children?.map((g) => ({ ...g, href: u(g.href) })),
+    })),
+  }));
+}
+
+const navItems: NavMenuTop[] = prefixItems(
+  (fromFile ?? fallbackNavFromI18n()).filter((item) => item.id !== "home"),
 );
 
 const languageOptions: Array<{ value: SiteLang; label: string }> = [
@@ -57,7 +72,7 @@ const currentPath = Astro.url.pathname;
 
 function isLinkActive(href: string) {
   if (!href || href === "#") return false;
-  return currentPath === href || (href !== "/" && currentPath.startsWith(href));
+  return currentPath === href || (href !== BASE && currentPath.startsWith(href));
 }
 
 function isL3Active(l3: NavMenuL3) {

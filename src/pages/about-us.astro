@@ -40,7 +40,7 @@ if (!mission || !vision || !history) {
           </div>
           <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
             <img
-              src="/uploads/about/mission.png"
+              src={`${import.meta.env.BASE_URL}uploads/about/mission.png`}
               alt={pickLocalizedText(mission.heading, "en")}
               class="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
@@ -55,7 +55,7 @@ if (!mission || !vision || !history) {
         <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
           <div class="order-2 md:order-1 relative min-h-[14rem] md:min-h-0 bg-cream-2">
             <img
-              src="/uploads/about/vision.png"
+              src={`${import.meta.env.BASE_URL}uploads/about/vision.png`}
               alt={pickLocalizedText(vision.heading, "en")}
               class="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
@@ -129,7 +129,7 @@ if (!mission || !vision || !history) {
       <!-- Section heading -->
       <div
         class="relative mb-16 overflow-hidden rounded-2xl bg-cover bg-center px-4 py-14 text-center text-white md:py-16"
-        style="background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(/uploads/about/25-years-faith-growth.png)"
+        style={`background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(${import.meta.env.BASE_URL}uploads/about/25-years-faith-growth.png)`}
       >
         <p class="eyebrow mb-3 text-white/90">
           <LocalizedInline value={{ en: "Our Amazing Story", "zh-Hant": "我們的奇妙故事", "zh-Hans": "我们的奇妙故事" }} />
@@ -219,7 +219,7 @@ if (!mission || !vision || !history) {
               data-thumb-offset={t.poster ? undefined : "1"}
               aria-label={`Testimony by ${t.name}`}
             >
-              <source src={`/uploads/testimonies/${encodeURIComponent(t.file)}`} type="video/mp4" />
+              <source src={`${import.meta.env.BASE_URL}uploads/testimonies/${encodeURIComponent(t.file)}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             <p class="testimony-name">{t.name}</p>
@@ -249,10 +249,10 @@ if (!mission || !vision || !history) {
           }} />
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <a href="/campus" class="btn btn-secondary">
+          <a href={`${import.meta.env.BASE_URL}campus`} class="btn btn-secondary">
             <LocalizedInline value={{ en: "Find a Campus", "zh-Hant": "尋找會堂", "zh-Hans": "寻找会堂" }} />
           </a>
-          <a href="/contact" class="btn btn-ghost-white">
+          <a href={`${import.meta.env.BASE_URL}contact`} class="btn btn-ghost-white">
             <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
           </a>
         </div>

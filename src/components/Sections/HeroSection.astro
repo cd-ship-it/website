@@ -36,6 +36,11 @@ const {
   secondaryCtaLink = "/sermons",
 } = Astro.props;
 
+const B = import.meta.env.BASE_URL;
+const p = (path: string) => (!path || /^https?:\/\//.test(path)) ? path : `${B}${path.replace(/^\//, "")}`;
+const resolvedCtaLink = p(ctaLink);
+const resolvedSecondaryCtaLink = p(secondaryCtaLink);
+
 const useEditorial = Boolean(titleEditorial?.lines?.length);
 
 const disabled =
@@ -64,7 +69,7 @@ const overlayVideo =
       aria-hidden="true"
       poster={backgroundImage}
     >
-      <source src={backgroundVideo} type="video/mp4" />
+      <source src={backgroundVideo?.startsWith('http') ? backgroundVideo : `${import.meta.env.BASE_URL}${backgroundVideo?.replace(/^\//, '')}`} type="video/mp4" />
     </video>
   )}
 
@@ -108,11 +113,11 @@ const overlayVideo =
       </p>
 
       <div class="flex flex-wrap gap-4">
-        <Button href={ctaLink} variant="secondary" size="lg">
+        <Button href={resolvedCtaLink} variant="secondary" size="lg">
           <LocalizedInline value={ctaText} />
         </Button>
         <Button
-          href={secondaryCtaLink}
+          href={resolvedSecondaryCtaLink}
           variant="outline"
           size="lg"
           class="!border-white/35 !text-white hover:!bg-white/10 hover:!border-white/65"

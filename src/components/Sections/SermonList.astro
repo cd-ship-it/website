@@ -32,13 +32,13 @@ try {
 
       <div class="sermons-home-grid">
         {sermons.map((sermon) => (
-          <a href={`/sermons/${sermon.youtube_id}`} class="sermon-card-dark group">
+          <a href={`${import.meta.env.BASE_URL}sermons/${sermon.youtube_id}`} class="sermon-card-dark group">
             <div class="sermon-card-dark-thumb">
               <img
                 src={`https://img.youtube.com/vi/${sermon.youtube_id}/mqdefault.jpg`}
                 alt={sermon.sermon_title}
                 loading="lazy"
-                onerror="this.src='/uploads/sermon-placeholder.webp'"
+                onerror={`this.src='${import.meta.env.BASE_URL}uploads/sermon-placeholder.webp'`}
               />
               <div class="sermon-card-dark-desaturate" aria-hidden="true"></div>
               <div class="sermon-card-dark-play">
@@ -60,7 +60,7 @@ try {
 
       {showViewAll && (
         <div class="mt-8 flex justify-end">
-            <Button href="/sermons" variant="primary" size="lg">
+            <Button href={`${import.meta.env.BASE_URL}sermons`} variant="primary" size="lg">
                 View all sermons
               </Button>
         </div>

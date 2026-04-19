@@ -37,7 +37,7 @@ import LocalizedInline from "../UI/LocalizedInline.astro";
           "zh-Hans": "我们也是。我们亲身经历过，深知这是真实的。汇点是一个湾区群体，我们经历了困难——却选择了一起继续前行。"
         }} />
       </p>
-      <a href="/our-season" class="manifesto-cta">
+      <a href={`${import.meta.env.BASE_URL}our-season`} class="manifesto-cta">
         <LocalizedInline value={{ en: "Our story", "zh-Hant": "我們的故事", "zh-Hans": "我们的故事" }} />
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path d="M5 12h14M12 5l7 7-7 7"/>

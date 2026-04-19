@@ -1,3 +1,4 @@
+import type { WpDynamicPageConfig } from "../config/wpDynamicPages";
 import {
   getWpCategoryBySlug,
   getWpPages,
@@ -9,6 +10,8 @@ import type { WpPost } from "./types";
 
 export type WpMirrorItem = WpPost & {
   type?: string;
+  /** Canonical permalink from WordPress REST (`link`). */
+  link?: string;
 };
 
 export function parseWordPressIds(rawIds?: string): number[] {
@@ -71,6 +74,54 @@ export async function fetchLatestWordPressPostByCategorySlug(
     order: "desc",
   });
   return posts[0] ?? null;
+}
+
+/**
+ * Loads the WordPress record for a top-level dynamic page (`src/pages/[slug].astro`).
+ */
+export async function fetchWpDynamicPageRecord(
+  cfg: WpDynamicPageConfig,
+): Promise<WpMirrorItem | null> {
+  try {
+    if (cfg.kind === "wordpress_page" && cfg.wpPageSlug) {
+      return await fetchWordPressPageBySlug(cfg.wpPageSlug);
+    }
+    if (cfg.kind === "wordpress_category_latest_post" && cfg.wpCategorySlug) {
+      return await fetchLatestWordPressPostByCategorySlug(cfg.wpCategorySlug);
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+export function wpMirrorDisplayDates(record: WpMirrorItem | null): {
+  dateIso: string | null;
+  dateLong: string | null;
+} {
+  if (!record?.date) {
+    return { dateIso: null, dateLong: null };
+  }
+  const d = new Date(record.date);
+  return {
+    dateIso: d.toISOString().slice(0, 10),
+    dateLong: d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+  };
+}
+
+export function shouldShowWpDynamicPostTitle(
+  cfg: WpDynamicPageConfig,
+  record: WpMirrorItem | null,
+): boolean {
+  return (
+    cfg.kind === "wordpress_category_latest_post" &&
+    cfg.showPostTitle !== false &&
+    Boolean(record?.title?.rendered)
+  );
 }
 
 export function mergeWordPressMirrorItems(
