@@ -9,8 +9,7 @@ error() { echo -e "${RED}✖  $1${NC}"; exit 1; }
 
 # ── 1. Build for production ───────────────────────────────────────────────────
 step "Building for production (base=/v2)..."
-sed -i '' 's/^PLATFORM=development/PLATFORM=production/' .env
-PLATFORM=production npm run build || { sed -i '' 's/^PLATFORM=production/PLATFORM=development/' .env; error "Build failed."; }
+PLATFORM=production npm run build || error "Build failed."
 
 # ── 2. Deploy dist/ to server via rsync ───────────────────────────────────────
 step "Deploying to crosspointchurchsv.org/v2 via rsync..."
@@ -30,10 +29,5 @@ else
 fi
 
 git push origin HEAD
-
-# ── 4. Restore local .env to development ─────────────────────────────────────
-step "Restoring PLATFORM=development in .env..."
-sed -i '' 's/^PLATFORM=production/PLATFORM=development/' .env
-echo "  .env restored."
 
 echo -e "\n${GREEN}✓ Done. Site is live at https://crosspointchurchsv.org/v2${NC}\n"

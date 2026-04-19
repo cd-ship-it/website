@@ -92,6 +92,17 @@ export async function getWpPosts(
   });
 }
 
+export async function getWpPages(
+  params: QueryParams = {},
+): Promise<WpPost[]> {
+  return fetchFromWordPress<WpPost[]>("pages", {
+    per_page: 100,
+    status: "publish",
+    _embed: "1",
+    ...params,
+  });
+}
+
 interface WpCategory {
   id: number;
   slug: string;

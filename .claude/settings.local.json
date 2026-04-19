@@ -16,7 +16,9 @@
       "Bash(grep -oE '\\(Mon|Tue|Wed|Thu|Fri|Sat|Sun\\), \\(January|February|March|April|May|June|July|August|September|October|November|December\\) [0-9]+, 20[0-9]{2}')",
       "Bash(PLATFORM=production npm run build)",
       "Bash(git -C /Users/fredng/projects/crosspointweb3.0 remote -v)",
-      "Bash(chmod +x /Users/fredng/projects/crosspointweb3.0/build2prod.sh)"
+      "Bash(chmod +x /Users/fredng/projects/crosspointweb3.0/build2prod.sh)",
+      "Bash(node -e ' *)",
+      "Bash(PLATFORM=production node *)"
     ]
   }
 }

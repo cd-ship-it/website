@@ -2,16 +2,12 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
-  getWpCategoryBySlug,
-  getWpPageById,
-  getWpPostById,
-  getWpPostsByCategoryId,
-} from "../../lib/wordpress";
-import type { WpPost } from "../../lib/wordpress/types";
-
-type WpMirrorItem = WpPost & {
-  type?: string;
-};
+  fetchExplicitWordPressItemsById,
+  fetchWordPressItemsByCategorySlug,
+  mergeWordPressMirrorItems,
+  parseWordPressIds,
+  type WpMirrorItem,
+} from "../../lib/wordpress/mirror";
 
 interface StaticPathProps extends Record<string, unknown> {
   item: WpMirrorItem;
@@ -19,73 +15,14 @@ interface StaticPathProps extends Record<string, unknown> {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const parseMirrorIds = (rawIds?: string): number[] => {
-    if (!rawIds) {
-      return [];
-    }
-
-    return rawIds
-      .split(",")
-      .map((value) => Number.parseInt(value.trim(), 10))
-      .filter((value) => Number.isInteger(value) && value > 0);
-  };
-
-  const mergeMirrorItems = (
-    categoryItems: WpMirrorItem[],
-    explicitItems: WpMirrorItem[],
-  ): WpMirrorItem[] => {
-    const keyToItem = new Map<string, WpMirrorItem>();
-    const lowerSlugToItemKey = new Map<string, string>();
-
-    const putItem = (item: WpMirrorItem, isExplicit: boolean) => {
-      const type = item.type ?? "post";
-      const key = `${type}:${item.id}`;
-      const lowerSlug = item.slug.toLowerCase();
-      const existingKey = lowerSlugToItemKey.get(lowerSlug);
-
-      if (existingKey && existingKey !== key) {
-        if (isExplicit) {
-          console.warn(
-            `[wp-mirror] slug collision "${item.slug}" replaced by explicit ID (${key}) over ${existingKey}`,
-          );
-          keyToItem.delete(existingKey);
-        } else {
-          console.warn(
-            `[wp-mirror] slug collision "${item.slug}" ignored for ${key} (already used by ${existingKey})`,
-          );
-          return;
-        }
-      }
-
-      lowerSlugToItemKey.set(lowerSlug, key);
-      keyToItem.set(key, item);
-    };
-
-    for (const item of categoryItems) {
-      putItem(item, false);
-    }
-    for (const item of explicitItems) {
-      putItem(item, true);
-    }
-
-    return Array.from(keyToItem.values());
-  };
-
   const categorySlug = import.meta.env.PUBLIC_WP_MIRROR_CATEGORY_SLUG ?? "wp_mirror";
-  const mirrorIds = parseMirrorIds(import.meta.env.PUBLIC_WP_MIRROR_IDS);
+  const mirrorIds = parseWordPressIds(import.meta.env.PUBLIC_WP_MIRROR_IDS);
 
-  const explicitItems = (
-    await Promise.all(
-      mirrorIds.map(async (id) => {
-        const [post, page] = await Promise.all([getWpPostById(id), getWpPageById(id)]);
-        return [post, page].filter(Boolean) as WpMirrorItem[];
-      }),
-    )
-  ).flat();
-
-  const category = await getWpCategoryBySlug(categorySlug);
-  const categoryItems = category ? await getWpPostsByCategoryId(category.id) : [];
-  const mergedItems = mergeMirrorItems(categoryItems, explicitItems);
+  const [explicitItems, categoryItems] = await Promise.all([
+    fetchExplicitWordPressItemsById(mirrorIds),
+    fetchWordPressItemsByCategorySlug(categorySlug),
+  ]);
+  const mergedItems = mergeWordPressMirrorItems(categoryItems, explicitItems);
 
   const paths: Array<{ params: { slug: string }; props: StaticPathProps }> = [];
   const seenRouteSlugs = new Set<string>();

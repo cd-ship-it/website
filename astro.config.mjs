@@ -1,11 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { loadEnv } from 'vite';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
-const env = loadEnv('', process.cwd(), '');
-const isProduction = env.PLATFORM === 'production';
+const isProduction = process.env.PLATFORM === 'production';
 
 // https://astro.build/config
 export default defineConfig({
