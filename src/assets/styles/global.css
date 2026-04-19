@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300;0,400;0,500;0,600;0,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -55,7 +55,7 @@
 
   /* Font stacks + motion (homepage panel-deck / pathways) */
   --serif: 'Playfair Display', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --sans: 'Chivo', system-ui, -apple-system, sans-serif;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -81,11 +81,16 @@
   }
 
   body {
-    @apply font-sans text-ink bg-cream;
+    @apply font-sans font-light text-ink bg-cream;
   }
 
-  h1, h2, h3, h4, h6 {
-    @apply font-serif font-bold text-heading;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold italic text-heading;
   }
 
   h1 {
@@ -104,9 +109,30 @@
     @apply text-xl md:text-2xl;
   }
 
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+
   h6 {
     @apply text-base md:text-lg;
   }
+}
+
+/* ─── Header navigation: Chivo 400 for menu labels (overrides body font-light) ─ */
+#site-header nav a,
+#site-header nav button,
+#site-header #mobile-menu a,
+#site-header #mobile-menu button,
+#site-header #nav-alt-flyout a,
+#site-header #nav-alt-flyout button {
+  font-family: var(--sans);
+  font-weight: 400;
+}
+
+#site-header .nav-lang-pill,
+#site-header .nav-lang-pill[aria-pressed="true"] {
+  font-family: var(--sans);
+  font-weight: 400;
 }
 
 /* ─── Components ──────────────────────────────────────────────────────────── */
@@ -178,8 +204,7 @@
     @apply p-8 lg:p-10 flex flex-col justify-center;
   }
 
-  /** Orange subhead (pastor role, etc.); matches default `<h5>`. */
-  h5,
+  /** Orange label line (use class; semantic `<h5>` uses global Playfair heading styles). */
   .subheader-orange {
     @apply font-sans font-normal text-base text-orange-500 mb-4 leading-snug;
   }
@@ -226,7 +251,7 @@
   }
 
   .section-heading {
-    @apply font-serif font-bold text-heading mb-4;
+    @apply font-serif font-bold italic text-heading mb-4;
     font-size: var(--font-section-major);
     line-height: 1.15;
   }
@@ -273,19 +298,19 @@
 
   /** Card-level or in-rail h2 (was ad hoc text-2xl). */
   .subsection-heading {
-    @apply font-serif font-bold text-heading;
+    @apply font-serif font-bold italic text-heading;
     font-size: var(--font-subsection);
     line-height: 1.3;
   }
 
   /** FAQ / form group h3 (was text-xl font-bold). */
   .subhead {
-    @apply mb-4 font-serif font-bold text-heading text-xl;
+    @apply mb-4 font-serif font-bold italic text-heading text-xl;
   }
 
   /** Compact card title (was text-lg font-bold). */
   .subhead-sm {
-    @apply font-serif font-bold text-heading text-lg;
+    @apply font-serif font-bold italic text-heading text-lg;
   }
 
   /** Calendar month chip, meta badges (unifies 10px/11px ad hoc sizes). */
@@ -299,7 +324,7 @@
 
   /** Long-form HTML (Markdown, CMS): one preset for blog, events, ministries, about. */
   .prose-content {
-    @apply prose prose-lg max-w-none prose-headings:text-heading prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-p:text-ink-3 prose-li:text-ink-3 prose-strong:text-gray-900 prose-a:text-primary-600 hover:prose-a:text-primary-700;
+    @apply prose prose-lg max-w-none prose-headings:text-heading prose-headings:italic prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h4:text-lg prose-p:text-ink-3 prose-li:text-ink-3 prose-strong:text-gray-900 prose-a:text-primary-600 hover:prose-a:text-primary-700;
   }
 
   /**
@@ -449,36 +474,39 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
   margin-bottom: 0;
 }
 
-/* Campus card grid (service times home) */
+/* Campus card grid (service times home) — full width of parent `.container` (centered on page) */
 .campus-card-grid {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 .campus-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: white;
+  background: var(--cream);
   border-radius: 0.875rem;
-  border: 1.5px solid var(--cream-3);
+  border: none;
+  outline: none;
+  box-shadow: none;
   overflow: hidden;
   text-decoration: none;
-  transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+  transition:
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
 }
 .campus-card:hover {
-  box-shadow: 0 8px 32px rgba(15, 20, 40, 0.13);
-  border-color: var(--orange);
-  transform: translateY(-3px);
+  background: var(--cream-2);
+  box-shadow: 0 16px 40px rgba(15, 20, 40, 0.1);
+  transform: translateY(-5px);
 }
-.campus-card-accent {
-  height: 4px;
-  background: var(--cream-3);
-  flex-shrink: 0;
-  transition: background 0.22s ease;
-}
-.campus-card:hover .campus-card-accent {
-  background: var(--orange);
+.campus-card:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
 }
 .campus-card-body {
   padding: 1.25rem 1.25rem 1.1rem;
@@ -488,16 +516,17 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 }
 .campus-card-day {
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--muted);
   margin-bottom: 0.3rem;
 }
 .campus-card-name {
   font-family: var(--serif);
   font-size: 1.3rem;
   font-weight: 700;
+  font-style: italic;
   color: var(--ink);
   margin-bottom: 0.7rem;
   line-height: 1.2;
@@ -516,14 +545,14 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .campus-card-cta {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--orange-dark);
+  color: var(--ink-3);
   transition: color 0.15s ease, gap 0.15s ease;
   display: flex;
   align-items: center;
   gap: 0.3rem;
 }
 .campus-card:hover .campus-card-cta {
-  color: var(--orange);
+  color: var(--primary-700);
   gap: 0.5rem;
 }
 @media (max-width: 640px) {
@@ -622,6 +651,7 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .pathway-card-title {
   font-family: var(--serif);
   font-weight: 700;
+  font-style: italic;
   font-size: 2rem;
   color: var(--white);
   line-height: 1.2;
@@ -796,6 +826,7 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .panel-deck .hero-h1 {
   font-family: var(--serif);
   font-weight: 900;
+  font-style: italic;
   font-size: clamp(3.5rem, 9vw, 8rem);
   line-height: 0.95;
   color: #fff;
@@ -829,7 +860,7 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 }
 .hero-scroll-hint {
   position: absolute;
-  bottom: 24px; right: 24px;
+  bottom: 112px; right: 24px;
   z-index: 2;
   display: flex; flex-direction: column;
   align-items: center; gap: 6px;
@@ -845,6 +876,59 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 }
 .hero-scroll-arrow svg { display: block; }
 
+/* Home hero — editorial title stack (kicker + primary / terracotta accent lines on video) */
+.hero-editorial__kicker-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin-bottom: clamp(0.05rem, 3vw, 0.05rem);
+  min-width: 0;
+  max-width: 100%;
+}
+.hero-editorial__bullet {
+  color: #d4653a;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.45;
+  flex-shrink: 0;
+  margin-top: 0.12em;
+}
+.hero-editorial__kicker-text {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  /* Shrink on narrow viewports so one line fits without wrapping */
+  font-size: clamp(0.6rem, 0.42rem + 2.1vw, 1.45rem);
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.38;
+  min-width: 0;
+}
+.hero-editorial__kicker-text .st-lang {
+  white-space: nowrap;
+}
+.hero-editorial__headline {
+  margin: 0;
+  /* Slightly more aggressive clamp so two nowrap headline lines fit on phones */
+  font-size: clamp(1.65rem, 7.5vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+.hero-editorial__line {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.hero-editorial__line--primary {
+  font-style: normal;
+  color: #fff;
+}
+.hero-editorial__line--accent {
+  font-style: italic;
+  color: var(--orange);
+}
+
 @keyframes cue {
   0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
   50%      { opacity: 0.7; transform: translateX(-50%) translateY(6px); }
@@ -857,16 +941,16 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .panel-deck .story-img img { width: 100%; height: 100%; object-fit: cover; }
 .panel-deck .story-text { display: flex; flex-direction: column; justify-content: center; padding: 6rem 5rem; }
 .panel-deck .story-eyebrow { font-size: 0.675rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); margin-bottom: 1.5rem; }
-.panel-deck .story-h2 { font-family: var(--serif); font-weight: 900; font-size: clamp(2.5rem, 4vw, 4.5rem); color: var(--off-black); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+.panel-deck .story-h2 { font-family: var(--serif); font-weight: 900; font-style: italic; font-size: clamp(2.5rem, 4vw, 4.5rem); color: var(--off-black); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
 .panel-deck .story-h2 em { font-style: italic; color: var(--blue); }
 .panel-deck .story-body { font-size: 1rem; color: var(--warm-gray); line-height: 1.8; max-width: 380px; margin-bottom: 2.5rem; }
 .panel-deck .story-stats { display: flex; gap: 3rem; margin-bottom: 2.5rem; }
-.panel-deck .story-stat-n { font-family: var(--serif); font-weight: 900; font-size: 2.75rem; color: var(--off-black); line-height: 1; }
+.panel-deck .story-stat-n { font-family: var(--serif); font-weight: 900; font-style: italic; font-size: 2.75rem; color: var(--off-black); line-height: 1; }
 .panel-deck .story-stat-l { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warm-gray); margin-top: 0.25rem; }
 .panel-deck .panel--connect { background: var(--ink); }
 .panel-deck .panel--connect .panel-inner { flex-direction: column; padding: 7rem 2.5rem; max-width: 1360px; margin: 0 auto; width: 100%; }
 .panel-deck .connect-header { display: flex; align-items: flex-end; justify-content: space-between; width: 100%; margin-bottom: 3rem; gap: 2rem; }
-.panel-deck .connect-h2 { font-family: var(--serif); font-weight: 900; font-size: clamp(2.5rem, 5vw, 5rem); color: #fff; line-height: 1; letter-spacing: -0.025em; }
+.panel-deck .connect-h2 { font-family: var(--serif); font-weight: 900; font-style: italic; font-size: clamp(2.5rem, 5vw, 5rem); color: #fff; line-height: 1; letter-spacing: -0.025em; }
 .panel-deck .connect-h2 em { font-style: italic; color: var(--orange); }
 .panel-deck .connect-sub { font-size: 0.875rem; color: rgba(255, 255, 255, 0.35); max-width: 200px; line-height: 1.6; text-align: right; }
 .panel-deck .connect-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; width: 100%; }
@@ -876,10 +960,10 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .panel-deck .connect-card-scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15, 14, 12, 0.05) 40%, rgba(15, 14, 12, 0.8) 100%); }
 .panel-deck .connect-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; }
 .panel-deck .connect-card-tag { font-size: 0.625rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 0.35rem; }
-.panel-deck .connect-card-title { font-family: var(--serif); font-weight: 700; font-size: 1.25rem; color: #fff; line-height: 1.2; margin-bottom: 0.6rem; }
+.panel-deck .connect-card-title { font-family: var(--serif); font-weight: 700; font-style: italic; font-size: 1.25rem; color: #fff; line-height: 1.2; margin-bottom: 0.6rem; }
 .panel-deck .connect-card-arrow { font-size: 0.75rem; color: rgba(255, 255, 255, 0.45); display: flex; align-items: center; gap: 0.35rem; font-weight: 500; }
 .panel-deck .sermons-header { display: flex; align-items: flex-end; justify-content: space-between; width: 100%; margin-bottom: 3rem; }
-.panel-deck .sermons-h2 { font-family: var(--serif); font-weight: 900; font-size: clamp(2.5rem, 5vw, 5.5rem); color: var(--off-black); line-height: 1; letter-spacing: -0.025em; }
+.panel-deck .sermons-h2 { font-family: var(--serif); font-weight: 900; font-style: italic; font-size: clamp(2.5rem, 5vw, 5.5rem); color: var(--off-black); line-height: 1; letter-spacing: -0.025em; }
 .panel-deck .sermons-h2 em { font-style: italic; color: var(--blue); }
 .panel-deck .sermons-link { font-size: 0.875rem; color: var(--warm-gray); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; font-weight: 500; }
 .panel-deck .sermons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; width: 100%; }
@@ -894,10 +978,10 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
 .panel-deck .badge-en { background: rgba(31, 110, 179, 0.1); color: var(--blue); }
 .panel-deck .badge-yue { background: rgba(245, 160, 32, 0.12); color: var(--orange-dk); }
 .panel-deck .badge-man { background: rgba(28, 26, 23, 0.07); color: var(--warm-gray); }
-.panel-deck .sermon-title { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; color: var(--off-black); line-height: 1.3; margin-bottom: 0.5rem; }
+.panel-deck .sermon-title { font-family: var(--serif); font-weight: 700; font-style: italic; font-size: 1.05rem; color: var(--off-black); line-height: 1.3; margin-bottom: 0.5rem; }
 .panel-deck .sermon-meta { font-size: 0.775rem; color: var(--warm-gray); }
 .panel-deck .cta-glow { position: absolute; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(245, 160, 32, 0.18), transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-.panel-deck .cta-h2 { position: relative; font-family: var(--serif); font-weight: 900; font-size: clamp(3rem, 8vw, 7.5rem); color: #fff; line-height: 0.95; letter-spacing: -0.025em; margin-bottom: 2rem; }
+.panel-deck .cta-h2 { position: relative; font-family: var(--serif); font-weight: 900; font-style: italic; font-size: clamp(3rem, 8vw, 7.5rem); color: #fff; line-height: 0.95; letter-spacing: -0.025em; margin-bottom: 2rem; }
 .panel-deck .cta-h2 em { font-style: italic; color: var(--orange); }
 .panel-deck .cta-p { position: relative; font-size: 1.05rem; color: rgba(255, 255, 255, 0.5); max-width: 380px; margin: 0 auto 3rem; line-height: 1.75; }
 .panel-deck .cta-actions { position: relative; display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }

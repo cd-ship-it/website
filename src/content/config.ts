@@ -84,9 +84,19 @@ const siteInfoCollection = defineCollection({
     })).optional(),
     /** home-hero.md fields */
     hero: z.object({
+      /** Stacked editorial headline (kicker + lines). When set, overrides plain `heroTitle` in the hero. */
+      heroTitleEditorial: z.object({
+        kicker: localizedText.optional(),
+        lines: z.array(z.object({
+          style: z.enum(['primary', 'accent']),
+          text: localizedText,
+        })).min(1).max(12),
+      }).optional(),
       heroTitle:         localizedText.optional(),
       heroSubtitle:      localizedText.optional(),
       backgroundImage:   z.string().optional(),
+      /** Path under `public/` (e.g. `/uploads/xp_ai.mp4`). Disabled when `PUBLIC_HERO_VIDEO_DISABLED` is set. */
+      backgroundVideo:   z.string().optional(),
       ctaText:           localizedText.optional(),
       ctaLink:           z.string().optional(),
       secondaryCtaText:  localizedText.optional(),
@@ -144,12 +154,6 @@ const campusCollection = defineCollection({
       address: localizedOrString,
       region: localizedOrString.optional(),
     }).optional(),
-    /** Practical notes for first-time visitors. */
-    firstVisitNotes: z.object({
-      parking: localizedOrString.optional(),
-      arrival: localizedOrString.optional(),
-      kidsCheckIn: localizedOrString.optional(),
-    }).optional(),
     /** Curated campus photo slots; use placeholders until final assets are ready. */
     photoShowcase: z.array(z.object({
       image: z.string(),
@@ -162,6 +166,8 @@ const campusCollection = defineCollection({
     googleMapsZoom: z.number().optional(),
     /** Optional external life group directory link for this campus. */
     lifeGroupDirectoryUrl: z.string().url().optional(),
+    /** Public campus / congregation website (shown on the Service Times card). */
+    campusWebsiteUrl: z.string().url().optional(),
     seo: z.object({
       title: z.string(),
       description: z.string(),
@@ -209,35 +215,6 @@ const pagesCollection = defineCollection({
         }).optional(),
       }).optional(),
       contactPhone: z.string().optional(),
-      draft: z.boolean().default(false),
-    }),
-    z.object({
-      pageKind: z.literal('special-announcements'),
-      seo: z.object({
-        title: localizedText,
-        description: localizedText,
-      }),
-      pageHeader: z.object({
-        backgroundImage: z.string(),
-        title: localizedText,
-        subtitle: localizedText.optional(),
-      }),
-      eyebrow: localizedText,
-      announcementTitle: localizedText,
-      dateLabel: localizedText,
-      letterGreeting: localizedText,
-      letterParagraphs: z.array(localizedText).min(1),
-      prayerIntro: localizedText,
-      prayerBullets: z.array(localizedText).min(1),
-      letterClosing: localizedText,
-      signatureLine1: localizedText,
-      signatureLine2: localizedText,
-      partnersSectionTitle: localizedText,
-      partnersIntro: localizedText,
-      partners: z.array(z.string()),
-      disclaimerSectionTitle: localizedText,
-      disclaimerIntro: localizedText,
-      disclaimer: z.array(z.string()),
       draft: z.boolean().default(false),
     }),
     z.object({
@@ -402,6 +379,32 @@ const navigationLevel2 = z.object({
   children: z.array(navigationLevel3).optional(),
 });
 
+const disclaimerCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    seo: z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+    pageHeader: z.object({
+      backgroundImage: z.string(),
+      title: localizedText,
+      subtitle: localizedText.optional(),
+    }),
+    partnersSection: z.object({
+      heading: localizedText,
+      intro: localizedText,
+      items: z.array(localizedText),
+    }),
+    disclaimerSection: z.object({
+      heading: localizedText,
+      intro: localizedText,
+      items: z.array(localizedText),
+    }),
+    draft: z.boolean().default(false),
+  }),
+});
+
 const navigationCollection = defineCollection({
   type: 'content',
   schema: z.object({
@@ -563,6 +566,7 @@ export const collections = {
   campus: campusCollection,
   giving: givingCollection,
   about: aboutCollection,
+  disclaimer: disclaimerCollection,
   pages: pagesCollection,
   navigation: navigationCollection,
 };

@@ -65,7 +65,7 @@ module.exports = {
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans:  ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Chivo"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         /** Maps to :root tokens in global.css — single place to tune responsive display sizes */
@@ -79,6 +79,8 @@ module.exports = {
           css: {
             'h1, h2, h3, h4, h5, h6': {
               fontFamily: theme('fontFamily.serif').join(', '),
+              fontWeight: '700',
+              fontStyle: 'italic',
               color: theme('colors.heading'),
             },
           },

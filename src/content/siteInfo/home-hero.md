@@ -1,15 +1,28 @@
 ---
 title: "Home Hero"
 hero:
-  heroTitle:
-    en: "Welcome to Crosspoint"
-    zh-Hant: "歡迎來到匯點教會"
-    zh-Hans: "欢迎来到匯點教會"
+  heroTitleEditorial:
+    kicker:
+      en: "Doubt, questions, hard seasons."
+      zh-Hant: "疑惑、迷失、艱難的時光"
+      zh-Hans: "疑惑、迷失、艱難的時光"
+    lines:
+      - style: primary
+        text:
+          en: "You're in the"
+          zh-Hant: "這裡是"
+          zh-Hans: "这里是"
+      - style: accent
+        text:
+          en: "right place."
+          zh-Hant: "屬於你的地方"
+          zh-Hans: "屬於你的地方"
   heroSubtitle:
-    en: "25 Years Strong. Still Moving Forward in Faith."
-    zh-Hant: "25年，繼續同心，與主同行。"
-    zh-Hans: "25年，继续同心，与主同行。"
+    en: "25+ years of faith. Still learning."
+    zh-Hant: "走過二十五年後，憑信，仍在成長"
+    zh-Hans: "走過二十五年後，憑信，仍在成長"
   backgroundImage: "https://crosspointchurchsv.org/wp-content/uploads/2026/03/HistoryHero2.jpg"
+  backgroundVideo: "/uploads/xp_ai.mp4"
   ctaText:
     en: "Plan Your Visit"
     zh-Hant: "計劃探訪"

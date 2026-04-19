@@ -5,10 +5,19 @@ import type { LocalizedText } from "../../lib/i18n";
 
 type LText = string | LocalizedText;
 
+export interface HeroTitleEditorial {
+  kicker?: LocalizedText;
+  lines: { style: "primary" | "accent"; text: LocalizedText }[];
+}
+
 export interface Props {
   title?: LText;
+  /** Stacked editorial headline; when present with lines, replaces `title`. */
+  titleEditorial?: HeroTitleEditorial;
   subtitle?: LText;
   backgroundImage?: string;
+  /** URL path to MP4 in `public/` (e.g. `/uploads/xp_ai.mp4`). Omit or disable via env for image-only hero. */
+  backgroundVideo?: string;
   ctaText?: LText;
   ctaLink?: string;
   secondaryCtaText?: LText;
@@ -17,33 +26,83 @@ export interface Props {
 
 const {
   title            = { en: "Welcome to Crosspoint", "zh-Hant": "歡迎來到匯點教會", "zh-Hans": "欢迎来到汇点教会" },
+  titleEditorial,
   subtitle         = { en: "25 Years Strong. Still Moving Forward in Faith.", "zh-Hant": "25 年恩典。繼續在信仰中前行。", "zh-Hans": "25 年恩典。继续在信仰中前行。" },
   backgroundImage  = "https://crosspointchurchsv.org/wp-content/uploads/2026/03/HistoryHero2.jpg",
+  backgroundVideo,
   ctaText          = { en: "Plan Your Visit",  "zh-Hant": "計劃探訪",  "zh-Hans": "计划探访" },
   ctaLink          = "/im-new",
   secondaryCtaText = { en: "Watch Sermons",    "zh-Hant": "觀看講道",  "zh-Hans": "观看讲道" },
   secondaryCtaLink = "/sermons",
 } = Astro.props;
+
+const useEditorial = Boolean(titleEditorial?.lines?.length);
+
+const disabled =
+  import.meta.env.PUBLIC_HERO_VIDEO_DISABLED === "true" ||
+  import.meta.env.PUBLIC_HERO_VIDEO_DISABLED === "1";
+const useVideo = Boolean(backgroundVideo && !disabled);
+
+const overlayStatic =
+  "linear-gradient(to bottom, rgba(9,21,41,0.75) 0%, rgba(9,21,41,0.25) 28%, rgba(9,21,41,0.55) 62%, rgba(9,21,41,0.90) 100%)";
+/** Stronger navy wash when video runs behind copy (lowers perceived contrast). */
+const overlayVideo =
+  "linear-gradient(to bottom, rgba(9,21,41,0.88) 0%, rgba(9,21,41,0.45) 30%, rgba(9,21,41,0.68) 62%, rgba(9,21,41,0.94) 100%)";
 ---
 
 <section
-  class="relative flex items-end bg-cover bg-center"
+  class="relative flex items-end overflow-hidden bg-cover bg-center"
   style={`background-image: url(${backgroundImage}); min-height: 100svh; min-height: 100vh;`}
 >
-  <!-- Strong navy at top for transparent-nav legibility, lightens in the middle, darkens for text -->
-  <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(9,21,41,0.75) 0%, rgba(9,21,41,0.25) 28%, rgba(9,21,41,0.55) 62%, rgba(9,21,41,0.90) 100%);"></div>
+  {useVideo && (
+    <video
+      class="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover"
+      autoplay
+      muted
+      loop
+      playsinline
+      aria-hidden="true"
+      poster={backgroundImage}
+    >
+      <source src={backgroundVideo} type="video/mp4" />
+    </video>
+  )}
+
+  <div
+    class="absolute inset-0 z-[2]"
+    style={`background: ${useVideo ? overlayVideo : overlayStatic};`}
+  ></div>
 
   <div class="container relative z-10 pb-24 pt-44">
     <div class="max-w-3xl">
-      <!-- Eyebrow: amber line + label -->
-      <div class="flex items-center gap-3 mb-5">
-        <span class="inline-block w-8 h-px bg-secondary-400 opacity-80"></span>
-        <p class="text-secondary-400 text-xs font-semibold tracking-[0.22em] uppercase">Crosspoint Church · Silicon Valley</p>
-      </div>
-
-      <h1 class="font-serif font-bold text-white mb-6 leading-[1.05] text-hero">
-        <LocalizedInline value={title} />
-      </h1>
+      {useEditorial && titleEditorial ? (
+        <div class="hero-editorial mb-6">
+          {titleEditorial.kicker && (
+            <div class="hero-editorial__kicker-row">
+              {/* <span class="hero-editorial__bullet" aria-hidden="true">•</span> */}
+              <p class="hero-editorial__kicker-text">
+                <LocalizedInline value={titleEditorial.kicker} />
+              </p>
+            </div>
+          )}
+          <h1 class="hero-editorial__headline">
+            {titleEditorial.lines.map((line) => (
+              <span
+                class:list={[
+                  "hero-editorial__line",
+                  line.style === "accent" ? "hero-editorial__line--accent" : "hero-editorial__line--primary",
+                ]}
+              >
+                <LocalizedInline value={line.text} />
+              </span>
+            ))}
+          </h1>
+        </div>
+      ) : (
+        <h1 class="font-serif font-bold text-white mb-6 leading-[1.05] text-hero">
+          <LocalizedInline value={title} />
+        </h1>
+      )}
       <p class="text-white/70 text-lg md:text-xl mb-10 max-w-2xl leading-relaxed">
         <LocalizedInline value={subtitle} />
       </p>

@@ -19,7 +19,7 @@ export interface Props {
   sectionHeading?: LocalizedText;
   campuses: CampusRow[];
   /** Defaults match the homepage mockup. */
-  eyebrow?: LocalizedText;
+  // eyebrow?: LocalizedText;
   sectionSub?: LocalizedText;
   planVisitHref?: string;
   planVisitLabel?: LocalizedText;
@@ -28,11 +28,11 @@ export interface Props {
 const {
   sectionHeading,
   campuses,
-  eyebrow = {
-    en: "Five campuses across the Bay Area",
-    "zh-Hant": "灣區五個會堂",
-    "zh-Hans": "湾区五个會堂",
-  },
+  // eyebrow = {
+  //   en: "Five campuses across the Bay Area",
+  //   "zh-Hant": "灣區五個會堂",
+  //   "zh-Hans": "湾区五个會堂",
+  // },
   sectionSub = {
     en: "We gather every week in English, Cantonese, and Mandarin.",
     "zh-Hant": "我們每週以英語、粵語及國語聚會。",
@@ -72,9 +72,8 @@ for (const c of campuses) {
   class="section-default home-section-block"
   aria-labelledby={sectionHeading ? "service-times-heading" : undefined}
 >
-  <div>
-    <div class="home-section-intro">
-      <p class="eyebrow"><LocalizedInline value={eyebrow} /></p>
+  <div class="container">
+    <div class="home-section-intro pl-5">
       {sectionHeading && (
         <h2 id="service-times-heading" class="section-heading">
           <LocalizedInline value={sectionHeading} />
@@ -87,9 +86,8 @@ for (const c of campuses) {
       <div class="campus-card-grid">
         {orderedCampuses.map((campus) => (
           <a class="campus-card" href={campusPageHref(campus.campusName)}>
-            <div class="campus-card-accent" aria-hidden="true"></div>
             <div class="campus-card-body">
-              <div class="campus-card-day">
+              <div class="campus-card-day !text-secondary-500">
                 <LocalizedInline value={campus.worshipDate} />
               </div>
               <h3 class="campus-card-name">
@@ -102,11 +100,11 @@ for (const c of campuses) {
                   </div>
                 ))}
               </div>
-              <div class="campus-card-cta">
+              <div class="campus-card-cta !text-primary-500">
                 <LocalizedInline value={{ en: "Learn more", "zh-Hant": "了解更多", "zh-Hans": "了解更多" }} />
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </div>
-            </div>
+            </div>  
           </a>
         ))}
       </div>

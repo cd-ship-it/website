@@ -1,0 +1,57 @@
+---
+/**
+ * Events / Sermons / Giving — absolutely centered on the header bar (full container width).
+ * Parent must be `position: relative` (see Header.astro).
+ */
+import { I18N, type LocaleStrings } from "../../lib/i18n";
+import LocalizedInline from "../UI/LocalizedInline.astro";
+
+type NavKey = keyof LocaleStrings["nav"];
+
+function navLabel(key: NavKey) {
+  return {
+    en: I18N.en.nav[key],
+    "zh-Hant": I18N["zh-Hant"].nav[key],
+    "zh-Hans": I18N["zh-Hans"].nav[key],
+  };
+}
+
+const currentPath = Astro.url.pathname;
+
+function isLinkActive(href: string) {
+  if (!href || href === "#") return false;
+  return currentPath === href || (href !== "/" && currentPath.startsWith(href));
+}
+
+const centerLinkClass = (active: boolean) =>
+  `text-sm font-normal transition-colors sm:text-base ${
+    active ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
+  }`;
+---
+
+<nav
+  class="pointer-events-auto ml-auto flex items-center gap-3 pr-1 sm:gap-4 md:absolute md:left-1/2 md:top-1/2 md:z-10 md:-translate-x-1/2 md:-translate-y-1/2 md:gap-10 md:pr-0"
+  aria-label="Quick links"
+>
+  <a
+    href="/events"
+    class={centerLinkClass(isLinkActive("/events"))}
+    aria-current={isLinkActive("/events") ? "page" : undefined}
+  >
+    <LocalizedInline value={navLabel("events")} />
+  </a>
+  <a
+    href="/sermons"
+    class={centerLinkClass(isLinkActive("/sermons"))}
+    aria-current={isLinkActive("/sermons") ? "page" : undefined}
+  >
+    <LocalizedInline value={navLabel("sermons")} />
+  </a>
+  <a
+    href="/giving"
+    class={centerLinkClass(isLinkActive("/giving"))}
+    aria-current={isLinkActive("/giving") ? "page" : undefined}
+  >
+    <LocalizedInline value={navLabel("giving")} />
+  </a>
+</nav>

@@ -8,25 +8,16 @@ import SermonList from "../components/Sections/SermonList.astro";
 import FinalCTA from "../components/Sections/FinalCTA.astro";
 import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.astro";
 import NewToCrosspoint from "../components/Sections/new-to-crosspoint.astro";
-import { getCollection } from "astro:content";
+import { getEntry } from "astro:content";
 import type { LocalizedText } from "../lib/i18n";
 
-const siteInfoEntries = await getCollection("siteInfo");
-const matchSiteInfo = (key: string) =>
-  siteInfoEntries.find(
-    (item) =>
-      item.id === key ||
-      item.slug === key ||
-      item.id.endsWith(`/${key}`) ||
-      item.id.endsWith(`/${key}.md`) ||
-      item.id === `${key}.md`,
-  );
-
+// Use getEntry (not getCollection().find) so we resolve the canonical slug and avoid
+// duplicate-id glob warnings where the first match can be stale relative to the last.
 // ── Hero ─────────────────────────────────────────────────────────────────────
-const homeHeroEntry = matchSiteInfo("home-hero");
+const homeHeroEntry = await getEntry("siteInfo", "home-hero");
 const hero = homeHeroEntry?.data.hero;
 
-const serviceTimesEntry = matchSiteInfo("service-times");
+const serviceTimesEntry = await getEntry("siteInfo", "service-times");
 const campuses = (serviceTimesEntry?.data.campuses ?? []) as Array<{
   campusName: string | LocalizedText;
   worshipDate: string | LocalizedText;
@@ -34,9 +25,16 @@ const campuses = (serviceTimesEntry?.data.campuses ?? []) as Array<{
 }>;
 const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText | undefined;
 
+const homeGsapDisabled =
+  import.meta.env.PUBLIC_HOME_GSAP_DISABLED === "true" ||
+  import.meta.env.PUBLIC_HOME_GSAP_DISABLED === "1";
+
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Crosspoint Church · San Francisco Bay Area & Tri-Valley"
+  description="Crosspoint Church serves the San Francisco Bay Area and Tri-Valley — including Livermore, Pleasanton, Dublin, San Ramon, Danville, San Jose, Oakland, Fremont, and nearby communities — with worship, community, and faith for every season."
+>
   <div class="panel-deck">
     <!-- PANEL 1 — HERO -->
     <section class="panel panel--hero">
@@ -45,8 +43,10 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
         {hero ? (
           <HeroSection
             title={hero.heroTitle}
+            titleEditorial={hero.heroTitleEditorial}
             subtitle={hero.heroSubtitle}
             backgroundImage={hero.backgroundImage}
+            backgroundVideo={hero.backgroundVideo}
             ctaText={hero.ctaText}
             ctaLink={hero.ctaLink}
             secondaryCtaText={hero.secondaryCtaText}
@@ -59,7 +59,7 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
         
       </div>
       <!-- Ticker -->
-        <Ticker />
+        <!-- <Ticker /> -->
     </section>
     
     <section class="panel panel--services">
@@ -74,9 +74,9 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
     </section>
 
     <!-- PANEL 3 — Newtocrosspoint -->
-    <section class="panel panel--pathways">
+    <!-- <section class="panel panel--pathways">
       <NewToCrosspoint variant="pathways" />
-    </section>
+    </section> -->
 
     <!-- PANEL 4 — events -->
     <section class="panel panel--events">
@@ -93,6 +93,12 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
       <FinalCTA />
     </section>
   </div>
-  
+
+  {!homeGsapDisabled ? (
+    <script>
+      import { initHomePageGsap } from "../scripts/home-page-gsap";
+      initHomePageGsap();
+    </script>
+  ) : null}
 
 </BaseLayout>

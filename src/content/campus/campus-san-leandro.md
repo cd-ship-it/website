@@ -35,19 +35,6 @@ quickFacts:
     en: "East Bay"
     zh-Hant: "東灣"
     zh-Hans: "东湾"
-firstVisitNotes:
-  parking:
-    en: "Parking is available on site and nearby streets."
-    zh-Hant: "會堂現場與附近街道都有停車位置。"
-    zh-Hans: "会堂现场与附近街道都有停车位置。"
-  arrival:
-    en: "Arrive 10 to 15 minutes early and our team will help you get settled."
-    zh-Hant: "建議提前 10 到 15 分鐘到達，我們的同工會協助你。"
-    zh-Hans: "建议提前 10 到 15 分钟到达，我们的同工会协助你。"
-  kidsCheckIn:
-    en: "Kids check-in support is available before service."
-    zh-Hant: "崇拜前可在兒童報到處獲得協助。"
-    zh-Hans: "崇拜前可在儿童报到处获得协助。"
 photoShowcase:
   - image: "/uploads/SLWOrship.webp"
     placementHint: "hero"
@@ -74,6 +61,7 @@ photoShowcase:
       zh-Hant: "San Leandro 家庭與孩子"
       zh-Hans: "San Leandro 家庭与孩子"
 googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3157.3876985246584!2d-122.136137!3d37.687093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f903621ede44f%3A0xc14617ff498eed29!2s615%20Lewelling%20Blvd%2C%20San%20Leandro%2C%20CA%2094579!5e0!3m2!1sen!2sus!4v1775790883796!5m2!1sen!2sus"
+campusWebsiteUrl: "https://maps.app.goo.gl/pRj7wDqUo4n2qfow8"
 seo:
   title: "San Leandro Campus - Crosspoint Church"
   description: "Join the San Leandro Campus of Crosspoint Church in the East Bay for Cantonese, English, and Mandarin worship services every Sunday."

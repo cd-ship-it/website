@@ -34,19 +34,6 @@ quickFacts:
     en: "South Bay"
     zh-Hant: "南灣"
     zh-Hans: "南湾"
-firstVisitNotes:
-  parking:
-    en: "On-site parking is available around the building."
-    zh-Hant: "會堂周邊設有現場停車位。"
-    zh-Hans: "会堂周边设有现场停车位。"
-  arrival:
-    en: "Come a little early and greeters can guide you to service and check-in areas."
-    zh-Hant: "建議提前到達，接待同工可以帶你到崇拜和報到區。"
-    zh-Hans: "建议提前到达，接待同工可以带你到崇拜和报到区。"
-  kidsCheckIn:
-    en: "Children check-in is available before each service time."
-    zh-Hant: "每堂崇拜前都有兒童報到安排。"
-    zh-Hans: "每堂崇拜前都有儿童报到安排。"
 photoShowcase:
   - image: "/uploads/IMG_7146.webp"
     placementHint: "hero"
@@ -73,6 +60,7 @@ photoShowcase:
       zh-Hant: "Milpitas 家庭與兒童事工"
       zh-Hans: "Milpitas 家庭与儿童事工"
 googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15389.077949286382!2d-121.90497292606004!3d37.423473883732164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fced2020b0cf7%3A0x2392c80d5b78f1d5!2s658%20Gibraltar%20Ct%2C%20Milpitas%2C%20CA%2095035!5e0!3m2!1sen!2sus!4v1775693798486!5m2!1sen!2sus"
+campusWebsiteUrl: "https://maps.app.goo.gl/ZUP7t7jUFSYMeRnYA"
 seo:
   title: "Milpitas Campus - Crosspoint Church"
   description: "Join us at the Milpitas Campus of Crosspoint Church for English, Cantonese, and Mandarin worship services every Sunday."

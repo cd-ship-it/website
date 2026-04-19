@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crosspoint Church | Bold & Simple</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b0b0b; color: white; }
+        .font-black { font-weight: 900; letter-spacing: -0.05em; }
+        .text-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Subtle texture for the "Bold" feel */
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05; pointer-events: none; z-index: 50;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(11,11,11,1));
+        }
+    </style>
+</head>
+<body>
+    <div class="grain"></div>
+
+    <nav class="fixed w-full z-40 p-6 md:p-10 flex justify-between items-center mix-blend-difference">
+        <div class="text-2xl font-black tracking-tighter uppercase">Crosspoint</div>
+        <div class="hidden md:flex gap-8 text-xs font-bold tracking-widest uppercase">
+            <a href="#" class="hover:text-amber-500 transition">Locations</a>
+            <a href="#" class="hover:text-amber-500 transition">Messages</a>
+            <a href="#" class="hover:text-amber-500 transition">Give</a>
+        </div>
+        <button class="bg-white text-black px-6 py-2 text-xs font-black uppercase tracking-tighter">Menu</button>
+    </nav>
+
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-neutral-900">
+            <img src="https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&q=80&w=2000" 
+                 class="w-full h-full object-cover opacity-50 grayscale" alt="Worship">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-6">
+            <h1 class="text-7xl md:text-[12rem] font-black leading-[0.8] uppercase mb-8">
+                You<br>Belong<br>Here.
+            </h1>
+            <p class="text-lg md:text-xl text-neutral-400 max-w-xl mx-auto mb-10 font-medium">
+                No matter your story, your doubts, or your background. Find your home at Crosspoint.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button class="bg-amber-500 text-black px-10 py-5 font-black uppercase tracking-tighter hover:scale-105 transition-transform">
+                    Plan Your Visit
+                </button>
+                <button class="border border-white/20 backdrop-blur-md px-10 py-5 font-black uppercase tracking-tighter hover:bg-white hover:text-black transition-all">
+                    Watch Latest
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 md:px-20 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+        <div class="md:col-span-7">
+            <h2 class="text-4xl md:text-7xl font-black leading-tight">
+                WE ARE A CHURCH <br> FOR THE <span class="text-serif italic text-amber-500 lowercase font-normal">un-churched.</span>
+            </h2>
+        </div>
+        <div class="md:col-span-5 relative">
+            <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=800" 
+                 class="w-full aspect-[4/5] object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Community">
+            <div class="absolute -bottom-6 -left-6 bg-white text-black p-8 hidden md:block">
+                <p class="text-xs font-bold uppercase tracking-widest mb-2">Our Mission</p>
+                <p class="text-xl font-medium tracking-tight">To help people find and follow Jesus in a modern world.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-neutral-100 text-black py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-end mb-20">
+                <h3 class="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none">Find<br>Your City.</h3>
+                <p class="text-sm font-bold uppercase tracking-widest text-neutral-400 hidden md:block">4 Locations across the Bay Area</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="group relative h-[400px] overflow-hidden bg-black">
+                    <img src="https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=80&w=1000" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Milpitas">
+                    <div class="absolute inset-0 p-10 flex flex-col justify-end text-white">
+                        <h4 class="text-5xl font-black uppercase tracking-tighter">Milpitas</h4>
+                        <p class="text-sm font-bold tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">9:30AM & 11:15AM</p>
+                    </div>
+                </div>
+                <div class="group relative h-[400px] overflow-hidden bg-black">
+                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=1000" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" alt="Pleasanton">
+                    <div class="absolute inset-0 p-10 flex flex-col justify-end text-white">
+                        <h4 class="text-5xl font-black uppercase tracking-tighter">Pleasanton</h4>
+                        <p class="text-sm font-bold tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">10:00AM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 px-6 text-center border-t border-white/10">
+        <div class="text-4xl font-black tracking-tighter uppercase mb-10">Crosspoint</div>
+        <div class="flex flex-wrap justify-center gap-8 text-xs font-bold tracking-widest uppercase text-neutral-500 mb-10">
+            <a href="#" class="hover:text-white">Privacy</a>
+            <a href="#" class="hover:text-white">Terms</a>
+            <a href="#" class="hover:text-white">Contact</a>
+            <a href="#" class="hover:text-white">Instagram</a>
+        </div>
+        <p class="text-[10px] text-neutral-600 uppercase tracking-widest">&copy; 2026 Crosspoint Church. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

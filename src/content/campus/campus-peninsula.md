@@ -34,21 +34,9 @@ quickFacts:
     en: "Peninsula"
     zh-Hant: "半島"
     zh-Hans: "半岛"
-firstVisitNotes:
-  parking:
-    en: "Use nearby public parking around the community center."
-    zh-Hant: "可使用社區中心周邊公共停車位。"
-    zh-Hans: "可使用社区中心周边公共停车位。"
-  arrival:
-    en: "Arrive 10 minutes early to find room locations easily."
-    zh-Hant: "建議提早 10 分鐘到達，方便找到聚會場地。"
-    zh-Hans: "建议提早 10 分钟到达，方便找到聚会场地。"
-  kidsCheckIn:
-    en: "Ask the welcome team for children and family support details."
-    zh-Hant: "可向接待同工詢問兒童與家庭支援安排。"
-    zh-Hans: "可向接待同工询问儿童与家庭支援安排。"
 #photoShowcase:
 googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3164.623800090593!2d-122.27778210000001!3d37.516790099999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f9f5a61652eaf%3A0x6b1efcecbafc42e8!2s40%20Twin%20Pines%20Ln%2C%20Belmont%2C%20CA%2094002!5e0!3m2!1sen!2sus!4v1775791307353!5m2!1sen!2sus"
+campusWebsiteUrl: "https://maps.app.goo.gl/EcawcgxPTsrvWwuW7"
 seo:
   title: "Peninsula Campus - Crosspoint Church"
   description: "Join us at the Peninsula Campus of Crosspoint Church for Cantonese worship services every Sunday along the San Francisco Peninsula."

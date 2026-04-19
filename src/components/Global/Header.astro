@@ -1,13 +1,21 @@
 ---
 import Navigation from "./Navigation.astro";
+import NavigationAlt from "./NavigationAlt.astro";
+import NavigationAltQuickLinks from "./NavigationAltQuickLinks.astro";
+import { NAVIGATION_VARIANT } from "../../config/navigationVariant";
 ---
 
 <header
   id="site-header"
   class="sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-in-out"
 >
-  <div class="container flex items-center justify-between h-18">
-    <a href="/" class="flex items-center shrink-0">
+  <div
+    class:list={[
+      "container flex h-18 items-center gap-4",
+      NAVIGATION_VARIANT === "alt" ? "relative justify-between" : "justify-between",
+    ]}
+  >
+    <a href="/" class="relative z-20 flex shrink-0 items-center">
       <span class="sr-only">Crosspoint Church</span>
       <img
         alt="Crosspoint Church"
@@ -15,7 +23,14 @@ import Navigation from "./Navigation.astro";
         class="h-12 w-auto"
       />
     </a>
-    <Navigation />
+    {NAVIGATION_VARIANT === "alt" ? (
+      <>
+        <NavigationAltQuickLinks />
+        <NavigationAlt />
+      </>
+    ) : (
+      <Navigation />
+    )}
   </div>
 </header>
 

@@ -1,0 +1,53 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+import PageRailSection from "../components/UI/PageRailSection.astro";
+
+const page = await getEntry("disclaimer", "partners-affiliations");
+if (!page) throw new Error('Content entry "disclaimer/partners-affiliations" not found.');
+
+const { seo, pageHeader, partnersSection, disclaimerSection } = page.data;
+const headerBg = pageHeader.backgroundImage;
+---
+
+<BaseLayout title={seo.title} description={seo.description}>
+  <PageHeader
+    title={pageHeader.title}
+    subtitle={pageHeader.subtitle}
+    backgroundImage={headerBg}
+  />
+
+  <PageRailSection cream>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={partnersSection.heading} />
+    </h2>
+    <p class="body-copy mb-6">
+      <LocalizedInline value={partnersSection.intro} />
+    </p>
+    <ul class="list-disc pl-5 space-y-2 body-copy text-ink">
+      {partnersSection.items.map((item) => (
+        <li>
+          <LocalizedInline value={item} />
+        </li>
+      ))}
+    </ul>
+  </PageRailSection>
+
+  <PageRailSection>
+    <h2 class="subsection-heading mb-4">
+      <LocalizedInline value={disclaimerSection.heading} />
+    </h2>
+    <p class="body-copy mb-6">
+      <LocalizedInline value={disclaimerSection.intro} />
+    </p>
+    <ul class="list-disc pl-5 space-y-2 body-copy text-ink">
+      {disclaimerSection.items.map((item) => (
+        <li>
+          <LocalizedInline value={item} />
+        </li>
+      ))}
+    </ul>
+  </PageRailSection>
+</BaseLayout>

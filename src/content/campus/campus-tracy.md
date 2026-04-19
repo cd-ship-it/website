@@ -34,21 +34,9 @@ quickFacts:
     en: "Central Valley"
     zh-Hant: "中央山谷"
     zh-Hans: "中央山谷"
-firstVisitNotes:
-  parking:
-    en: "Street and nearby parking are typically available."
-    zh-Hant: "周邊街道通常可找到停車位。"
-    zh-Hans: "周边街道通常可找到停车位。"
-  arrival:
-    en: "Arrive a bit early so a team member can greet and guide you."
-    zh-Hant: "建議提前到達，讓同工接待並帶你熟悉環境。"
-    zh-Hans: "建议提前到达，让同工接待并带你熟悉环境。"
-  kidsCheckIn:
-    en: "Ask our greeters about children support when you arrive."
-    zh-Hant: "到達後可向接待同工詢問兒童相關安排。"
-    zh-Hans: "到达后可向接待同工询问儿童相关安排。"
 # photoShowcase:
 googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3155.581101259842!2d-121.43282839999998!3d37.7295094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80903d2612a3a701%3A0x4f317b8995147ce!2s489%20W%20Mt%20Diablo%20Ave%2C%20Tracy%2C%20CA%2095376!5e0!3m2!1sen!2sus!4v1775799715002!5m2!1sen!2sus"
+campusWebsiteUrl: "https://maps.app.goo.gl/CDE9Q4PYCdtoHqA8A"
 seo:
   title: "Tracy Campus - Crosspoint Church"
   description: "Join us at the Tracy Campus of Crosspoint Church for Cantonese and Mandarin worship services every Saturday."

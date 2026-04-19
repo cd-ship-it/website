@@ -34,19 +34,6 @@ quickFacts:
     en: "Tri-Valley"
     zh-Hant: "三谷"
     zh-Hans: "三谷"
-firstVisitNotes:
-  parking:
-    en: "Parking is available around the campus area."
-    zh-Hant: "會堂周邊設有可用停車位。"
-    zh-Hans: "会堂周边设有可用停车位。"
-  arrival:
-    en: "Come a little early and a host can guide you to the right room."
-    zh-Hant: "建議提早到達，接待同工可帶你到正確聚會區。"
-    zh-Hans: "建议提早到达，接待同工可带你到正确聚会区。"
-  kidsCheckIn:
-    en: "Family and children support is available before service."
-    zh-Hant: "崇拜前可獲得家庭與兒童支援安排。"
-    zh-Hans: "崇拜前可获得家庭与儿童支援安排。"
 photoShowcase:
   - image: "/uploads/PL-2.webp"
     placementHint: "hero"
@@ -74,6 +61,7 @@ photoShowcase:
       zh-Hans: "Pleasanton 儿童与家庭"
 googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8731.481355771371!2d-121.8998261525114!3d37.687344664247064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fe95c57a49dfd%3A0xa56e85966143a97d!2s5627%20Gibraltar%20Dr%2C%20Pleasanton%2C%20CA%2094588!5e0!3m2!1sen!2sus!4v1775695087122!5m2!1sen!2sus"
 lifeGroupDirectoryUrl: "https://docs.google.com/document/d/e/2PACX-1vTQLpqIdPdRfSJFSceoUHuTRRtdh0KEVCHBdLeEY95av2zr5ofKgNsO9s9RLOw-lXz82IuT9iObElAt/pub"
+campusWebsiteUrl: "https://maps.app.goo.gl/r5FQGabS3VCfxe4g8"
 seo:
   title: "Pleasanton Campus - Crosspoint Church"
   description: "Join us at the Pleasanton Campus of Crosspoint Church for English and Mandarin worship services every Sunday in the Tri-Valley area."

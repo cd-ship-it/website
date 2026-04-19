@@ -162,17 +162,17 @@ items:
           zh-Hant: "牧師團隊"
           zh-Hans: "牧師团队"
         href: "/about-pastors"
+      - id: "partners-affiliations"
+        label:
+          en: "Partners & Affiliations"
+          zh-Hant: "合作夥伴與機構"
+          zh-Hans: "合作伙伴与机构"
+        href: "/disclaimer"
       - id: "contact"
         label:
           en: "Contact Us"
           zh-Hant: "聯絡我們"
           zh-Hans: "联络我们"
-        href: "/contact"        
-      - id: "special-announcements"
-        label:
-          en: "Special Announcements"
-          zh-Hant: "特別通告"
-          zh-Hans: "特别通告"
-        href: "/special-announcements"
+        href: "/contact"
 draft: false
 ---

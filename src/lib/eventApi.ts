@@ -44,6 +44,12 @@ function renderedField(val: unknown): string {
   return asString(rec.rendered);
 }
 
+function firstImageSrcFromHtml(html: string): string {
+  if (!html) return "";
+  const match = html.match(/<img[^>]+src=["']([^"']+)["'][^>]*>/i);
+  return match?.[1]?.trim() ?? "";
+}
+
 function normalizeDateInput(input: string): string {
   if (!input) return "";
   const dateOnly = input.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -122,9 +128,12 @@ function normalizeEvent(raw: unknown): EventItem {
 
   const image =
     pickString(imageObj, ["url", "src", "source_url"]) ||
+    pickString(asRecord(rec.featured_image), ["url", "src", "source_url"]) ||
+    pickString(asRecord(acf.featured_image), ["url", "src", "source_url"]) ||
     pickString(firstMedia, ["source_url"]) ||
     pickString(rec, ["featured_image", "image"]) ||
     pickString(acf, ["featured_image", "image"]) ||
+    firstImageSrcFromHtml(content) ||
     undefined;
 
   const registrationLink =

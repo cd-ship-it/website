@@ -35,9 +35,9 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
   {
     value: "3",
     label: {
-      en: "worship languages",
-      "zh-Hant": "敬拜語言",
-      "zh-Hans": "敬拜语言",
+      en: "languages",
+      "zh-Hant": "語言",
+      "zh-Hans": "语言",
     },
   },
   {
@@ -52,7 +52,7 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
 ---
 
 {s && (
-  <section class="section-default bg-white">
+  <section class="bg-primary-900 px-6 py-[72px] text-white" >
     <div class="container">
       <div class="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <div class="relative overflow-hidden rounded-[1.75rem] bg-primary-950 min-h-[22rem] lg:min-h-[34rem]">
@@ -62,40 +62,31 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
             class="absolute inset-0 h-full w-full object-cover"
           />
           <div class="absolute inset-0 bg-gradient-to-b from-primary-950/10 via-primary-950/25 to-primary-950/75"></div>
-          <div class="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
-            <div class="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm">
-              <span class="inline-block h-1.5 w-1.5 rounded-full bg-secondary-400"></span>
-              Building Family Bliss
-            </div>
-          </div>
+          
         </div>
 
-        <div class="flex flex-col justify-center">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="inline-block h-px w-8 bg-secondary-400 opacity-75"></span>
-            <p class="text-secondary-600 text-xs font-semibold tracking-[0.22em] uppercase">Our Story</p>
-          </div>
-          {s.heading && (
-            <h2 class="font-serif font-bold text-heading leading-tight text-second-hero mb-6">
+        <div class="flex flex-col justify-center text-white">
+           {s.heading && (
+            <h2 class="font-serif font-bold text-heading text-white/90 leading-tight text-second-hero mb-6 whitespace-pre-line">
               <LocalizedInline value={s.heading} />
             </h2>
-          )}
+          )} 
           {s.paragraph1 && (
-            <p class="body-copy text-lg mb-5 max-w-xl">
+            <p class="body-copy text-lg mb-5 max-w-xl text-white/90">
               <LocalizedInline value={s.paragraph1} />
             </p>
           )}
           {s.paragraph2 && (
-            <p class="body-copy text-base mb-8 max-w-xl">
+            <p class="body-copy text-lg mb-8 max-w-xl whitespace-pre-line text-white/90">
               <LocalizedInline value={s.paragraph2} />
             </p>
           )}
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-2xl">
             {storyStats.map((stat) => (
-              <div class="rounded-2xl border border-cream-3 bg-cream px-5 py-4">
-                <div class="font-serif text-3xl font-bold leading-none text-primary-700">{stat.value}</div>
-                <div class="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted">
+              <div class="px-5 py-4">
+                <div class="font-serif text-3xl font-bold leading-none text-white">{stat.value}</div>
+                <div class="mt-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-white/70">
                   <LocalizedInline value={stat.label} />
                 </div>
               </div>

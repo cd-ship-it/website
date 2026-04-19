@@ -1,7 +1,6 @@
 ---
 import { fetchAllEvents } from "../../lib/eventApi";
 import type { EventItem } from "../../lib/eventApi";
-import EventCard from "../UI/EventCard.astro";
 import Button from "../UI/Button.astro";
 
 export interface Props {
@@ -14,24 +13,12 @@ const { count, showViewAll = true } = Astro.props;
 let events: EventItem[] = [];
 try {
   const allEvents = await fetchAllEvents();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const upcoming = allEvents
-    .filter((event) => {
-      const d = new Date(`${event.startDate}T00:00:00`);
-      return !Number.isNaN(d.getTime()) && d >= today;
-    })
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-
-  events = typeof count === "number" ? upcoming.slice(0, count) : upcoming;
+  events = typeof count === "number" ? allEvents.slice(0, count) : allEvents;
 } catch {
   events = [];
 }
 
 const compactEvents = events.slice(0, 6);
-const heroEvent = compactEvents[0];
-const sideEvents = compactEvents.slice(1, 4);
 
 function monthLabel(dateStr: string) {
   return new Date(`${dateStr}T00:00:00`)
@@ -48,220 +35,111 @@ function fullDate(dateStr: string) {
 }
 ---
 
-<section class="events-home">
+<section
+  id="events-home"
+  class="section-default home-section-block"
+  aria-labelledby="events-heading"
+>
   <div class="container">
-    <div class="events-home-header">
-      <div>
-        <p class="eyebrow">What's Happening</p>
-        <h2 class="section-heading">Upcoming Events</h2>
-      </div>
-      {showViewAll && compactEvents.length > 0 && (
-        <a href="/events" class="events-home-all">
-          View all events
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-      )}
+    <div class="home-section-intro pl-5">
+      <h2 id="events-heading" class="section-heading">Upcoming Events</h2>
+      <p class="section-sub">Join us across campuses for upcoming gatherings and ministry events.</p>
     </div>
 
-    {compactEvents.length > 0 ? (
-      <div class="events-home-grid">
-        {/* Featured event — large card */}
-        {heroEvent && (
-          <a href={`/events/${encodeURIComponent(heroEvent.slug)}`} class="events-hero-card group">
-            <div class="events-hero-date">
-              <span class="events-hero-month">{monthLabel(heroEvent.startDate)}</span>
-              <span class="events-hero-day">{dayNum(heroEvent.startDate)}</span>
-            </div>
-            <div class="events-hero-content">
-              <span class="events-hero-badge">Featured</span>
-              <h3 class="events-hero-title">{heroEvent.title}</h3>
-              <p class="events-hero-meta">{fullDate(heroEvent.startDate)}{heroEvent.time && ` · ${heroEvent.time}`}</p>
-              {heroEvent.location && <p class="events-hero-meta">{heroEvent.location}</p>}
-              <span class="events-hero-link group-hover:text-secondary-500">See details →</span>
-            </div>
-          </a>
-        )}
+    <div class="home-section-body">
+      {compactEvents.length > 0 ? (
+        <div class="events-home-grid">
+          {compactEvents.map((event) => (
+            <a href={`/events/${encodeURIComponent(event.slug)}`} class="events-grid-item group">
+              <div class="events-grid-date">
+                <span class="events-grid-month">{monthLabel(event.startDate)}</span>
+                <span class="events-grid-day">{dayNum(event.startDate)}</span>
+              </div>
+              {event.image?.trim() && (
+                <div class="events-grid-thumb">
+                  <img
+                    src={event.image.trim()}
+                    alt={event.title}
+                    loading="lazy"
+                    decoding="async"
+                    onerror="this.closest('.events-grid-thumb')?.remove()"
+                  />
+                </div>
+              )}
+              <div class="events-grid-info">
+                <h3 class="events-grid-title">{event.title}</h3>
+                <p class="events-grid-meta">{fullDate(event.startDate)}{event.time && ` · ${event.time}`}</p>
+                {event.location && <p class="events-grid-meta">{event.location}</p>}
+                <p class="events-grid-cta">
+                  <span class="text-secondary-500">See Details</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-10 bg-cream-2 rounded-2xl">
+          <p class="text-muted">No upcoming events available right now.</p>
+        </div>
+      )}
 
-        {/* Side list — compact rows */}
-        {sideEvents.length > 0 && (
-          <div class="events-side-list">
-            {sideEvents.map((event) => (
-              <a href={`/events/${encodeURIComponent(event.slug)}`} class="events-side-item group">
-                <div class="events-side-date">
-                  <span class="events-side-month">{monthLabel(event.startDate)}</span>
-                  <span class="events-side-day">{dayNum(event.startDate)}</span>
-                </div>
-                <div class="events-side-info">
-                  <h4 class="events-side-title">{event.title}</h4>
-                  <p class="events-side-meta">{fullDate(event.startDate)}{event.time && ` · ${event.time}`}</p>
-                </div>
-              </a>
-            ))}
+      {showViewAll && compactEvents.length > 0 && (
+        <div class="mt-8 flex justify-end">            
+          <Button href="/events" variant="primary" size="lg">
+            View all events
+          </Button>
           </div>
-        )}
-      </div>
-    ) : (
-      <div class="text-center py-10 bg-cream-2 rounded-2xl">
-        <p class="text-muted">No upcoming events available right now.</p>
-      </div>
-    )}
+        </div>
+      )}
+    </div>
   </div>
 </section>
 
 <style>
-  .events-home {
-    background: var(--cream);
-    padding: 5rem 0;
-  }
-
-  .events-home-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    gap: 1rem;
-  }
-  .events-home-header .section-heading { margin-bottom: 0; }
-  .events-home-header .eyebrow { margin-bottom: 0.3rem; }
-
-  .events-home-all {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.15s, gap 0.15s;
-  }
-  .events-home-all:hover { color: var(--ink); gap: 0.55rem; }
-
   .events-home-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
   }
-  @media (min-width: 768px) {
+  @media (max-width: 767px) {
     .events-home-grid {
-      grid-template-columns: 1.3fr 1fr;
-      gap: 2rem;
+      grid-template-columns: 1fr;
     }
   }
 
-  /* ── Hero event ───────────────────────────────── */
-  .events-hero-card {
+  .events-grid-item {
     display: flex;
-    gap: 1.5rem;
-    padding: 2rem;
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--cream-3);
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 1.1rem;
     text-decoration: none;
     color: inherit;
-    transition: box-shadow 0.25s, border-color 0.25s, transform 0.25s;
+    transition: transform 0.15s;
   }
-  .events-hero-card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    border-color: var(--orange);
-    transform: translateY(-2px);
+  .events-grid-item:hover {
+    transform: translateX(2px);
   }
 
-  .events-hero-date {
+  .events-grid-date {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 5rem;
-    padding: 1rem 0.75rem;
-    border-radius: var(--radius);
-    background: var(--cream-2);
-    flex-shrink: 0;
-  }
-  .events-hero-month {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--orange);
-  }
-  .events-hero-day {
-    font-family: var(--serif);
-    font-size: 2.5rem;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--ink);
-  }
-
-  .events-hero-content { flex: 1; min-width: 0; }
-  .events-hero-badge {
-    display: inline-block;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.65rem;
-    border-radius: 9999px;
-    background: rgba(232, 150, 31, 0.12);
-    color: var(--orange);
-    margin-bottom: 0.65rem;
-  }
-  .events-hero-title {
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.25;
-    margin-bottom: 0.5rem;
-  }
-  .events-hero-meta {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 0.15rem;
-  }
-  .events-hero-link {
-    display: inline-block;
-    margin-top: 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--orange-dk);
-    transition: color 0.15s;
-  }
-
-  /* ── Side list ─────────────────────────────────── */
-  .events-side-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .events-side-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.15rem 0;
-    border-bottom: 1px solid var(--cream-3);
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.15s;
-  }
-  .events-side-item:first-child { border-top: 1px solid var(--cream-3); }
-  .events-side-item:hover { background: rgba(0,0,0,0.015); }
-
-  .events-side-date {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     min-width: 3rem;
+    padding: 0.1rem 0;
     flex-shrink: 0;
   }
-  .events-side-month {
-    font-size: 0.6rem;
-    font-weight: 700;
+  .events-grid-month {
+    font-size: 1rem;
+    font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--orange);
   }
-  .events-side-day {
+  .events-grid-day {
     font-family: var(--serif);
     font-size: 1.5rem;
     font-weight: 800;
@@ -269,8 +147,23 @@ function fullDate(dateStr: string) {
     color: var(--ink);
   }
 
-  .events-side-info { flex: 1; min-width: 0; }
-  .events-side-title {
+  .events-grid-thumb {
+    flex-shrink: 0;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--cream-2);
+  }
+  .events-grid-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .events-grid-info { flex: 1; min-width: 0; }
+  .events-grid-title {
     font-family: var(--serif);
     font-size: 1rem;
     font-weight: 700;
@@ -278,8 +171,18 @@ function fullDate(dateStr: string) {
     line-height: 1.3;
     margin-bottom: 0.2rem;
   }
-  .events-side-meta {
+  .events-grid-meta {
     font-size: 0.78rem;
     color: var(--muted);
+    margin-bottom: 0.05rem;
+  }
+  .events-grid-cta {
+    margin-top: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary-500);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 </style>

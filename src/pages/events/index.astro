@@ -101,10 +101,24 @@ try {
     return String(input ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
+  function asRecord(v) {
+    return v && typeof v === "object" ? v : {};
+  }
+
+  function firstImageSrcFromHtml(html) {
+    if (!html) return "";
+    const m = String(html).match(/<img[^>]+src=["']([^"']+)["']/i);
+    return m?.[1]?.trim() ?? "";
+  }
+
   function normalizeEvent(raw) {
     const rec = raw && typeof raw === "object" ? raw : {};
     const acf = rec.acf && typeof rec.acf === "object" ? rec.acf : {};
     const venue = rec.venue && typeof rec.venue === "object" ? rec.venue : {};
+    const embedded = asRecord(rec._embedded);
+    const mediaList = Array.isArray(embedded["wp:featuredmedia"]) ? embedded["wp:featuredmedia"] : [];
+    const firstMedia = asRecord(mediaList[0]);
+    const imageObj = asRecord(rec.image);
 
     const id = pickString(rec, ["id", "event_id", "eventId"]) || pickString(acf, ["id", "event_id"]);
     const title =
@@ -112,6 +126,11 @@ try {
       pickString(rec, ["event_title", "name", "title"]) ||
       pickString(acf, ["event_title", "name", "title"]) ||
       "Untitled Event";
+    const content =
+      rendered(rec.content) ||
+      pickString(rec, ["description", "body", "event_description"]) ||
+      pickString(acf, ["description", "body", "event_description"]) ||
+      "";
     const startDate = normalizeDateInput(
       pickString(rec, ["start_date", "startDate", "event_start_date", "date"]) ||
       pickString(acf, ["start_date", "startDate", "event_start_date", "date"])
@@ -128,6 +147,16 @@ try {
       pickString(acf, ["location", "venue_name"]) ||
       pickString(venue, ["name", "title"]);
 
+    let image =
+      pickString(imageObj, ["url", "src", "source_url"]) ||
+      pickString(asRecord(rec.featured_image), ["url", "src", "source_url"]) ||
+      pickString(asRecord(acf.featured_image), ["url", "src", "source_url"]) ||
+      pickString(firstMedia, ["source_url"]) ||
+      pickString(rec, ["featured_image", "image"]) ||
+      pickString(acf, ["featured_image", "image"]) ||
+      "";
+    if (!image) image = firstImageSrcFromHtml(content);
+
     const safeSlug = compactSlug(title);
 
     return {
@@ -139,6 +168,7 @@ try {
       time: time || undefined,
       summary: "",
       location: location || undefined,
+      image: image || undefined,
     };
   }
 
@@ -181,13 +211,28 @@ try {
     const hasPrebuiltDetails = PREBUILT_EVENT_SLUGS.includes(event.slug);
     const wrapperTag = hasPrebuiltDetails ? "a" : "div";
     const wrapperAttrs = hasPrebuiltDetails
-      ? `href="/events/${encodeURIComponent(event.slug)}" class="group block xp-panel-inner bg-white border border-gray-100 hover:shadow-lg hover:border-primary-200 hover:-translate-y-0.5 transition-all duration-300 p-5 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"`
-      : `class="group block xp-panel-inner bg-white border border-gray-100 p-5 flex flex-col opacity-90" aria-disabled="true"`;
+      ? `href="/events/${encodeURIComponent(event.slug)}" class="group block xp-panel-inner bg-white border border-gray-100 hover:shadow-lg hover:border-primary-200 hover:-translate-y-0.5 transition-all duration-300 flex flex-col overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500"`
+      : `class="group block xp-panel-inner bg-white border border-gray-100 flex flex-col overflow-hidden opacity-90" aria-disabled="true"`;
     const ctaLabel = hasPrebuiltDetails ? "See details →" : "Details available after next update";
+
+    const featuredImg =
+      event.image && String(event.image).trim()
+        ? `<div class="relative aspect-[16/9] w-full shrink-0 bg-cream-2 border-b border-gray-100 overflow-hidden">
+            <img
+              src="${esc(String(event.image).trim())}"
+              alt="${esc(event.title)}"
+              class="h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+              onerror="this.closest('div')?.remove()"
+            />
+          </div>`
+        : "";
 
     return `
       <${wrapperTag} ${wrapperAttrs}>
-        <div class="flex gap-4 items-start">
+        ${featuredImg}
+        <div class="flex gap-4 items-start p-5 flex-1">
           <div class="shrink-0 rounded-lg overflow-hidden border border-gray-200 w-20 h-20 text-center bg-white">
             <div class="bg-secondary-500 text-ink text-micro-label py-1">${esc(monthLabel(event.startDate))}</div>
             <div class="text-2xl font-bold text-heading leading-tight pt-2">${esc(dayNum(event.startDate))}</div>
