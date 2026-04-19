@@ -32,3 +32,9 @@ uploads/**
 
 # Stock / local assets at repo root (not versioned)
 kane-reinholdtsen-LETdkk7wHQk-unsplash.jpg
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
