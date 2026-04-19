@@ -168,7 +168,7 @@ if (!mission || !vision || !history) {
                   <div class="mt-4 flex flex-col gap-2">
                     {entry.images!.map((src) => (
                       <img
-                        src={src}
+                        src={`${import.meta.env.BASE_URL}${src}`}
                         alt={`Crosspoint Church ${entry.year}`}
                         class="w-full rounded-lg object-cover max-h-44"
                         loading="lazy"

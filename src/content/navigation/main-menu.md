@@ -130,7 +130,7 @@ items:
           en: "Heart of a Shepherd"
           zh-Hant: "牧人心語"
           zh-Hans: "牧人心語"
-        href: "/word-of-your-pastor"
+        href: "/heart-of-a-shepherd"
       - id: "membership"
         label:
           en: "Membership"

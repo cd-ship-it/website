@@ -163,7 +163,7 @@ const EVENTS_API_URL = getEventsApiUrl();
   <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
   <section class="relative min-h-[320px] md:min-h-[380px] flex items-center justify-center overflow-hidden">
     <img
-      src={hero.image}
+      src={`${import.meta.env.BASE_URL}${hero.image}`}
       alt={heroAlt}
       class="absolute inset-0 w-full h-full object-cover"
     />
@@ -275,7 +275,7 @@ const EVENTS_API_URL = getEventsApiUrl();
             >
               <div class="overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_-8px_rgba(9,21,41,0.25)] ring-1 ring-primary-900/8">
                 <img
-                  src={photo.image}
+                  src={`${import.meta.env.BASE_URL}${photo.image}`}
                   alt={typeof photo.alt === "string" ? photo.alt : photo.alt.en}
                   class="h-52 w-full object-cover sm:h-56"
                   loading="lazy"

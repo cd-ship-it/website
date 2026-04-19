@@ -91,7 +91,7 @@ function pillarTitleEn(title: unknown): string {
         <div class="max-w-3xl mx-auto text-center">
           {heroImage && (
             <img
-              src={heroImage.src}
+              src={`${base}${heroImage.src}`}
               alt={typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en}
               class="w-80 h-80 object-cover rounded-full mx-auto mb-8 shadow-lg ring-4 ring-secondary-200"
             />
