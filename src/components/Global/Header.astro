@@ -1,18 +1,83 @@
 ---
 import Navigation from "./Navigation.astro";
+import NavigationAlt from "./NavigationAlt.astro";
+import NavigationAltQuickLinks from "./NavigationAltQuickLinks.astro";
+import { NAVIGATION_VARIANT } from "../../config/navigationVariant";
 ---
 
-<header class="sticky top-0 z-50 w-full bg-cream/95 backdrop-blur-md border-b border-cream-3">
-  <div class="container flex items-center justify-between h-18">
-    <a href="/" class="flex items-center shrink-0">
+<header
+  id="site-header"
+  class="sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-in-out"
+>
+  <div
+    class:list={[
+      "container flex h-18 items-center gap-4",
+      NAVIGATION_VARIANT === "alt" ? "relative justify-between" : "justify-between",
+    ]}
+  >
+    <a href="/" class="relative z-20 flex shrink-0 items-center">
       <span class="sr-only">Crosspoint Church</span>
       <img
         alt="Crosspoint Church"
         src="https://crosspointchurchsv.org/wp-content/uploads/2022/04/Xpt-ID2015-1_1400x346-1.png"
-        class="h-14 w-auto"
+        class="h-12 w-auto"
       />
     </a>
-
-    <Navigation />
+    {NAVIGATION_VARIANT === "alt" ? (
+      <>
+        <NavigationAltQuickLinks />
+        <NavigationAlt />
+      </>
+    ) : (
+      <Navigation />
+    )}
   </div>
 </header>
+
+<style>
+  /* Default (over hero): frosted glass so colored logo stays readable */
+  #site-header {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  /* Solid state (past hero / inner pages) */
+  #site-header.is-solid {
+    background-color: #ffffff;
+    border-bottom-color: #e5e7eb;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+</style>
+
+<script>
+  const header = document.getElementById("site-header");
+  const hero = document.querySelector(".panel--hero");
+
+  if (header) {
+    if (hero) {
+      // Transition: frosted glass over hero → solid white when scrolled past
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            header.classList.remove("is-solid");
+          } else {
+            header.classList.add("is-solid");
+          }
+        },
+        { rootMargin: "-72px 0px 0px 0px", threshold: 0 }
+      );
+      obs.observe(hero);
+      // Apply immediately
+      if (hero.getBoundingClientRect().top <= 72) {
+        header.classList.add("is-solid");
+      }
+    } else {
+      // No hero on this page — always solid
+      header.classList.add("is-solid");
+    }
+  }
+</script>

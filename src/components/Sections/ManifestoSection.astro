@@ -1,0 +1,49 @@
+---
+// ManifestoSection — bold typographic statement of Crosspoint's core conviction.
+// "Life goes up. Life goes down. God never moves."
+// Placed directly below the hero to set the tone for the whole page.
+import LocalizedInline from "../UI/LocalizedInline.astro";
+---
+
+<section class="manifesto-section">
+  <div class="container">
+
+    <p class="manifesto-label">
+      <LocalizedInline value={{ en: "Our Foundation", "zh-Hant": "我們的根基", "zh-Hans": "我们的根基" }} />
+    </p>
+
+    <h2 class="manifesto-h2">
+      <span class="manifesto-h2-line manifesto-h2-up">
+        <LocalizedInline value={{ en: "Life goes up.", "zh-Hant": "生命有高峰。", "zh-Hans": "生命有高峰。" }} />
+      </span>
+      <span class="manifesto-h2-line manifesto-h2-down">
+        <LocalizedInline value={{ en: "Life goes down.", "zh-Hant": "生命有低谷。", "zh-Hans": "生命有低谷。" }} />
+      </span>
+      <!-- "God *never* moves." — em wraps only the emphasis word, handled per-language -->
+      <span class="manifesto-h2-line manifesto-h2-god">
+        <span class="st-i18n">
+          <span class="st-lang st-lang-en">God <em class="manifesto-h2-em">never</em> moves.</span>
+          <span class="st-lang st-lang-zh-Hant">上帝<em class="manifesto-h2-em">從不</em>動搖。</span>
+          <span class="st-lang st-lang-zh-Hans">上帝<em class="manifesto-h2-em">从不</em>动摇。</span>
+        </span>
+      </span>
+    </h2>
+
+    <div class="manifesto-footer">
+      <p class="manifesto-body">
+        <LocalizedInline value={{
+          en: "And neither do we. We've tested that. We know it's true. Crosspoint is a Bay Area community that has lived through difficulty — and chosen, together, to keep going.",
+          "zh-Hant": "我們也是。我們親身經歷過，深知這是真實的。匯點是一個灣區群體，我們經歷了困難——卻選擇了一起繼續前行。",
+          "zh-Hans": "我们也是。我们亲身经历过，深知这是真实的。汇点是一个湾区群体，我们经历了困难——却选择了一起继续前行。"
+        }} />
+      </p>
+      <a href="/our-season" class="manifesto-cta">
+        <LocalizedInline value={{ en: "Our story", "zh-Hant": "我們的故事", "zh-Hans": "我们的故事" }} />
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>

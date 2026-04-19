@@ -42,74 +42,127 @@ function pastorBioToLocalizedHtml(
     "zh-Hans": paragraphsToBioHtml(resolveLocalizedSlot(bio, "zh-Hans")),
   };
 }
+
+/** Extract just the first paragraph for the summary preview. */
+function firstParagraph(
+  bio: string | { en: string; "zh-Hant"?: string; "zh-Hans"?: string },
+): LocalizedText {
+  const extract = (raw: string) => {
+    const first = raw.split("\n\n").map((p) => p.trim()).filter(Boolean)[0] ?? "";
+    return first;
+  };
+  if (typeof bio === "string") {
+    const txt = extract(bio);
+    return { en: txt, "zh-Hant": txt, "zh-Hans": txt };
+  }
+  return {
+    en: extract(bio.en ?? ""),
+    "zh-Hant": extract(resolveLocalizedSlot(bio, "zh-Hant")),
+    "zh-Hans": extract(resolveLocalizedSlot(bio, "zh-Hans")),
+  };
+}
+
+const allPastors = pastors ?? [];
 ---
 
 <BaseLayout title={seo.title} description={seo.description}>
   <div class="about-pastors-page">
 
   <PageHeader
-    title={title}
+    title={title ?? pageHeader.title}
     subtitle={pageHeader?.subtitle}
     backgroundImage={headerBg}
   />
 
   <!-- ── Intro ──────────────────────────────────────────────────────────── -->
-  <!-- {pageIntro && (
+  {pageIntro && (
     <section class="py-14 bg-white">
-      <div class="container max-w-3xl mx-auto text-center">
-        <p class="text-xl text-ink-3 leading-relaxed">
-          <LocalizedInline value={pageIntro} />
-        </p>
+      <div class="container max-w-4xl mx-auto">
+        <div class="xp-panel-inner bg-cream p-6 md:p-8">
+        
+          <p class="text-lg md:text-xl text-muted leading-relaxed max-w-[68ch]">
+            <LocalizedInline value={pageIntro} />
+          </p>
+        </div>
       </div>
     </section>
-  )} -->
+  )}
 
-  <!-- ── Pastor Cards ───────────────────────────────────────────────────── -->
-  {pastors && pastors.length > 0 && (
-    <section class="xp-panel">
-      <div class="container-xp-stack">
-        <div class="xp-panel-stack-narrow">
-          {pastors.map((pastor) => (
-            <div class="xp-panel-inner bg-white flex flex-col sm:flex-row gap-0">
+  <!-- ── Pastoral Team ──────────────────────────────────────────────────── -->
+  {allPastors.length > 0 && (
+    <section class="pastor-team py-10 bg-cream">
+      <div class="container max-w-4xl mx-auto">
 
-              <!-- Photo (circular crop) -->
-              <div class="shrink-0 flex justify-center sm:justify-start pt-8 pb-2 sm:py-8 sm:pl-8 sm:pr-0">
-                <div class="h-40 w-40 sm:h-44 sm:w-44 rounded-full overflow-hidden bg-cream-2 ring-2 ring-cream-3 shrink-0">
-                  <img
-                    src={pastor.image}
-                    alt={pickLocalizedText(pastor.name, "en")}
-                    class="h-full w-full object-cover object-center"
-                    loading="lazy"
-                  />
+        <div class="pastor-grid">
+          {allPastors.map((pastor, idx) => (
+            <div class="pastor-card xp-panel-inner bg-white" data-pastor-card>
+              <div class="pastor-card-summary">
+                <div class="shrink-0 flex justify-center sm:justify-start pt-6 pb-2 sm:py-6 sm:pl-6 sm:pr-0">
+                  <div class="h-32 w-32 sm:h-36 sm:w-36 rounded-2xl overflow-hidden bg-cream-2 shadow-sm shrink-0">
+                    <img
+                      src={pastor.image}
+                      alt={pickLocalizedText(pastor.name, "en")}
+                      class="h-full w-full object-cover object-center"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <!-- Info -->
-              <div class="flex flex-col justify-between p-6 flex-1 min-w-0">
-                <div>
-                  <h4>
+                <div class="flex flex-col justify-center p-5 flex-1 min-w-0">
+                  <h2 class="text-xl md:text-2xl font-bold text-ink mb-0.5">
                     <LocalizedInline value={pastor.name} />
-                  </h4>
-                  <h5>
+                  </h2>
+                  <p class="body-copy text-secondary-600 font-medium mb-3">
                     <LocalizedInline value={pastor.title} />
-                  </h5>
-                  <LocalizedHtml value={pastorBioToLocalizedHtml(pastor.bio)} class="body-copy" />
+                  </p>
+                  <p class="body-copy leading-relaxed line-clamp-3">
+                    <LocalizedInline value={firstParagraph(pastor.bio)} />
+                  </p>
+                  <div class="flex items-center gap-4 mt-4">
+                    <button
+                      type="button"
+                      class="pastor-toggle btn btn-primary gap-2 py-2.5 px-4 text-sm shrink-0"
+                      data-pastor-toggle
+                      aria-expanded="false"
+                    >
+                      <span class="toggle-label">
+                        <LocalizedInline value={{ en: "Read full bio", "zh-Hant": "閱讀完整簡介", "zh-Hans": "阅读完整简介" }} />
+                      </span>
+                      <svg class="toggle-icon h-4 w-4 shrink-0 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {pastor.email && (
+                      <a
+                        href={`mailto:${pastor.email}`}
+                        class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-primary-600 hover:underline"
+                      >
+                        <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <LocalizedInline value={{ en: "Email", "zh-Hant": "電郵", "zh-Hans": "电邮" }} />
+                      </a>
+                    )}
+                  </div>
                 </div>
-
-                {pastor.email && (
-                  <a
-                    href={`mailto:${pastor.email}`}
-                    class="inline-flex items-center gap-2 mt-5 text-sm text-primary-600 font-medium hover:underline"
-                  >
-                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    {pastor.email}
-                  </a>
-                )}
               </div>
-
+              <div class="pastor-card-detail" data-pastor-detail hidden>
+                <div class="border-t border-cream-3 mx-6 pt-5 pb-6">
+                  <LocalizedHtml value={pastorBioToLocalizedHtml(pastor.bio)} class="body-copy leading-relaxed max-w-[60ch]" />
+                  {pastor.email && (
+                    <a
+                      href={`mailto:${pastor.email}`}
+                      class="inline-flex items-center gap-2 mt-4 text-sm text-primary-600 font-medium hover:underline"
+                    >
+                      <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      {pastor.email}
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -117,5 +170,104 @@ function pastorBioToLocalizedHtml(
     </section>
   )}
 
+  <!-- ── Contact Strip ──────────────────────────────────────────────────── -->
+  <section class="py-12 bg-white border-t border-cream-3">
+    <div class="container max-w-4xl mx-auto text-center">
+      <p class="text-xs uppercase tracking-widest text-muted mb-2">
+        <LocalizedInline value={{ en: "Need to reach us?", "zh-Hant": "需要聯繫我們？", "zh-Hans": "需要联系我们？" }} />
+      </p>
+      <p class="text-lg text-ink font-semibold mb-4">
+        <LocalizedInline value={{ en: "Church Office", "zh-Hant": "教會辦公室", "zh-Hans": "教会办公室" }} />
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        {contactPhone && (
+          <a href={`tel:${contactPhone.replace(/[^+\d]/g, "")}`} class="btn btn-outline">
+            {contactPhone}
+          </a>
+        )}
+        <a href="/contact" class="btn btn-primary">
+          <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯繫我們", "zh-Hans": "联系我们" }} />
+        </a>
+      </div>
+    </div>
+  </section>
+
   </div>
 </BaseLayout>
+
+<style>
+  .pastor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pastor-card-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  @media (min-width: 640px) {
+    .pastor-card-summary {
+      flex-direction: row;
+    }
+  }
+
+  .pastor-card-detail {
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+    max-height: 0;
+    opacity: 0;
+  }
+  .pastor-card-detail[hidden] {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pastor-card-detail.is-open {
+    max-height: 2000px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .toggle-icon {
+    transition: transform 0.25s ease;
+  }
+  .pastor-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  document.querySelectorAll("[data-pastor-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest("[data-pastor-card]");
+      if (!card) return;
+      const detail = card.querySelector("[data-pastor-detail]");
+      if (!detail) return;
+
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        detail.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+        const label = btn.querySelector(".toggle-label");
+        if (label) {
+          const lang = document.documentElement.lang || "en";
+          const labels: Record<string, string> = { en: "Read full bio", "zh-Hant": "閱讀完整簡介", "zh-Hans": "阅读完整简介" };
+          label.textContent = labels[lang] || labels.en;
+        }
+      } else {
+        detail.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+        const label = btn.querySelector(".toggle-label");
+        if (label) {
+          const lang = document.documentElement.lang || "en";
+          const labels: Record<string, string> = { en: "Hide bio", "zh-Hant": "收起簡介", "zh-Hans": "收起简介" };
+          label.textContent = labels[lang] || labels.en;
+        }
+      }
+    });
+  });
+</script>

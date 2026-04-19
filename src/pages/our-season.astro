@@ -1,0 +1,832 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/UI/Button.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
+
+// ── All trilingual content defined here ──────────────────────────────────────
+const t = {
+  seoTitle: "Still Standing — Our Story | Crosspoint Church",
+  seoDesc:  "Crosspoint Church has been through fire. Here's what the past two years taught us — and why we're still here, still building, and still inviting you in.",
+
+  eyebrow: {
+    en:        "Crosspoint Church · Our Season",
+    "zh-Hant": "匯點教會 · 我們的季節",
+    "zh-Hans": "汇点教会 · 我们的季节",
+  },
+  heroSub: {
+    en:        "Twenty-five years of roots don't wash away. Here's what the storm taught us — and why we're still here.",
+    "zh-Hant": "二十五年的根基不會被沖走。以下是那場風暴給我們的功課——以及我們為何仍然在此。",
+    "zh-Hans": "二十五年的根基不会被冲走。以下是那场风暴给我们的功课——以及我们为何仍然在此。",
+  },
+
+  // Opening
+  openingP1: {
+    en:        "We're not going to pretend the storm was easy. It wasn't. Crosspoint Church went through one of the most painful seasons in its 25-year history. People we loved walked away. Structures that felt permanent shifted overnight. And for a while, the question wasn't where we were going — it was whether we'd make it at all.",
+    "zh-Hant": "我們不打算假裝那場風暴很輕鬆。並非如此。匯點教會經歷了25年歷史中最痛苦的季節之一。我們深愛的人離開了。看似永久的架構在一夜之間改變。有一段時間，問題不是我們要往哪裡走——而是我們能否走下去。",
+    "zh-Hans": "我们不打算假装那场风暴很轻松。并非如此。汇点教会经历了25年历史中最痛苦的季节之一。我们深爱的人离开了。看似永久的架构在一夜之间改变。有一段时间，问题不是我们要往哪里走——而是我们能否走下去。",
+  },
+  openingP2: {
+    en:        "We made it.",
+    "zh-Hant": "我們走過來了。",
+    "zh-Hans": "我们走过来了。",
+  },
+  openingP3: {
+    en:        "Not triumphantly. Not without scars. But we're here, and we think that matters — both for what it says about God, and for what it says about the people who stayed.",
+    "zh-Hant": "不是凱旋而歸，也不是毫髮無傷。但我們在這裡，我們認為這很重要——無論是對上帝所彰顯的，還是對留下來的人所展現的。",
+    "zh-Hans": "不是凯旋而归，也不是毫发无伤。但我们在这里，我们认为这很重要——无论是对上帝所彰显的，还是对留下来的人所展现的。",
+  },
+
+  // Blockquote
+  quote: {
+    en:        "What remains after a storm is not what survived the storm — it's what the storm",
+    "zh-Hant": "風暴過後所留存的，不是挺過了風暴的東西——而是風暴",
+    "zh-Hans": "风暴过后所留存的，不是挺过了风暴的东西——而是风暴",
+  },
+  quoteEm: {
+    en:        "couldn't take.",
+    "zh-Hant": "帶不走的東西。",
+    "zh-Hans": "带不走的东西。",
+  },
+
+  // Hard Part
+  hardPartH2: {
+    en:        "The Hard Part",
+    "zh-Hant": "最艱難的部分",
+    "zh-Hans": "最艰难的部分",
+  },
+  hardP1: {
+    en:        "Loss is real. We didn't lose a few people — we lost a significant portion of our congregation. Friends. Families. Young people we'd invested in for years. And the way some of it happened left wounds that people who decided to stay in the church are still processing.",
+    "zh-Hant": "失去是真實的。我們不只失去了少數人——我們失去了相當大一部分會眾。朋友。家人。我們多年投入培育的年輕人。而這一切發生的方式，留下了教會中誠實的人至今仍在處理的傷痛。",
+    "zh-Hans": "失去是真实的。我们不只失去了少数人——我们失去了相当大一部分会众。朋友。家人。我们多年投入培育的年轻人。而这一切发生的方式，留下了教会中诚实的人至今仍在处理的伤痛。",
+  },
+  hardP2: {
+    en:        "We're not going to recount every detail here. Not because we're hiding anything — but because we believe that dwelling on what broke is not the same as honoring what held.",
+    "zh-Hant": "我們不打算在這裡重述每個細節。不是因為我們在隱瞞什麼——而是因為我們相信，糾結於破碎之處，並不等同於珍惜仍然屹立之物。",
+    "zh-Hans": "我们不打算在这里重述每个细节。不是因为我们在隐瞒什么——而是因为我们相信，纠结于破碎之处，并不等同于珍惜仍然屹立之物。",
+  },
+  hardP3: {
+    en:        "The people who stayed had options. They knew what was happening. They had every reason to walk away, and they didn't. That choice is worth more than anything we could say to explain it.",
+    "zh-Hant": "留下來的人有選擇。他們知道發生了什麼。他們有千百個理由可以離開，但他們沒有。這個選擇，比我們任何的解釋都更有分量。",
+    "zh-Hans": "留下来的人有选择。他们知道发生了什么。他们有千百个理由可以离开，但他们没有。这个选择，比我们任何的解释都更有分量。",
+  },
+  stat1Label: {
+    en:        "Years of faith that held.",
+    "zh-Hant": "年的信仰，屹立不倒。",
+    "zh-Hans": "年的信仰，屹立不倒。",
+  },
+  stat2Label: {
+    en:        "Bay Area campuses.\nStill open. Still growing.",
+    "zh-Hant": "個灣區分堂。\n仍然開放。仍然成長。",
+    "zh-Hans": "个湾区分堂。\n仍然开放。仍然成长。",
+  },
+  stat3Label: {
+    en:        "Church family\nthat chose to stay.",
+    "zh-Hant": "個選擇留下的\n教會家庭。",
+    "zh-Hans": "个选择留下的\n教会家庭。",
+  },
+
+  // What We Learned
+  learnedH2: {
+    en:        "What We Learned",
+    "zh-Hant": "我們學到了什麼",
+    "zh-Hans": "我们学到了什么",
+  },
+  l1h3: { en: "Roots matter more than numbers.", "zh-Hant": "根基比數字更重要。", "zh-Hans": "根基比数字更重要。" },
+  l1p:  {
+    en:        "A congregation of people who are all-in is worth more than a crowd of people who are sort-of-in. We learned that the hard way — and we'd learn it again.",
+    "zh-Hant": "一群全心投入的會眾，比一群半心半意的人更有價值。我們以艱難的方式學到了這一點——即使重來，我們仍願學習這一課。",
+    "zh-Hans": "一群全心投入的会众，比一群半心半意的人更有价值。我们以艰难的方式学到了这一点——即使重来，我们仍愿学习这一课。",
+  },
+  l2h3: { en: "Pruning is painful. It's also how trees grow.", "zh-Hant": "修剪是痛苦的。但這也是樹木生長的方式。", "zh-Hans": "修剪是痛苦的。但这也是树木生长的方式。" },
+  l2p:  {
+    en:        "Every gardener knows that pruning hurts the plant. It also produces fruit. We believe that's what happened here, and the coming seasons will show it.",
+    "zh-Hant": "每個園丁都知道修剪會傷害植物。但修剪也結出果實。我們相信這正是發生在這裡的事，未來的季節將會印證。",
+    "zh-Hans": "每个园丁都知道修剪会伤害植物。但修剪也结出果实。我们相信这正是发生在这里的事，未来的季节将会印证。",
+  },
+  l3h3: { en: "God builds what He wants to build.", "zh-Hant": "上帝建造祂所要建造的。", "zh-Hans": "上帝建造祂所要建造的。" },
+  l3p:  {
+    en:        '"Unless the Lord builds the house, the builders labor in vain." — Psalm 127:1. This is His church. We\'ve always said that. The storm proved it.',
+    "zh-Hant": "「若不是耶和華建造房屋，建造的人就枉然勞力。」——詩篇127:1。這是祂的教會。我們一直這樣說。那場風暴印證了這句話。",
+    "zh-Hans": "「若不是耶和华建造房屋，建造的人就枉然劳力。」——诗篇127:1。这是祂的教会。我们一直这样说。那场风暴印证了这句话。",
+  },
+  l4h3: { en: "Community is a choice, not a convenience.", "zh-Hant": "群體是一種選擇，不是一種方便。", "zh-Hans": "群体是一种选择，不是一种方便。" },
+  l4p:  {
+    en:        "The people in our seats on any given Sunday chose to be there. Knowing that changes how we treat each other. It raises the stakes in the best possible way.",
+    "zh-Hant": "每個主日坐在我們席位上的人，都是選擇來的。知道這一點，改變了我們彼此相待的方式。這以最好的方式提升了我們在乎彼此的深度。",
+    "zh-Hans": "每个主日坐在我们席位上的人，都是选择来的。知道这一点，改变了我们彼此相待的方式。这以最好的方式提升了我们在乎彼此的深度。",
+  },
+  l5h3: { en: "Accountability builds what apology alone cannot.", "zh-Hant": "承擔責任，建立道歉所無法建立的。", "zh-Hans": "承担责任，建立道歉所无法建立的。" },
+  l5p:  {
+    en:        "We've made mistakes — as leaders, as an institution. We name them rather than spin them. A church that cannot be honest about its own shortcomings cannot be trusted to lead anyone else. Owning it is the first step to correcting it. Correcting it is how we get stronger.",
+    "zh-Hant": "我們犯了錯誤——作為領袖，作為機構。我們選擇承認，而非粉飾。一個無法誠實面對自身過失的教會，無法被信任去帶領任何人。承擔責任是改正的第一步。改正，才是我們變得更強的方式。",
+    "zh-Hans": "我们犯了错误——作为领袖，作为机构。我们选择承认，而非粉饰。一个无法诚实面对自身过失的教会，无法被信任去带领任何人。承担责任是改正的第一步。改正，才是我们变得更强的方式。",
+  },
+
+  // To Those Who Stayed
+  stayH2: {
+    en:        "To Everyone Who Stayed",
+    "zh-Hant": "致所有選擇留下的人",
+    "zh-Hans": "致所有选择留下的人",
+  },
+  stayP1: {
+    en:        "We see you. You understood what was happening, and you had every reason to walk away. You didn't. That decision — quiet, costly, and faithful — is the ground this church is now standing on. We don't take that lightly. We never will.",
+    "zh-Hant": "我們看見你們。你們明白發生了什麼，你們有千百個理由可以離開。你們沒有。這個決定——沉默的、代價高昂的、忠實的——正是這間教會現在所站立的根基。我們不會輕視這一點。永遠不會。",
+    "zh-Hans": "我们看见你们。你们明白发生了什么，你们有千百个理由可以离开。你们没有。这个决定——沉默的、代价高昂的、忠实的——正是这间教会现在所站立的根基。我们不会轻视这一点。永远不会。",
+  },
+  stayP2: {
+    en:        "Here is our promise: we will not waste what you gave. Every prayer, every Sunday you showed up, every dollar you trusted us with — it counts. We are building with it. We will keep building, with everything we have.",
+    "zh-Hant": "這是我們的承諾：我們不會浪費你們所給予的。每一個禱告，每一個你們出現的主日，每一分你們信任我們的奉獻——這些都算數。我們正用這一切在建造。我們將竭盡所有，繼續建造。",
+    "zh-Hans": "这是我们的承诺：我们不会浪费你们所给予的。每一个祷告，每一个你们出现的主日，每一分你们信任我们的奉献——这些都算数。我们正用这一切在建造。我们将竭尽所有，继续建造。",
+  },
+  stayP3: {
+    en:        "And here is what we believe with everything in us: God is not done with Crosspoint. What He is building here — through you, through this faithful remnant, through the roots that held when everything else let go — is larger than anything we have yet imagined. You did not stay for a smaller story. The chapters ahead will show it.",
+    "zh-Hant": "而這是我們全心所相信的：上帝對匯點的計劃尚未完成。祂藉著你們——這忠實的餘民，藉著那些在一切動搖時仍然屹立的根基——所要建造的，遠超過我們迄今所能想像的。你們留下來，不是為了一個更小的故事。未來的篇章將會彰顯這一切。",
+    "zh-Hans": "而这是我们全心所相信的：上帝对汇点的计划尚未完成。祂借着你们——这忠实的余民，借着那些在一切动摇时仍然屹立的根基——所要建造的，远超过我们迄今所能想象的。你们留下来，不是为了一个更小的故事。未来的篇章将会彰显这一切。",
+  },
+
+  // Scripture references — "To Those Who Stayed"
+  v1text: {
+    en:        "Now to him who is able to do immeasurably more than all we ask or imagine, according to his power that is at work within us.",
+    "zh-Hant": "神能照著運行在我們心裡的大力，充充足足地成就一切，超過我們所求所想的。",
+    "zh-Hans": "神能照着运行在我们心里的大力，充充足足地成就一切，超过我们所求所想的。",
+  },
+  v1ref: { en: "Ephesians 3:20", "zh-Hant": "以弗所書 3:20", "zh-Hans": "以弗所书 3:20" },
+
+  v2text: {
+    en:        "Being confident of this, that he who began a good work in you will carry it on to completion until the day of Christ Jesus.",
+    "zh-Hant": "我深信那在你們心裡動了善工的，必成全這工，直到耶穌基督的日子。",
+    "zh-Hans": "我深信那在你们心里动了善工的，必成全这工，直到耶稣基督的日子。",
+  },
+  v2ref: { en: "Philippians 1:6", "zh-Hant": "腓立比書 1:6", "zh-Hans": "腓立比书 1:6" },
+
+  v3text: {
+    en:        "The glory of this present house will be greater than the glory of the former house, says the Lord Almighty.",
+    "zh-Hant": "這殿後來的榮耀必大過先前的榮耀。這是萬軍之耶和華說的。",
+    "zh-Hans": "这殿后来的荣耀必大过先前的荣耀。这是万军之耶和华说的。",
+  },
+  v3ref: { en: "Haggai 2:9", "zh-Hant": "哈該書 2:9", "zh-Hans": "哈该书 2:9" },
+
+  // What's Ahead
+  aheadH2: { en: "What's Ahead", "zh-Hant": "未來的展望", "zh-Hans": "未来的展望" },
+  aheadP1: {
+    en:        "We purchased a third building in San Leandro. We have new pastoral leadership. Across the Bay Area, our community continues to gather every week in English, Cantonese, and Mandarin. We are consolidating — bringing our people closer together, concentrating our strength around where God is clearly moving. We are not trying to hold the same map. We are building better ground.",
+    "zh-Hant": "我們在San Leandro購置了第三座堂址。我們有新的牧師領導團隊。在灣區各地，我們的社群每週繼續以英語、廣東話和普通話聚集敬拜。我們正在整合——將我們的人聚得更緊，將我們的力量集中在上帝明顯動工的地方。我們不是要守住原有的版圖。我們是在建立更好的根基。",
+    "zh-Hans": "我们在San Leandro购置了第三座会堂。我们有新的牧师领导团队。在湾区各地，我们的社群每周继续以英语、粤语和普通话聚集敬拜。我们正在整合——将我们的人聚得更紧，将我们的力量集中在上帝明显动工的地方。我们不是要守住原有的版图。我们是在建立更好的根基。",
+  },
+  aheadP2: {
+    en:        "Fewer commitments, made more fully. Deeper roots before wider reach. That is the sequence: regroup, grow, then expand — into a Bay Area that needs a trilingual, multigenerational church more than ever.",
+    "zh-Hant": "更少的承諾，更全心的投入。先扎更深的根，再拓更廣的疆界。這是我們的次序：整合、成長、然後擴展——走向一個比以往任何時候都更需要三語、跨世代教會的灣區。",
+    "zh-Hans": "更少的承诺，更全心的投入。先扎更深的根，再拓更广的疆界。这是我们的次序：整合、成长、然后扩展——走向一个比以往任何时候都更需要三语、跨世代教会的湾区。",
+  },
+  aheadP3: {
+    en:        "The theme we're carrying is simple: Every high. Every low. God is with us. We stay strong. It's not a slogan. It's a testimony. It's what we know because we lived it — and we believe the best of what God has for Crosspoint is still ahead.",
+    "zh-Hant": "我們所承載的主題很簡單：每一個高峰，每一個低谷，上帝與我們同在，我們繼續堅強。這不是一句口號。這是一個見證。這是我們親身經歷所知道的真實——我們相信，上帝為匯點所預備最美好的，仍在前方。",
+    "zh-Hans": "我们所承载的主题很简单：每一个高峰，每一个低谷，上帝与我们同在，我们继续坚强。这不是一句口号。这是一个见证。这是我们亲身经历所知道的真实——我们相信，上帝为汇点所预备最美好的，仍在前方。",
+  },
+  aheadP4: {
+    en:        "We are also being deliberate about how we move forward. We're concentrating our people, our energy, and our resources where they can do the most good — building depth instead of spread. This is not retreat. It's refinement. The goal has never changed: a healthy, rooted, thriving church family.",
+    "zh-Hant": "我們在前進的方式上也保持審慎。我們將我們的人力、精力和資源集中在最能發揮作用的地方——建立深度而非廣度。這不是撤退。這是精煉。我們的目標從未改變：一個健康、有根基、欣欣向榮的教會家庭。",
+    "zh-Hans": "我们在前进的方式上也保持审慎。我们将我们的人力、精力和资源集中在最能发挥作用的地方——建立深度而非广度。这不是撤退。这是精炼。我们的目标从未改变：一个健康、有根基、欣欣向荣的教会家庭。",
+  },
+  aheadP5: {
+    en:        "The Bay Area is home to one of the most diverse Chinese-speaking communities in the world. Crosspoint was built to serve it — in English, Cantonese, and Mandarin. That calling hasn't wavered. We feel it more sharply now than ever. A trilingual Bay Area deserves a church that meets it fully. We intend to be that church.",
+    "zh-Hant": "灣區是全球最多元化的華語社群之一的所在。匯點的建立，就是為了服事這個社群——以英語、廣東話和普通話。這份呼召從未動搖。我們現在比以往更清晰地感受到這份呼召。三語的灣區，值得一間能全然回應的教會。我們立志成為那樣的教會。",
+    "zh-Hans": "湾区是全球最多元化的华语社群之一的所在。汇点的建立，就是为了服事这个社群——以英语、粤语和普通话。这份呼召从未动摇。我们现在比以往更清晰地感受到这份呼召。三语的湾区，值得一间能全然回应的教会。我们立志成为那样的教会。",
+  },
+  ctaPrimary:   { en: "Join Us This Sunday", "zh-Hant": "這週日來聚會", "zh-Hans": "这周日来聚会" },
+  ctaSecondary: { en: "Learn More About Us",  "zh-Hant": "進一步認識我們", "zh-Hans": "进一步认识我们" },
+
+  // Closing
+  closingLabel: { en: "We're still here.", "zh-Hant": "我們仍然在這裡。", "zh-Hans": "我们仍然在这里。" },
+  closingLine1: { en: "Come see",        "zh-Hant": "來看看",          "zh-Hans": "来看看" },
+  closingLine2: { en: "what held.",      "zh-Hant": "留存下來的是什麼。", "zh-Hans": "留存下来的是什么。" },
+};
+---
+
+<BaseLayout title={t.seoTitle} description={t.seoDesc}>
+
+  <!-- ── Hero: "Still Standing." ──────────────────────────────────────── -->
+  <section class="os-hero">
+    <div class="os-hero-inner container">
+      <p class="os-eyebrow">
+        <LocalizedInline value={t.eyebrow} />
+      </p>
+      <h1 class="os-h1">
+        <span class="st-i18n">
+          <span class="st-lang st-lang-en">Still<br /><em>Standing.</em></span>
+          <span class="st-lang st-lang-zh-Hant">仍然<br /><em>屹立。</em></span>
+          <span class="st-lang st-lang-zh-Hans">仍然<br /><em>屹立。</em></span>
+        </span>
+      </h1>
+      <p class="os-hero-sub">
+        <LocalizedInline value={t.heroSub} />
+      </p>
+    </div>
+    <div class="os-hero-scroll" aria-hidden="true">
+      <span class="st-i18n">
+        <span class="st-lang st-lang-en">Scroll</span>
+        <span class="st-lang st-lang-zh-Hant">向下滾動</span>
+        <span class="st-lang st-lang-zh-Hans">向下滚动</span>
+      </span>
+      <div class="os-hero-line"></div>
+    </div>
+  </section>
+
+  <!-- ── Opening statement ────────────────────────────────────────────── -->
+  <section class="os-section os-section--light">
+    <div class="container os-prose-wrap">
+      <p class="os-drop-cap">
+        <LocalizedInline value={t.openingP1} />
+      </p>
+      <p>
+        <LocalizedInline value={t.openingP2} />
+      </p>
+      <p>
+        <LocalizedInline value={t.openingP3} />
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Pull quote ───────────────────────────────────────────────────── -->
+  <section class="os-section os-section--dark">
+    <div class="container">
+
+      <!-- Quote 1: Spurgeon -->
+      <blockquote class="os-blockquote">
+        <p>
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">"I have learned to kiss the wave that throws me against the <em>Rock of Ages.</em>"</span>
+            <span class="st-lang st-lang-zh-Hant">「我學會了親吻那將我拋向<em>萬古磐石</em>的浪潮。」</span>
+            <span class="st-lang st-lang-zh-Hans">「我学会了亲吻那将我抛向<em>万古磐石</em>的浪潮。」</span>
+          </span>
+        </p>
+        <footer class="os-blockquote-cite">
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">— Charles Spurgeon</span>
+            <span class="st-lang st-lang-zh-Hant">——司布真（Charles Spurgeon）</span>
+            <span class="st-lang st-lang-zh-Hans">——司布真（Charles Spurgeon）</span>
+          </span>
+        </footer>
+      </blockquote>
+
+      <!-- Quote 2: Corrie ten Boom -->
+      <blockquote class="os-blockquote">
+        <p>
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">"You can never learn that Christ is all you need, until Christ is <em>all you have.</em>"</span>
+            <span class="st-lang st-lang-zh-Hant">「直到基督是你所擁有的一切，你才能學會基督是你<em>所需要的一切。</em>」</span>
+            <span class="st-lang st-lang-zh-Hans">「直到基督是你所拥有的一切，你才能学会基督是你<em>所需要的一切。</em>」</span>
+          </span>
+        </p>
+        <footer class="os-blockquote-cite">
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">— Corrie ten Boom</span>
+            <span class="st-lang st-lang-zh-Hant">——柯麗·滕·波姆（Corrie ten Boom）</span>
+            <span class="st-lang st-lang-zh-Hans">——柯丽·滕·波姆（Corrie ten Boom）</span>
+          </span>
+        </footer>
+      </blockquote>
+
+      <!-- Quote 3: C.S. Lewis -->
+      <blockquote class="os-blockquote">
+        <p>
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">"God whispers to us in our pleasures, speaks in our conscience, but <em>shouts in our pains</em> — it is His megaphone to rouse a deaf world."</span>
+            <span class="st-lang st-lang-zh-Hant">「上帝在我們的歡樂中低語，在我們的良知中說話，卻在我們的<em>痛苦中呼喊</em>——痛苦是祂喚醒充耳不聞之世界的擴音器。」</span>
+            <span class="st-lang st-lang-zh-Hans">「上帝在我们的欢乐中低语，在我们的良知中说话，却在我们的<em>痛苦中呼喊</em>——痛苦是祂唤醒充耳不闻之世界的扩音器。」</span>
+          </span>
+        </p>
+        <footer class="os-blockquote-cite">
+          <span class="st-i18n">
+            <span class="st-lang st-lang-en">— C.S. Lewis, <cite>The Problem of Pain</cite></span>
+            <span class="st-lang st-lang-zh-Hant">——C.S. 路易斯，《痛苦的奧秘》</span>
+            <span class="st-lang st-lang-zh-Hans">——C.S. 路易斯，《痛苦的奥秘》</span>
+          </span>
+        </footer>
+      </blockquote>
+
+    </div>
+  </section>
+
+  <!-- ── The hard part ────────────────────────────────────────────────── -->
+  <section class="os-section os-section--light">
+    <div class="container os-two-col">
+
+      <div class="os-prose-col">
+        <h2 class="os-h2">
+          <LocalizedInline value={t.hardPartH2} />
+        </h2>
+        <p><LocalizedInline value={t.hardP1} /></p>
+        <p><LocalizedInline value={t.hardP2} /></p>
+        <p><LocalizedInline value={t.hardP3} /></p>
+      </div>
+
+      <div class="os-stat-col">
+        <div class="os-big-stat">
+          <span class="os-stat-num">25</span>
+          <span class="os-stat-label"><LocalizedInline value={t.stat1Label} /></span>
+        </div>
+        <div class="os-big-stat">
+          <span class="os-stat-num">5</span>
+          <span class="os-stat-label"><LocalizedInline value={t.stat2Label} /></span>
+        </div>
+        <div class="os-big-stat">
+          <span class="os-stat-num">1</span>
+          <span class="os-stat-label"><LocalizedInline value={t.stat3Label} /></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── What we learned ──────────────────────────────────────────────── -->
+  <section class="os-section os-section--dark">
+    <div class="container os-prose-wrap">
+      <h2 class="os-h2 os-h2--light">
+        <LocalizedInline value={t.learnedH2} />
+      </h2>
+
+      <div class="os-lessons">
+
+        <div class="os-lesson">
+          <span class="os-lesson-num">01</span>
+          <div>
+            <h3 class="os-lesson-h3"><LocalizedInline value={t.l1h3} /></h3>
+            <p><LocalizedInline value={t.l1p} /></p>
+          </div>
+        </div>
+
+        <div class="os-lesson">
+          <span class="os-lesson-num">02</span>
+          <div>
+            <h3 class="os-lesson-h3"><LocalizedInline value={t.l2h3} /></h3>
+            <p><LocalizedInline value={t.l2p} /></p>
+          </div>
+        </div>
+
+        <div class="os-lesson">
+          <span class="os-lesson-num">03</span>
+          <div>
+            <h3 class="os-lesson-h3"><LocalizedInline value={t.l3h3} /></h3>
+            <p><LocalizedInline value={t.l3p} /></p>
+          </div>
+        </div>
+
+        <div class="os-lesson">
+          <span class="os-lesson-num">04</span>
+          <div>
+            <h3 class="os-lesson-h3"><LocalizedInline value={t.l4h3} /></h3>
+            <p><LocalizedInline value={t.l4p} /></p>
+          </div>
+        </div>
+
+        <div class="os-lesson">
+          <span class="os-lesson-num">05</span>
+          <div>
+            <h3 class="os-lesson-h3"><LocalizedInline value={t.l5h3} /></h3>
+            <p><LocalizedInline value={t.l5p} /></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── To those who stayed ─────────────────────────────────────────── -->
+  <section class="os-section os-section--stay">
+    <div class="container os-prose-wrap">
+      <h2 class="os-h2 os-stay-h2">
+        <LocalizedInline value={t.stayH2} />
+      </h2>
+      <p><LocalizedInline value={t.stayP1} /></p>
+      <p><LocalizedInline value={t.stayP2} /></p>
+      <!-- <p class="os-stay-p3"><LocalizedInline value={t.stayP3} /></p> -->
+
+      <div class="os-scripture-list">
+        <div class="os-scripture-item">
+          <p class="os-scripture-text">"<LocalizedInline value={t.v1text} />"</p>
+          <p class="os-scripture-ref"><LocalizedInline value={t.v1ref} /></p>
+        </div>
+        <div class="os-scripture-item">
+          <p class="os-scripture-text">"<LocalizedInline value={t.v2text} />"</p>
+          <p class="os-scripture-ref"><LocalizedInline value={t.v2ref} /></p>
+        </div>
+        <div class="os-scripture-item">
+          <p class="os-scripture-text">"<LocalizedInline value={t.v3text} />"</p>
+          <p class="os-scripture-ref"><LocalizedInline value={t.v3ref} /></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── What's ahead ─────────────────────────────────────────────────── -->
+  <section class="os-section os-section--light">
+    <div class="container os-prose-wrap">
+      <h2 class="os-h2">
+        <LocalizedInline value={t.aheadH2} />
+      </h2>
+      <p><LocalizedInline value={t.aheadP1} /></p>
+      <p><LocalizedInline value={t.aheadP2} /></p>
+      <p><LocalizedInline value={t.aheadP3} /></p>
+      <p><LocalizedInline value={t.aheadP4} /></p>
+      <p><LocalizedInline value={t.aheadP5} /></p>
+
+      <div class="os-cta-block">
+        <Button href="/im-new" variant="primary" size="lg">
+          <LocalizedInline value={t.ctaPrimary} />
+        </Button>
+        <Button href="/about-us" variant="outline" size="lg">
+          <LocalizedInline value={t.ctaSecondary} />
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Closing manifesto ────────────────────────────────────────────── -->
+  <section class="os-section os-section--manifesto">
+    <div class="container">
+      <p class="os-manifesto-label">
+        <LocalizedInline value={t.closingLabel} />
+      </p>
+      <h2 class="os-manifesto-h2">
+        <span><LocalizedInline value={t.closingLine1} /></span>
+        <em><LocalizedInline value={t.closingLine2} /></em>
+      </h2>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+/* ── Our Season page styles ──────────────────────────────────────────────── */
+
+.os-hero {
+  background: #060D18;
+  min-height: 88vh;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 5rem;
+}
+.os-hero::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  right: -8%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,150,31,0.06), transparent 60%);
+  pointer-events: none;
+}
+.os-hero-inner {
+  padding-top: 10rem;
+  position: relative;
+  z-index: 1;
+}
+.os-eyebrow {
+  font-family: var(--sans);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.os-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: var(--orange);
+  opacity: 0.5;
+}
+.os-h1 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(4rem, 14vw, 13rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: white;
+  margin-bottom: 2rem;
+}
+.os-h1 em {
+  color: var(--orange);
+  font-style: italic;
+}
+.os-hero-sub {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: rgba(255,255,255,0.5);
+  max-width: 34rem;
+  line-height: 1.75;
+}
+.os-hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+.os-hero-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.3));
+}
+
+/* ── Sections ── */
+.os-section {
+  padding: clamp(4rem, 8vw, 7rem) 0;
+}
+.os-section--light {
+  background: #F9FAFB;
+}
+.os-section--dark {
+  background: #060D18;
+}
+.os-section--stay {
+  background: #FDF6EC;
+  position: relative;
+}
+.os-section--stay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--orange), transparent);
+}
+.os-section--stay p {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  color: var(--ink-3);
+  line-height: 1.85;
+  margin-bottom: 1.5rem;
+}
+.os-stay-h2 {
+  color: var(--ink) !important;
+}
+.os-stay-p3 {
+  font-family: var(--serif) !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.6 !important;
+  border-left: 3px solid var(--orange);
+  padding-left: 1.5rem;
+  margin-top: 2rem;
+}
+.os-scripture-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0,0,0,0.07);
+}
+.os-scripture-item {
+  background: white;
+  border-left: 3px solid var(--orange);
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.os-scripture-text {
+  font-family: var(--serif) !important;
+  font-size: 0.9375rem !important;
+  color: var(--ink) !important;
+  line-height: 1.65 !important;
+  margin-bottom: 0.4rem !important;
+}
+.os-scripture-ref {
+  font-family: var(--sans) !important;
+  font-size: 0.6875rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--orange) !important;
+  margin: 0 !important;
+}
+.os-section--manifesto {
+  background: var(--blue-dark, #0F2040);
+  padding: clamp(5rem, 10vw, 9rem) 0;
+}
+
+/* ── Typography ── */
+.os-prose-wrap {
+  max-width: 42rem;
+}
+.os-h2 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+.os-h2--light {
+  color: white;
+}
+.os-section--light p {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  color: var(--ink-3);
+  line-height: 1.85;
+  margin-bottom: 1.5rem;
+}
+.os-section--light p:last-of-type {
+  margin-bottom: 0;
+}
+/* "We made it." gets the big treatment (second <p> in opening) */
+.os-section--light .os-prose-wrap p:nth-child(2) {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.os-drop-cap::first-letter {
+  font-family: var(--serif);
+  font-size: 4.5rem;
+  font-weight: 900;
+  float: left;
+  line-height: 0.82;
+  margin-right: 0.12em;
+  margin-top: 0.08em;
+  color: var(--orange);
+}
+
+/* ── Blockquote ── */
+.os-blockquote {
+  max-width: 42rem;
+  border-left: 3px solid var(--orange);
+  padding-left: 2rem;
+  margin: 0;
+}
+.os-blockquote p {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.45;
+}
+.os-blockquote em {
+  color: var(--orange);
+  font-style: italic;
+}
+.os-blockquote + .os-blockquote {
+  margin-top: 3rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.os-blockquote-cite {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.35);
+}
+.os-blockquote-cite cite {
+  font-style: italic;
+}
+
+/* ── Two-column layout ── */
+.os-two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  max-width: 72rem;
+}
+@media (min-width: 900px) {
+  .os-two-col {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+.os-prose-col p {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  color: var(--ink-3);
+  line-height: 1.85;
+  margin-bottom: 1.25rem;
+}
+.os-stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.os-big-stat {
+  border-left: 2px solid var(--orange);
+  padding-left: 1.5rem;
+}
+.os-stat-num {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 3.5rem;
+  color: var(--orange);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.os-stat-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+/* ── Lessons ── */
+.os-lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+.os-lesson {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.os-lesson-num {
+  font-family: var(--serif);
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--orange);
+  opacity: 0.7;
+  padding-top: 0.2rem;
+  letter-spacing: 0.05em;
+}
+.os-lesson-h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.os-lesson p {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ── CTA block ── */
+.os-cta-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--cream-3);
+}
+
+/* ── Closing manifesto ── */
+.os-manifesto-label {
+  font-family: var(--sans);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+.os-manifesto-h2 {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+}
+.os-manifesto-h2 em {
+  color: var(--orange);
+  font-style: italic;
+}
+</style>

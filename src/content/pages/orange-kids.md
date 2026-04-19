@@ -21,7 +21,7 @@ pageHeader:
     zh-Hans: "与家长携手培育下一代"
 
 heroImage:
-  src: "/uploads/orange-kids/Orangekidslogo.png"
+  src: "/uploads/orange-kids/collage.webp"
   alt:
     en: "Orange Kids children in worship"
     zh-Hant: "Orange Kids崇拜"

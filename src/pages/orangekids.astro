@@ -13,7 +13,6 @@ const page = (await getCollection("pages")).find(
     entry.slug === "orangekids",
 );
 
-
 if (!page || page.data.pageKind !== "orange-kids") {
   throw new Error('Content entry "pages/orange-kids" not found or wrong pageKind.');
 }
@@ -35,21 +34,20 @@ const serviceTimesEntry = siteInfoEntries.find((e) => e.slug === "service-times"
 const campuses = serviceTimesEntry?.data.campuses ?? [];
 const orangeKidsCampuses = filterCampusesForOrangeKids(campuses);
 
-// Icon paths for the three pillars
-const pillarIcons: Record<string, string> = {
-  faith: `<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>`,
-  family: `<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>`,
-  fun: `<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
-};
+const base = import.meta.env.BASE_URL;
+const pillarPhotos = [
+  `${base}uploads/orange-kids/ok1.webp`,
+  `${base}uploads/orange-kids/ok2.webp`,
+  `${base}uploads/orange-kids/ok3.webp`,
+];
 
-const titleEn = typeof title === "string" ? title : title.en;
-const headerBg = pageHeader?.backgroundImage ?? "/uploads/page-header-bg.webp";
-const headerTitle = pageHeader?.title
-  ? (typeof pageHeader.title === "string" ? pageHeader.title : pageHeader.title.en)
-  : titleEn;
-const headerSubtitle = pageHeader?.subtitle
-  ? (typeof pageHeader.subtitle === "string" ? pageHeader.subtitle : pageHeader.subtitle.en)
-  : undefined;
+function pillarTitleEn(title: unknown): string {
+  if (typeof title === "string") return title;
+  if (title && typeof title === "object" && "en" in title && typeof (title as { en: unknown }).en === "string") {
+    return (title as { en: string }).en;
+  }
+  return "Orange Kids";
+}
 ---
 
 <BaseLayout
@@ -57,18 +55,28 @@ const headerSubtitle = pageHeader?.subtitle
   description={seo.description}
   image={heroImage ? { url: heroImage.src, alt: typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en } : undefined}
 >
-  <!-- ── Page Header ─────────────────────────────────────────────────────── -->
+  <!-- ── Orange Page Header ───────────────────────────────────────────────── -->
   <section
-    class="relative py-24 md:py-32 bg-cover bg-center"
-    style={`background-image: linear-gradient(rgba(26,20,16,0.55) 0%, rgba(26,20,16,0.80) 100%), url(${headerBg})`}
+    class="relative py-16 md:py-20 overflow-hidden"
+    style="background: linear-gradient(135deg, #D4820A 0%, #E8961F 45%, #F59E0B 100%);"
   >
-    <div class="container">
+    <!-- Dot-grid texture -->
+    <div
+      class="absolute inset-0 pointer-events-none"
+      style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.18) 1px, transparent 0); background-size: 24px 24px;"
+    ></div>
+    <!-- Decorative circles -->
+    <div class="absolute -right-16 -top-16 w-72 h-72 rounded-full bg-white/10 pointer-events-none"></div>
+    <div class="absolute right-32 bottom-0 w-36 h-36 rounded-full bg-white/08 pointer-events-none"></div>
+    <div class="absolute -left-8 bottom-4 w-48 h-48 rounded-full bg-black/05 pointer-events-none"></div>
+
+    <div class="container relative z-10">
       <div class="max-w-2xl">
-        <h1 class="font-serif font-bold text-white mb-4 leading-tight text-page-title">
+        <h1 class="font-serif font-bold text-white mb-3 leading-tight text-page-title">
           <LocalizedInline value={title} />
         </h1>
         {pageHeader?.subtitle && (
-          <p class="text-white/75 text-lg leading-relaxed">
+          <p class="text-white/85 text-lg leading-relaxed">
             <LocalizedInline value={pageHeader.subtitle} />
           </p>
         )}
@@ -78,24 +86,21 @@ const headerSubtitle = pageHeader?.subtitle
 
   <!-- ── Mission Statement ──────────────────────────────────────────────── -->
   {missionStatement && (
-    <section class="py-16">
+    <section class="py-16 bg-white">
       <div class="container">
         <div class="max-w-3xl mx-auto text-center">
           {heroImage && (
             <img
               src={heroImage.src}
               alt={typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en}
-              class="w-45 h-40 object-cover rounded-full mx-auto mb-8 shadow-md"
+              class="w-80 h-80 object-cover rounded-full mx-auto mb-8 shadow-lg ring-4 ring-secondary-200"
             />
           )}
-          {/* <h2 class="text-3xl md:text-4xl font-bold mb-6">
-            <LocalizedInline value={title} />
-          </h2> */}
           <p class="body-copy text-xl mb-6">
             <LocalizedInline value={missionStatement} />
           </p>
           {coreCommitment && (
-            <p class="body-copy text-lg">
+            <p class="body-copy text-lg text-muted">
               <LocalizedInline value={coreCommitment} />
             </p>
           )}
@@ -106,18 +111,30 @@ const headerSubtitle = pageHeader?.subtitle
 
   <!-- ── Three Pillars ──────────────────────────────────────────────────── -->
   {pillars && pillars.length > 0 && (
-    <section class="py-16 bg-cream">
+    <section class="py-16" style="background: #FFF7ED;">
       <div class="container">
+        <div class="text-center mb-10">
+          <p class="text-secondary-600 text-xs font-bold tracking-[0.2em] uppercase mb-2">What We Believe</p>
+          <h2 class="text-3xl font-bold text-heading">Our Commitments</h2>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {pillars.map((pillar) => (
-            <div class="xp-panel-inner bg-white p-8 text-center">
-              <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary-100 flex items-center justify-center"
-                set:html={pillarIcons[pillar.icon] ?? pillarIcons.faith}
-              />
-              <h3 class="text-xl font-bold mb-3">
+          {pillars.map((pillar, index) => (
+            <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-secondary-100">
+              {pillarPhotos[index] ? (
+                <div class="aspect-[4/3] w-full max-w-sm mx-auto mb-5 overflow-hidden rounded-2xl shadow-md ring-1 ring-secondary-100/80">
+                  <img
+                    src={pillarPhotos[index]}
+                    alt={pillarTitleEn(pillar.title)}
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ) : null}
+              <h3 class="text-xl font-bold mb-3 text-heading">
                 <LocalizedInline value={pillar.title} />
               </h3>
-              <p class="body-copy">
+              <p class="body-copy text-muted">
                 <LocalizedInline value={pillar.description} />
               </p>
             </div>
@@ -129,17 +146,16 @@ const headerSubtitle = pageHeader?.subtitle
 
   <!-- ── Sunday Morning Program ─────────────────────────────────────────── -->
   {sundayMorning && (
-    <section class="py-16">
+    <section class="py-16 bg-white">
       <div class="container">
         <div class="max-w-5xl mx-auto">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-            <!-- Text content -->
             <div>
-              <p class="text-sm font-semibold tracking-widest uppercase text-secondary-600 mb-2">
+              <p class="text-secondary-600 text-sm font-bold tracking-widest uppercase mb-2">
                 <LocalizedInline value={sundayMorning.heading} />
               </p>
-              <h2 class="text-3xl md:text-4xl font-bold mb-6">
+              <h2 class="text-3xl md:text-4xl font-bold mb-6 text-heading">
                 <LocalizedInline value={{ en: "What Your Kids Will Discover", "zh-Hant": "孩子將學到什麼", "zh-Hans": "孩子将学到什么" }} />
               </h2>
               <p class="body-copy text-lg mb-6">
@@ -149,9 +165,11 @@ const headerSubtitle = pageHeader?.subtitle
               <ul class="space-y-4 mb-6">
                 {sundayMorning.keyPoints.map((point) => (
                   <li class="flex items-start gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
+                    <div class="mt-1 shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background: #E8961F;">
+                      <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
                     <span class="body-copy text-lg mb-0 flex-1">
                       <LocalizedInline value={point} />
                     </span>
@@ -160,15 +178,14 @@ const headerSubtitle = pageHeader?.subtitle
               </ul>
 
               {sundayMorning.childcareNote && (
-                <div class="bg-cream-2 rounded-lg px-5 py-4 body-copy mb-0">
+                <div class="rounded-xl px-5 py-4 body-copy mb-0 border border-secondary-200" style="background: #FFF7ED;">
                   <LocalizedInline value={sundayMorning.childcareNote} />
                 </div>
               )}
             </div>
 
-            <!-- Image -->
             {sundayMorning.image && (
-              <div class="xp-panel-inner overflow-hidden">
+              <div class="rounded-2xl overflow-hidden shadow-lg">
                 <img
                   src={sundayMorning.image.src}
                   alt={typeof sundayMorning.image.alt === "string" ? sundayMorning.image.alt : sundayMorning.image.alt.en}
@@ -186,36 +203,35 @@ const headerSubtitle = pageHeader?.subtitle
 
   <!-- ── Campus Schedule ────────────────────────────────────────────────── -->
   {orangeKidsCampuses.length > 0 && (
-    <section class="py-16 bg-cream">
+    <section class="py-16" style="background: #FFF7ED;">
       <div class="container">
-        <div class="text-center mb-12">
-          {/* <h2 class="text-3xl md:text-4xl font-bold mb-4">
-            <LocalizedInline value={{ en: "Find Us at Your Campus", "zh-Hant": "在您附近的會堂找到我們", "zh-Hans": "在您附近的会堂找到我们" }} />
-          </h2> */}
-          <p class="text-xl text-muted max-w-3xl mx-auto">
-            <LocalizedInline value={{ en: "Orange Kids is available at the following Crosspoint campuses during Sunday worship services.", 
+        <div class="text-center mb-10">
+          <p class="text-secondary-600 text-xs font-bold tracking-[0.2em] uppercase mb-2">Join Us</p>
+          <h2 class="text-3xl font-bold text-heading mb-3">Find Us at Your Campus</h2>
+          <p class="text-muted max-w-2xl mx-auto">
+            <LocalizedInline value={{ en: "Orange Kids is available at the following Crosspoint campuses during Sunday worship services.",
             "zh-Hant": "Orange Kids 在匯點教會以下會堂的主日崇拜期間均有提供。", "zh-Hans": "Orange Kids 在汇点教会各会堂的主日崇拜期间均有提供。" }} />
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {orangeKidsCampuses.map((campus) => (
-            <div class="xp-panel-inner bg-white p-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-secondary-100">
               <div class="flex items-center gap-3 mb-4">
-                <span class="inline-block px-2 py-0.5 bg-secondary-100 text-secondary-800 text-xs font-semibold rounded-full uppercase tracking-wide">
+                <span class="inline-block px-2.5 py-0.5 text-white text-xs font-bold rounded-full uppercase tracking-wide" style="background: #E8961F;">
                   <LocalizedInline value={campus.worshipDate} />
                 </span>
-                <h3 class="font-bold text-lg">
+                <h3 class="font-bold text-lg text-heading">
                   <LocalizedInline value={campus.campusName} />
                 </h3>
               </div>
               <ul class="space-y-2">
                 {campus.services.map((service) => (
                   <li class="flex items-center gap-2 body-copy mb-0">
-                    <svg class="h-4 w-4 text-secondary-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-4 w-4 shrink-0" style="color: #E8961F;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="text-sm"><LocalizedInline value={service} /></span>
+                    <span class="text-sm text-ink-3"><LocalizedInline value={service} /></span>
                   </li>
                 ))}
               </ul>
@@ -225,27 +241,4 @@ const headerSubtitle = pageHeader?.subtitle
       </div>
     </section>
   )}
-
-  <!-- ── Contact CTA ────────────────────────────────────────────────────── -->
-  <!-- <section
-    class="py-20 bg-cover bg-center text-white"
-    style={`background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${headerBg})`}
-  >
-    <div class="container">
-      <div class="max-w-3xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
-          <LocalizedInline value={{ en: "Questions? We'd Love to Help.", "zh-Hant": "有問題嗎？我們很樂意幫助您。", "zh-Hans": "有问题吗？我们很乐意帮助您。" }} />
-        </h2>
-        <p class="text-xl mb-8">
-          <LocalizedInline value={{ en: "Reach out to our team and we'll connect you with the right campus.", "zh-Hant": "聯繫我們的團隊，我們將為您聯絡最近的會堂。", "zh-Hans": "联系我们的团队，我们将为您联络最近的会堂。" }} />
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
-
-          <a href="/contact" class="btn btn-ghost-white">
-            <LocalizedInline value={{ en: "Contact Us", "zh-Hant": "聯絡我們", "zh-Hans": "联络我们" }} />
-          </a>
-        </div>
-      </div>
-    </div>
-  </section> -->
 </BaseLayout>

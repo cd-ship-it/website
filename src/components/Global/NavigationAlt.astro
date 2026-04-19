@@ -1,0 +1,538 @@
+---
+/**
+ * Alternate nav: Events / Sermons / Giving centered; hamburger (all breakpoints)
+ * opens a flyout with language picker + full menu from `main-menu` (same as default mobile).
+ */
+import { getEntry } from "astro:content";
+import { LANG_LABELS, I18N, type LocalizedText, type SiteLang, type LocaleStrings } from "../../lib/i18n";
+import LocalizedInline from "../UI/LocalizedInline.astro";
+
+type NavKey = keyof LocaleStrings["nav"];
+
+type NavMenuL3 = { id: string; label: LocalizedText; href: string };
+type NavMenuL2 = { id: string; label: LocalizedText; href: string; children?: NavMenuL3[] };
+type NavMenuTop = { id: string; label: LocalizedText; href: string; children?: NavMenuL2[] };
+
+function navLabel(key: NavKey): LocalizedText {
+  return {
+    en: I18N.en.nav[key],
+    "zh-Hant": I18N["zh-Hant"].nav[key],
+    "zh-Hans": I18N["zh-Hans"].nav[key],
+  };
+}
+
+function fallbackNavFromI18n(): NavMenuTop[] {
+  const L = navLabel;
+  return [
+    {
+      id: "about",
+      label: L("about"),
+      href: "/about-us",
+      children: [
+        { id: "aboutUs", label: L("aboutUs"), href: "/about-us" },
+        { id: "staff", label: L("staff"), href: "/staff" },
+      ],
+    },
+    { id: "ministries", label: L("ministries"), href: "/ministries" },
+    { id: "sermons", label: L("sermons"), href: "/sermons" },
+    { id: "events", label: L("events"), href: "/events" },
+    { id: "imNew", label: L("imNew"), href: "/im-new" },
+    { id: "contact", label: L("contact"), href: "/contact" },
+    { id: "giving", label: L("giving"), href: "/giving" },
+  ];
+}
+
+const navEntry = await getEntry("navigation", "main-menu");
+const fromFile =
+  navEntry && !navEntry.data.draft && navEntry.data.items?.length ? navEntry.data.items : null;
+
+const navItems: NavMenuTop[] = (fromFile ?? fallbackNavFromI18n()).filter(
+  (item) => item.id !== "home",
+);
+
+const languageOptions: Array<{ value: SiteLang; label: string }> = [
+  { value: "en", label: LANG_LABELS.en },
+  { value: "zh-Hant", label: LANG_LABELS["zh-Hant"] },
+  { value: "zh-Hans", label: LANG_LABELS["zh-Hans"] },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isLinkActive(href: string) {
+  if (!href || href === "#") return false;
+  return currentPath === href || (href !== "/" && currentPath.startsWith(href));
+}
+
+function isL3Active(l3: NavMenuL3) {
+  return isLinkActive(l3.href);
+}
+function isL2Active(l2: NavMenuL2) {
+  if (l2.children?.some(isL3Active)) return true;
+  return isLinkActive(l2.href);
+}
+function isTopActive(item: NavMenuTop) {
+  if (item.children?.length) return item.children.some(isL2Active);
+  return isLinkActive(item.href);
+}
+
+function hasChildren(item: NavMenuTop): item is NavMenuTop & { children: NavMenuL2[] } {
+  return Array.isArray(item.children) && item.children.length > 0;
+}
+
+---
+
+<!-- `contents` hoists children into the header flex row; flyout uses `absolute` against `.container.relative` -->
+<div class="contents">
+  <div class="relative z-20 flex shrink-0 items-center justify-end">
+    <button
+      type="button"
+      id="nav-alt-menu-button"
+      class="nav-alt-menu-btn relative shrink-0 p-2 text-ink-2 transition-colors hover:text-secondary-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40"
+      aria-label="Open site menu"
+      aria-expanded="false"
+      aria-controls="nav-alt-flyout"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <div
+    id="nav-alt-flyout"
+    class="nav-alt-flyout absolute left-0 right-0 top-full z-50 origin-top scale-y-0 transform bg-white shadow-[0_4px_12px_rgba(9,21,41,0.15)] transition-transform duration-200 ease-out"
+    role="menu"
+    aria-labelledby="nav-alt-menu-button"
+  >
+    <div class="max-h-[min(70vh,32rem)] overflow-y-auto px-4 py-6">
+      <div class="mb-4 border-b border-gray-100 pb-4">
+        <p class="mb-2 px-1 text-xs font-normal uppercase tracking-wide text-muted" id="nav-alt-lang-heading">
+          <LocalizedInline value={navLabel("language")} />
+        </p>
+        <div role="group" aria-labelledby="nav-alt-lang-heading">
+          <div class="nav-lang-pills nav-lang-pills--mobile">
+          {
+            languageOptions.map((opt) => (
+              <button
+                type="button"
+                data-language-option={opt.value}
+                class="nav-lang-pill nav-lang-pill--mobile focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-700/30"
+                aria-pressed="false"
+              >
+                {opt.label}
+              </button>
+            ))
+          }
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        {
+          navItems.map((item, index) => {
+            if (hasChildren(item)) {
+              const subId = `nav-alt-sub-${index}`;
+              const isActive = isTopActive(item);
+              return (
+                <div class="flex flex-col gap-1 mobile-nav-parent">
+                  <button
+                    type="button"
+                    class={`mobile-submenu-trigger flex w-full items-center justify-start gap-[1em] rounded-lg border border-transparent px-4 py-3 text-left text-sm font-normal transition-colors ${
+                      isActive
+                        ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                        : "text-ink-2 hover:bg-gray-50 hover:text-primary-700"
+                    }`}
+                    aria-expanded="false"
+                    aria-controls={subId}
+                    data-submenu-id={subId}
+                  >
+                    <LocalizedInline value={item.label} />
+                    <svg class="mobile-submenu-chevron h-5 w-5 shrink-0 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    id={subId}
+                    class="mobile-submenu overflow-hidden transition-all duration-200 ease-out"
+                    role="menu"
+                    aria-hidden="true"
+                  >
+                    <div class="ml-3 flex flex-col gap-0 border-l-2 border-[#e8e8e8] pb-2 pl-2 pt-1">
+                      {item.children.map((child) => {
+                        const hasGrand = child.children && child.children.length > 0;
+                        if (!hasGrand) {
+                          const childActive = isLinkActive(child.href);
+                          return (
+                            <a
+                              href={child.href}
+                              class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-normal leading-snug transition-colors ${
+                                childActive
+                                  ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                  : "text-primary-700 hover:bg-gray-50"
+                              }`}
+                              role="menuitem"
+                              aria-current={childActive ? "page" : undefined}
+                            >
+                              <LocalizedInline value={child.label} />
+                            </a>
+                          );
+                        }
+                        const nestedSubId = `nav-alt-nested-${index}-${child.id}`;
+                        return (
+                          <div class="flex flex-col gap-0.5">
+                            <button
+                              type="button"
+                              class="mobile-submenu-trigger flex w-full items-center justify-start gap-[1em] rounded-lg border border-transparent px-4 py-2.5 text-left text-sm font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50"
+                              aria-expanded="false"
+                              aria-controls={nestedSubId}
+                              data-submenu-id={nestedSubId}
+                            >
+                              <span class="min-w-0 text-left">
+                                <LocalizedInline value={child.label} />
+                              </span>
+                              <svg
+                                class="mobile-submenu-chevron h-4 w-4 shrink-0"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                            <div
+                              id={nestedSubId}
+                              class="mobile-submenu overflow-hidden transition-all duration-200 ease-out"
+                              role="menu"
+                              aria-hidden="true"
+                            >
+                              <div class="mb-1 ml-3 flex flex-col gap-0.5 border-l-2 border-[#e8e8e8] pb-1 pl-2 pt-0">
+                                {child.href && child.href !== "#" && (
+                                  <a
+                                    href={child.href}
+                                    class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-normal leading-snug transition-colors ${
+                                      isLinkActive(child.href)
+                                        ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                        : "text-primary-700 hover:bg-gray-50"
+                                    }`}
+                                    role="menuitem"
+                                    aria-current={isLinkActive(child.href) ? "page" : undefined}
+                                  >
+                                    <LocalizedInline
+                                      value={{
+                                        en: "Overview",
+                                        "zh-Hant": "概覽",
+                                        "zh-Hans": "概览",
+                                      }}
+                                    />
+                                  </a>
+                                )}
+                                {child.children!.map((g) => {
+                                  const gActive = isLinkActive(g.href);
+                                  const gh = g.href?.trim();
+                                  return gh ? (
+                                    <a
+                                      href={gh}
+                                      class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-normal leading-snug transition-colors ${
+                                        gActive
+                                          ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                          : "text-primary-700 hover:bg-gray-50"
+                                      }`}
+                                      role="menuitem"
+                                      aria-current={gActive ? "page" : undefined}
+                                    >
+                                      <LocalizedInline value={g.label} />
+                                    </a>
+                                  ) : (
+                                    <span class="block rounded-lg px-3 py-2 text-xs font-normal leading-snug text-muted">
+                                      <LocalizedInline value={g.label} />
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            const href = item.href;
+            const isActive = isLinkActive(href);
+            return (
+              <a
+                href={href}
+                class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-normal transition-colors ${
+                  isActive
+                    ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                    : "text-ink-2 hover:bg-gray-50 hover:text-primary-700"
+                }`}
+                role="menuitem"
+                aria-current={isActive ? "page" : undefined}
+              >
+                <LocalizedInline value={item.label} />
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .nav-alt-menu-btn:hover svg {
+    transform: scale(1.05);
+  }
+  .nav-alt-menu-btn svg {
+    transition: transform 0.2s ease;
+  }
+
+  #nav-alt-flyout {
+    overflow: hidden;
+  }
+  #nav-alt-flyout:not(.show) {
+    pointer-events: none;
+  }
+  #nav-alt-flyout.show {
+    transform: scaleY(1);
+    pointer-events: auto;
+  }
+
+  #nav-alt-flyout a {
+    transition: all 0.15s ease;
+  }
+  #nav-alt-flyout a[aria-current="page"] {
+    font-weight: 400;
+  }
+
+
+  .nav-lang-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 9999px;
+    padding: 0.2rem;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .nav-lang-pill {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    border-radius: 9999px;
+    color: rgba(0,0,0,0.45);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .nav-lang-pill:hover {
+    color: var(--ink);
+    background: rgba(0,0,0,0.08);
+  }
+  .nav-lang-pill[aria-pressed="true"] {
+    background: var(--orange);
+    color: white;
+    font-weight: 400;
+  }
+  .nav-lang-pills--mobile {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .nav-lang-pill--mobile {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  .mobile-submenu {
+    max-height: 0;
+    opacity: 0;
+  }
+  .mobile-submenu.mobile-submenu-open {
+    max-height: 20rem;
+    opacity: 1;
+  }
+  .mobile-submenu-trigger[aria-expanded="true"] .mobile-submenu-chevron {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const KEY = "site_lang";
+  const VALID = ["en", "zh-Hant", "zh-Hans"];
+
+  const normalizeLang = (value) => (VALID.includes(value) ? value : "en");
+
+  function readStoredLang() {
+    try {
+      const fromLs = localStorage.getItem(KEY);
+      if (fromLs && VALID.includes(fromLs)) return fromLs;
+    } catch {
+      /* ignore */
+    }
+    const m = document.cookie.match(/(?:^|; )site_lang=([^;]+)/);
+    if (m) {
+      try {
+        const v = decodeURIComponent(m[1]);
+        if (VALID.includes(v)) return v;
+      } catch {
+        /* ignore */
+      }
+    }
+    const fromHtml = document.documentElement.dataset.lang;
+    if (fromHtml && VALID.includes(fromHtml)) return fromHtml;
+    return "en";
+  }
+
+  function applyLangToDocument(lang) {
+    const L = normalizeLang(lang);
+    document.documentElement.lang = L;
+    document.documentElement.dataset.lang = L;
+    window.__siteLang = L;
+  }
+
+  function syncLanguageSelects(lang) {
+    const L = normalizeLang(lang);
+    document.querySelectorAll("[data-language-option]").forEach((el) => {
+      if (!(el instanceof HTMLButtonElement)) return;
+      const v = el.getAttribute("data-language-option");
+      const isSel = v === L;
+      el.setAttribute("aria-pressed", isSel ? "true" : "false");
+      // Pills are styled via CSS [aria-pressed="true"] for both desktop and mobile dropdown.
+    });
+  }
+
+  function initLangUi() {
+    const lang = normalizeLang(readStoredLang());
+    applyLangToDocument(lang);
+    syncLanguageSelects(lang);
+  }
+
+  initLangUi();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initLangUi();
+
+    const applyLanguage = (nextLang) => {
+      const lang = normalizeLang(nextLang);
+      try {
+        localStorage.setItem(KEY, lang);
+      } catch {
+        /* ignore */
+      }
+      document.cookie = `site_lang=${encodeURIComponent(lang)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      applyLangToDocument(lang);
+      syncLanguageSelects(lang);
+      window.dispatchEvent(new CustomEvent("site-lang-change", { detail: { lang } }));
+    };
+
+    const mobileMenuButton = document.getElementById("nav-alt-menu-button");
+    const mobileMenu = document.getElementById("nav-alt-flyout");
+
+    let isMenuOpen = false;
+
+    const collapseMobileSubmenus = () => {
+      mobileMenu?.querySelectorAll(".mobile-submenu.mobile-submenu-open").forEach((el) => {
+        el.classList.remove("mobile-submenu-open");
+        el.setAttribute("aria-hidden", "true");
+      });
+      mobileMenu?.querySelectorAll('.mobile-submenu-trigger[aria-expanded="true"]').forEach((btn) => {
+        btn.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    const closeMobileMenu = () => {
+      if (!mobileMenu?.classList.contains("show")) {
+        isMenuOpen = false;
+        return;
+      }
+      isMenuOpen = false;
+      mobileMenu.classList.remove("show");
+      mobileMenuButton?.setAttribute("aria-expanded", "false");
+      collapseMobileSubmenus();
+    };
+
+    const toggleMobileMenu = () => {
+      isMenuOpen = !isMenuOpen;
+      if (isMenuOpen) {
+        mobileMenu?.classList.add("show");
+        mobileMenuButton?.setAttribute("aria-expanded", "true");
+      } else {
+        mobileMenu?.classList.remove("show");
+        mobileMenuButton?.setAttribute("aria-expanded", "false");
+        collapseMobileSubmenus();
+      }
+    };
+
+    document.querySelectorAll("[data-language-option]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const v = el.getAttribute("data-language-option");
+        if (!v) return;
+        applyLanguage(v);
+        closeMobileMenu();
+      });
+    });
+
+    mobileMenuButton?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+      if (
+        isMenuOpen &&
+        mobileMenu &&
+        mobileMenuButton &&
+        target instanceof Node &&
+        !mobileMenu.contains(target) &&
+        !mobileMenuButton.contains(target)
+      ) {
+        toggleMobileMenu();
+      }
+    });
+
+    mobileMenu?.querySelectorAll('a[href^="/"]').forEach((link) => {
+      link.addEventListener("click", () => {
+        if (isMenuOpen) {
+          setTimeout(() => toggleMobileMenu(), 100);
+        }
+      });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+
+    mobileMenu?.querySelectorAll(".mobile-submenu-trigger").forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const id = trigger.getAttribute("aria-controls") ?? trigger.getAttribute("data-submenu-id");
+        if (!id) return;
+        const sub = document.getElementById(id);
+        if (!sub) return;
+        const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+        if (isExpanded) {
+          sub.classList.remove("mobile-submenu-open");
+          sub.setAttribute("aria-hidden", "true");
+          trigger.setAttribute("aria-expanded", "false");
+        } else {
+          sub.classList.add("mobile-submenu-open");
+          sub.setAttribute("aria-hidden", "false");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+  });
+</script>

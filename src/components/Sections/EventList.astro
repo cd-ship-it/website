@@ -1,7 +1,6 @@
 ---
 import { fetchAllEvents } from "../../lib/eventApi";
 import type { EventItem } from "../../lib/eventApi";
-import EventCard from "../UI/EventCard.astro";
 import Button from "../UI/Button.astro";
 
 export interface Props {
@@ -14,62 +13,176 @@ const { count, showViewAll = true } = Astro.props;
 let events: EventItem[] = [];
 try {
   const allEvents = await fetchAllEvents();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const upcoming = allEvents
-    .filter((event) => {
-      const d = new Date(`${event.startDate}T00:00:00`);
-      return !Number.isNaN(d.getTime()) && d >= today;
-    })
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-
-  events = typeof count === "number" ? upcoming.slice(0, count) : upcoming;
+  events = typeof count === "number" ? allEvents.slice(0, count) : allEvents;
 } catch {
   events = [];
 }
 
 const compactEvents = events.slice(0, 6);
 
-const eventsSectionBg =
-  "https://crosspointchurchsv.org/wp-content/uploads/2026/03/signal-2023-10-28-11-17-16-441-scaled.jpg";
+function monthLabel(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`)
+    .toLocaleDateString("en-US", { month: "short" })
+    .toUpperCase();
+}
+function dayNum(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { day: "2-digit" });
+}
+function fullDate(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+  });
+}
 ---
 
 <section
+  id="events-home"
   class="section-default home-section-block"
-  
+  aria-labelledby="events-heading"
 >
-  <div>
-    <div class="home-section-intro">
-      <p class="eyebrow">What's Happening</p>
-      <h2 class="section-heading">Upcoming Events</h2>
-      <p class="section-sub">
-        Join us for these upcoming events and become part of our community
-      </p>
+  <div class="container">
+    <div class="home-section-intro pl-5">
+      <h2 id="events-heading" class="section-heading">Upcoming Events</h2>
+      <p class="section-sub">Join us across campuses for upcoming gatherings and ministry events.</p>
     </div>
 
     <div class="home-section-body">
-      {compactEvents.length > 0 && (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {compactEvents.length > 0 ? (
+        <div class="events-home-grid">
           {compactEvents.map((event) => (
-            <EventCard event={event} />
+            <a href={`/events/${encodeURIComponent(event.slug)}`} class="events-grid-item group">
+              <div class="events-grid-date">
+                <span class="events-grid-month">{monthLabel(event.startDate)}</span>
+                <span class="events-grid-day">{dayNum(event.startDate)}</span>
+              </div>
+              {event.image?.trim() && (
+                <div class="events-grid-thumb">
+                  <img
+                    src={event.image.trim()}
+                    alt={event.title}
+                    loading="lazy"
+                    decoding="async"
+                    onerror="this.closest('.events-grid-thumb')?.remove()"
+                  />
+                </div>
+              )}
+              <div class="events-grid-info">
+                <h3 class="events-grid-title">{event.title}</h3>
+                <p class="events-grid-meta">{fullDate(event.startDate)}{event.time && ` · ${event.time}`}</p>
+                {event.location && <p class="events-grid-meta">{event.location}</p>}
+                <p class="events-grid-cta">
+                  <span class="text-secondary-500">See Details</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                </p>
+              </div>
+            </a>
           ))}
         </div>
-      )}
-
-      {compactEvents.length === 0 && (
+      ) : (
         <div class="text-center py-10 bg-cream-2 rounded-2xl">
           <p class="text-muted">No upcoming events available right now.</p>
         </div>
       )}
 
       {showViewAll && compactEvents.length > 0 && (
-        <div class="mt-12 text-center">
+        <div class="mt-8 flex justify-end">            
           <Button href="/events" variant="primary" size="lg">
-            View All Events
+            View all events
           </Button>
+          </div>
         </div>
       )}
     </div>
   </div>
 </section>
+
+<style>
+  .events-home-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  @media (max-width: 767px) {
+    .events-home-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .events-grid-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 1.1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s;
+  }
+  .events-grid-item:hover {
+    transform: translateX(2px);
+  }
+
+  .events-grid-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 3rem;
+    padding: 0.1rem 0;
+    flex-shrink: 0;
+  }
+  .events-grid-month {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+  .events-grid-day {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .events-grid-thumb {
+    flex-shrink: 0;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--cream-2);
+  }
+  .events-grid-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .events-grid-info { flex: 1; min-width: 0; }
+  .events-grid-title {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 0.2rem;
+  }
+  .events-grid-meta {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.05rem;
+  }
+  .events-grid-cta {
+    margin-top: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary-500);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+</style>

@@ -74,6 +74,50 @@ if (!mission || !vision || !history) {
         </div>
       </div>
 
+      <!-- Card 3: Our Pastors — text left, image right -->
+      <div class="xp-panel-inner">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
+          <div class="p-8 lg:p-10 flex flex-col justify-center">
+            <h2 class="section-heading">
+              <LocalizedInline
+                value={{ en: "Our Pastors", "zh-Hant": "我們的牧者", "zh-Hans": "我们的牧者" }}
+              />
+            </h2>
+            <p class="body-copy mb-6">
+              <LocalizedInline
+                value={{
+                  en: "Our pastoral team is committed to guiding, teaching, and shepherding the Crosspoint community across all campuses.",
+                  "zh-Hant":
+                    "我們的牧者團隊致力於在各會堂引導、教導與牧養匯點教會的弟兄姊妹。",
+                  "zh-Hans": "我们的牧者团队致力于在各会堂引导、教导与牧养汇点教会的弟兄姊妹。",
+                }}
+              />
+            </p>
+            <a href={`${import.meta.env.BASE_URL}about-pastors`} class="btn btn-primary self-start">
+              <LocalizedInline
+                value={{
+                  en: "Meet our pastoral team",
+                  "zh-Hant": "認識牧者團隊",
+                  "zh-Hans": "认识牧者团队",
+                }}
+              />
+            </a>
+          </div>
+          <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
+            <img
+              src={`${import.meta.env.BASE_URL}uploads/milpitas-Building-sq.webp`}
+              alt={pickLocalizedText(
+                { en: "Milpitas campus building", "zh-Hant": "Milpitas 會堂", "zh-Hans": "Milpitas 会堂" },
+                "en",
+              )}
+              class="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 

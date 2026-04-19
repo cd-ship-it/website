@@ -101,8 +101,8 @@ function firstNavigableHref(item: NavMenuTop): string {
             <li class="relative group">
               <a
                 href={parentHref}
-                class={`text-base font-medium transition-colors flex items-center gap-1 ${
-                  isActive ? "text-[#3b71b8]" : "text-[#555555] hover:text-[#3b71b8]"
+                class={`text-base font-normal transition-colors flex items-center gap-1 ${
+                  isActive ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
                 }`}
                 aria-haspopup="true"
                 aria-expanded="false"
@@ -120,7 +120,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                 </svg>
               </a>
               <ul
-                class="nav-desktop-dropdown absolute left-0 top-full z-50 min-w-[280px] max-w-[min(100vw-2rem,22rem)] border-x border-b border-gray-200 border-t-[3px] border-t-[#3b71b8] bg-white py-0 opacity-0 shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-all duration-150 invisible group-hover:visible group-hover:opacity-100"
+                class="nav-desktop-dropdown absolute left-0 top-full z-50 min-w-[280px] max-w-[min(100vw-2rem,22rem)] border-x border-b border-gray-200 border-t-[3px] border-t-secondary-500 bg-white py-0 opacity-0 shadow-[0_4px_12px_rgba(9,21,41,0.15)] transition-all duration-150 invisible group-hover:visible group-hover:opacity-100"
                 role="menu"
               >
                 {item.children.map((child) => {
@@ -132,8 +132,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                         <a
                           href={child.href}
                           class:list={[
-                            "block px-5 py-[15px] text-base font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
-                            childActive && "font-semibold",
+                            "block px-5 py-[15px] text-base font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50",
                           ]}
                           role="menuitem"
                           aria-current={childActive ? "page" : undefined}
@@ -148,18 +147,17 @@ function firstNavigableHref(item: NavMenuTop): string {
                       <a
                         href={child.href || "#"}
                         class:list={[
-                          "flex items-center justify-between gap-2 px-5 py-[15px] text-base font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
-                          childActive && "font-semibold",
+                          "flex items-center justify-start gap-[1em] px-5 py-[15px] text-base font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50",
                         ]}
                         role="menuitem"
                         aria-current={isLinkActive(child.href) ? "page" : undefined}
                       >
-                        <span class="min-w-0 flex-1">
+                        <span class="min-w-0">
                           <LocalizedInline value={child.label} />
                         </span>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 shrink-0 text-[#3b71b8]/80"
+                          class="h-4 w-4 shrink-0 text-primary-400"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -170,7 +168,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                       </a>
                       <ul
                         role="menu"
-                        class="invisible absolute left-full top-0 z-[60] ml-0 min-w-[260px] max-w-[min(100vw-2rem,20rem)] border-x border-b border-gray-200 border-t-[3px] border-t-[#3b71b8] bg-white py-0 opacity-0 shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-all duration-150 group-hover/sub:visible group-hover/sub:opacity-100"
+                        class="invisible absolute left-full top-0 z-[60] ml-0 min-w-[260px] max-w-[min(100vw-2rem,20rem)] border-x border-b border-gray-200 border-t-[3px] border-t-secondary-500 bg-white py-0 opacity-0 shadow-[0_4px_12px_rgba(9,21,41,0.15)] transition-all duration-150 group-hover/sub:visible group-hover/sub:opacity-100"
                       >
                         {child.children!.map((g) => {
                           const gActive = isL3Active(g);
@@ -181,8 +179,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                                 <a
                                   href={gh}
                                   class:list={[
-                                    "block px-5 py-2.5 text-sm font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50",
-                                    gActive && "font-semibold",
+                                    "block px-5 py-2.5 text-sm font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50",
                                   ]}
                                   role="menuitem"
                                   aria-current={gActive ? "page" : undefined}
@@ -190,7 +187,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                                   <LocalizedInline value={g.label} />
                                 </a>
                               ) : (
-                                <span class="block px-5 py-2.5 text-sm font-medium leading-snug text-muted">
+                                <span class="block px-5 py-2.5 text-sm font-normal leading-snug text-muted">
                                   <LocalizedInline value={g.label} />
                                 </span>
                               )}
@@ -211,8 +208,8 @@ function firstNavigableHref(item: NavMenuTop): string {
           <li>
             <a
               href={href}
-              class={`text-base font-medium transition-colors ${
-                isActive ? "text-[#3b71b8]" : "text-[#555555] hover:text-[#3b71b8]"
+              class={`text-base font-normal transition-colors ${
+                isActive ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
               }`}
               aria-current={isActive ? "page" : undefined}
             >
@@ -223,28 +220,18 @@ function firstNavigableHref(item: NavMenuTop): string {
       })
     }
     
-    <li class="relative">
-      <label for="language-select-desktop" class="sr-only"><LocalizedInline value={navLabel("language")} /></label>
-      <div class="relative">
-        <select
-          id="language-select-desktop"
-          class="nav-language-select nav-language-select--desktop"
-          data-language-select
-        >
-          {languageOptions.map((opt) => (
-            <option value={opt.value} selected={opt.value === "en"}>{opt.label}</option>
-          ))}
-        </select>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="nav-language-chevron h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
+    <li>
+      <div class="nav-lang-pills" role="group" aria-label="Language">
+        {languageOptions.map((opt) => (
+          <button
+            type="button"
+            class="nav-lang-pill"
+            data-language-option={opt.value}
+            aria-pressed="false"
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
     </li>
   </ul>
@@ -253,7 +240,7 @@ function firstNavigableHref(item: NavMenuTop): string {
 <!-- Mobile Menu Button -->
 <button
   id="mobile-menu-button"
-  class="relative p-2 text-[#555555] transition-colors hover:text-[#3b71b8] focus:outline-none lg:hidden"
+  class="relative p-2 text-ink-2 transition-colors hover:text-secondary-600 focus:outline-none lg:hidden"
   aria-label="Toggle Menu"
   aria-expanded="false"
 >
@@ -265,7 +252,7 @@ function firstNavigableHref(item: NavMenuTop): string {
 <!-- Mobile Menu Dropdown - Compact & Clean -->
 <div
   id="mobile-menu"
-  class="absolute top-full left-0 right-0 z-50 origin-top scale-y-0 transform border-t-[3px] border-t-[#3b71b8] bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)] transition-transform duration-200 ease-out lg:hidden"
+  class="absolute top-full left-0 right-0 z-50 origin-top scale-y-0 transform bg-white shadow-[0_4px_12px_rgba(9,21,41,0.15)] transition-transform duration-200 ease-out lg:hidden"
   role="menu"
   aria-labelledby="mobile-menu-button"
 >
@@ -281,10 +268,10 @@ function firstNavigableHref(item: NavMenuTop): string {
               <div class="flex flex-col gap-1 mobile-nav-parent">
                 <button
                   type="button"
-                  class={`mobile-submenu-trigger flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-3 text-left text-sm font-medium transition-colors ${
+                  class={`mobile-submenu-trigger flex w-full items-center justify-start gap-[1em] rounded-lg border border-transparent px-4 py-3 text-left text-sm font-normal transition-colors ${
                     isActive
-                      ? "border-[#cfe0f5] bg-[#f3f7fc] text-[#3b71b8]"
-                      : "text-[#555555] hover:bg-gray-50 hover:text-[#3b71b8]"
+                      ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                      : "text-ink-2 hover:bg-gray-50 hover:text-primary-700"
                   }`}
                   aria-expanded="false"
                   aria-controls={subId}
@@ -309,10 +296,10 @@ function firstNavigableHref(item: NavMenuTop): string {
                         return (
                           <a
                             href={child.href}
-                            class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-medium leading-snug transition-colors ${
+                            class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-normal leading-snug transition-colors ${
                               childActive
-                                ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
-                                : "text-[#3b71b8] hover:bg-gray-50"
+                                ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                : "text-primary-700 hover:bg-gray-50"
                             }`}
                             role="menuitem"
                             aria-current={childActive ? "page" : undefined}
@@ -326,12 +313,12 @@ function firstNavigableHref(item: NavMenuTop): string {
                         <div class="flex flex-col gap-0.5">
                           <button
                             type="button"
-                            class="mobile-submenu-trigger flex w-full items-center justify-between rounded-lg border border-transparent px-4 py-2.5 text-left text-sm font-medium leading-snug text-[#3b71b8] transition-colors hover:bg-gray-50"
+                            class="mobile-submenu-trigger flex w-full items-center justify-start gap-[1em] rounded-lg border border-transparent px-4 py-2.5 text-left text-sm font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50"
                             aria-expanded="false"
                             aria-controls={nestedSubId}
                             data-submenu-id={nestedSubId}
                           >
-                            <span class="min-w-0 flex-1 text-left">
+                            <span class="min-w-0 text-left">
                               <LocalizedInline value={child.label} />
                             </span>
                             <svg
@@ -355,10 +342,10 @@ function firstNavigableHref(item: NavMenuTop): string {
                               {child.href && child.href !== "#" && (
                                 <a
                                   href={child.href}
-                                  class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-medium leading-snug transition-colors ${
+                                  class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-normal leading-snug transition-colors ${
                                     isLinkActive(child.href)
-                                      ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
-                                      : "text-[#3b71b8] hover:bg-gray-50"
+                                      ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                      : "text-primary-700 hover:bg-gray-50"
                                   }`}
                                   role="menuitem"
                                   aria-current={isLinkActive(child.href) ? "page" : undefined}
@@ -378,10 +365,10 @@ function firstNavigableHref(item: NavMenuTop): string {
                                 return gh ? (
                                   <a
                                     href={gh}
-                                    class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-medium leading-snug transition-colors ${
+                                    class={`block rounded-lg border border-transparent px-3 py-2 text-xs font-normal leading-snug transition-colors ${
                                       gActive
-                                        ? "border-[#cfe0f5] bg-[#f3f7fc] font-semibold text-[#3b71b8]"
-                                        : "text-[#3b71b8] hover:bg-gray-50"
+                                        ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                        : "text-primary-700 hover:bg-gray-50"
                                     }`}
                                     role="menuitem"
                                     aria-current={gActive ? "page" : undefined}
@@ -389,7 +376,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                                     <LocalizedInline value={g.label} />
                                   </a>
                                 ) : (
-                                  <span class="block rounded-lg px-3 py-2 text-xs font-medium leading-snug text-muted">
+                                  <span class="block rounded-lg px-3 py-2 text-xs font-normal leading-snug text-muted">
                                     <LocalizedInline value={g.label} />
                                   </span>
                                 );
@@ -409,10 +396,10 @@ function firstNavigableHref(item: NavMenuTop): string {
           return (
             <a
               href={href}
-              class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-medium transition-colors ${
+              class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-normal transition-colors ${
                 isActive
-                  ? "border-[#cfe0f5] bg-[#f3f7fc] text-[#3b71b8]"
-                  : "text-[#555555] hover:bg-gray-50 hover:text-[#3b71b8]"
+                  ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                  : "text-ink-2 hover:bg-gray-50 hover:text-primary-700"
               }`}
               role="menuitem"
               aria-current={isActive ? "page" : undefined}
@@ -425,20 +412,22 @@ function firstNavigableHref(item: NavMenuTop): string {
     </div>
     
     <div class="mt-3 border-t border-gray-100 pt-3">
-      <p class="mb-2 px-4 text-xs font-semibold uppercase tracking-wide text-muted" id="mobile-lang-heading">
+      <p class="mb-2 px-4 text-xs font-normal uppercase tracking-wide text-muted" id="mobile-lang-heading">
         <LocalizedInline value={navLabel("language")} />
       </p>
-      <div class="flex flex-col gap-2 px-4" role="group" aria-labelledby="mobile-lang-heading">
+      <div class="px-4" role="group" aria-labelledby="mobile-lang-heading">
+        <div class="nav-lang-pills nav-lang-pills--mobile">
         {languageOptions.map((opt) => (
           <button
             type="button"
             data-language-option={opt.value}
-            class="block w-full rounded-lg border border-transparent px-4 py-3 text-left text-sm font-medium text-[#555555] transition-colors hover:bg-gray-50 hover:text-[#3b71b8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3b71b8]/30"
+            class="nav-lang-pill nav-lang-pill--mobile focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-700/30"
             aria-pressed="false"
           >
             {opt.label}
           </button>
         ))}
+        </div>
       </div>
     </div>
   </div>
@@ -473,7 +462,7 @@ function firstNavigableHref(item: NavMenuTop): string {
   
   /* Active state styling */
   #mobile-menu a[aria-current="page"] {
-    font-weight: 600;
+    font-weight: 400;
   }
   
   /* Mobile submenu: collapsed by default */
@@ -491,44 +480,48 @@ function firstNavigableHref(item: NavMenuTop): string {
     transform: rotate(180deg);
   }
 
-  .nav-language-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border: 1px solid transparent;
-    border-radius: 0.5rem;
+  /* Language pill switcher (desktop nav) */
+  .nav-lang-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 9999px;
+    padding: 0.2rem;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .nav-lang-pill {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    border-radius: 9999px;
+    color: rgba(0,0,0,0.45);
     background: transparent;
-    color: var(--ink);
-    font-weight: 500;
-    line-height: 1.25rem;
+    border: none;
     cursor: pointer;
-    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
+    line-height: 1.4;
+    white-space: nowrap;
   }
-
-  .nav-language-select--desktop {
-    font-size: 1rem;
-    padding: 0.35rem 1.75rem 0.35rem 0.6rem;
+  .nav-lang-pill:hover {
+    color: var(--ink);
+    background: rgba(0,0,0,0.08);
   }
-
-  .nav-language-select:hover {
-    color: var(--blue);
-    background-color: #fff;
-    border-color: #d1d5db;
+  .nav-lang-pill[aria-pressed="true"] {
+    background: var(--orange);
+    color: white;
+    font-weight: 400;
   }
-
-  .nav-language-select:focus-visible {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 2px rgba(31, 110, 179, 0.2);
+  .nav-lang-pills--mobile {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.25rem;
   }
-
-  .nav-language-chevron {
-    position: absolute;
-    right: 0.6rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    pointer-events: none;
+  .nav-lang-pill--mobile {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8125rem;
   }
 </style>
 
@@ -569,19 +562,13 @@ function firstNavigableHref(item: NavMenuTop): string {
 
   function syncLanguageSelects(lang) {
     const L = normalizeLang(lang);
-    document.querySelectorAll("[data-language-select]").forEach((el) => {
-      if (el instanceof HTMLSelectElement) el.value = L;
-    });
+    // Pill buttons (desktop + mobile)
     document.querySelectorAll("[data-language-option]").forEach((el) => {
       if (!(el instanceof HTMLButtonElement)) return;
       const v = el.getAttribute("data-language-option");
       const isSel = v === L;
       el.setAttribute("aria-pressed", isSel ? "true" : "false");
-      el.classList.toggle("border-[#cfe0f5]", isSel);
-      el.classList.toggle("bg-[#f3f7fc]", isSel);
-      el.classList.toggle("font-semibold", isSel);
-      el.classList.toggle("text-[#3b71b8]", isSel);
-      el.classList.toggle("text-[#555555]", !isSel);
+      // Pills are styled via CSS [aria-pressed="true"] for both desktop and mobile dropdown.
     });
   }
 
@@ -597,8 +584,6 @@ function firstNavigableHref(item: NavMenuTop): string {
   document.addEventListener('DOMContentLoaded', () => {
     initLangUi();
 
-    const languageSelects = document.querySelectorAll("[data-language-select]");
-
     const applyLanguage = (nextLang) => {
       const lang = normalizeLang(nextLang);
       try {
@@ -611,14 +596,6 @@ function firstNavigableHref(item: NavMenuTop): string {
       syncLanguageSelects(lang);
       window.dispatchEvent(new CustomEvent("site-lang-change", { detail: { lang } }));
     };
-
-    languageSelects.forEach((el) => {
-      if (!(el instanceof HTMLSelectElement)) return;
-      el.addEventListener("change", (event) => {
-        const target = event.target;
-        if (target instanceof HTMLSelectElement) applyLanguage(target.value);
-      });
-    });
 
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');

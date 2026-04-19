@@ -111,24 +111,35 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
 
 
 {block && cards.length > 0 && variant === "pathways" && (
-  <section class="section-default home-section-block">
+  <section class="section-default home-section-block home-section-block--connect">
     <div>
-      <div class="home-section-intro">
-        <p class="eyebrow">Get Connected</p>
-        {sectionTitle && (
-          <h2 class="section-heading">
-            <LocalizedInline value={sectionTitle} />
-          </h2>
-        )}
-        {sectionSubtitle && (
-          <p class="section-sub">
-            <LocalizedInline value={sectionSubtitle} />
-          </p>
-        )}
+      <div class="home-section-split-intro">
+        <div class="home-section-intro">
+          <p class="eyebrow">Get Connected</p>
+          {sectionTitle && (
+            <h2 class="section-heading">
+              <LocalizedInline value={sectionTitle} />
+            </h2>
+          )}
+          {sectionSubtitle && (
+            <p class="section-sub">
+              <LocalizedInline value={sectionSubtitle} />
+            </p>
+          )}
+        </div>
+        <div class="home-section-aside">
+          <LocalizedInline
+            value={{
+              en: "Start with the doorway that matches where you are right now. Each path is designed to feel personal, welcoming, and easy to take next.",
+              "zh-Hant": "從最適合你當下處境的入口開始。每一條路徑都應該感覺真實、溫暖，並且容易踏出下一步。",
+              "zh-Hans": "从最适合你当下处境的入口开始。每一条路径都应该感觉真实、温暖，并且容易踏出下一步。",
+            }}
+          />
+        </div>
       </div>
       <div class="home-section-body">
-      <div class="pathways-grid">
-        {cards.map((card) => (
+      <div class="pathways-grid pathways-grid--editorial">
+        {cards.map((card, index) => (
           <a href={card.href} class="pathway-card">
             <img
               src={card.background ?? ""}
@@ -137,6 +148,7 @@ const exploreFallback = { en: "Explore", "zh-Hant": "探索", "zh-Hans": "探索
             />
             <div class="pathway-card-overlay"></div>
             <div class="pathway-card-body">
+              <div class="pathway-card-index">{String(index + 1).padStart(2, "0")}</div>
               {card.tag && (
                 <div class="pathway-card-tag">
                   <LocalizedInline value={card.tag} />
