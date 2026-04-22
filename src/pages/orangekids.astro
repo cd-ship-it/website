@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import { filterCampusesForOrangeKids } from "../config/site";
+import { withBaseUrl } from "../lib/urls";
 
 const page = (await getCollection("pages")).find(
   (entry) =>
@@ -34,12 +35,12 @@ const serviceTimesEntry = siteInfoEntries.find((e) => e.slug === "service-times"
 const campuses = serviceTimesEntry?.data.campuses ?? [];
 const orangeKidsCampuses = filterCampusesForOrangeKids(campuses);
 
-const base = import.meta.env.BASE_URL;
 const pillarPhotos = [
-  `${base}uploads/orange-kids/ok1.webp`,
-  `${base}uploads/orange-kids/ok2.webp`,
-  `${base}uploads/orange-kids/ok3.webp`,
+  withBaseUrl("/uploads/orange-kids/ok1.webp"),
+  withBaseUrl("/uploads/orange-kids/ok2.webp"),
+  withBaseUrl("/uploads/orange-kids/ok3.webp"),
 ];
+const heroImageSrc = heroImage ? withBaseUrl(heroImage.src) : undefined;
 
 function pillarTitleEn(title: unknown): string {
   if (typeof title === "string") return title;
@@ -53,7 +54,7 @@ function pillarTitleEn(title: unknown): string {
 <BaseLayout
   title={seo.title}
   description={seo.description}
-  image={heroImage ? { url: heroImage.src, alt: typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en } : undefined}
+  image={heroImage && heroImageSrc ? { url: heroImageSrc, alt: typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en } : undefined}
 >
   <!-- ── Orange Page Header ───────────────────────────────────────────────── -->
   <section
@@ -91,7 +92,7 @@ function pillarTitleEn(title: unknown): string {
         <div class="max-w-3xl mx-auto text-center">
           {heroImage && (
             <img
-              src={`${base}${heroImage.src}`}
+              src={heroImageSrc}
               alt={typeof heroImage.alt === "string" ? heroImage.alt : heroImage.alt.en}
               class="w-80 h-80 object-cover rounded-full mx-auto mb-8 shadow-lg ring-4 ring-secondary-200"
             />

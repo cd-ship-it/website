@@ -10,4 +10,4 @@ export const LANG_COLORS: Record<string, string> = {
   Mandarin: "bg-accent-100 text-accent-800",
 };
 
-export const SERMON_PLACEHOLDER_IMAGE = "/uploads/sermon-placeholder.webp";
+export const SERMON_PLACEHOLDER_IMAGE = `${import.meta.env.BASE_URL}uploads/sermon-placeholder.webp`;

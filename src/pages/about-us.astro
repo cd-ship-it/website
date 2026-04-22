@@ -4,11 +4,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import { pickLocalizedText, resolveLocalizedSlot } from "../lib/i18n";
+import { withBaseUrl } from "../lib/urls";
 
 const page = await getEntry("about", "about-us");
 if (!page) throw new Error('Content entry "about/about-us" not found.');
 
 const { seo, pageHeader, mission, vision, history, testimonies = [] } = page.data;
+const ctaBackgroundImage = withBaseUrl(pageHeader.backgroundImage);
 
 if (!mission || !vision || !history) {
   throw new Error('about-us.md must define mission, vision, and history.');
@@ -234,7 +236,7 @@ if (!mission || !vision || !history) {
   <!-- ── CTA ────────────────────────────────────────────────────────────── -->
   <section
     class="py-20 bg-cover bg-center text-white"
-    style={`background-image: linear-gradient(rgba(13,59,106,0.88), rgba(31,110,179,0.80)), url(${pageHeader.backgroundImage})`}
+    style={`background-image: linear-gradient(rgba(13,59,106,0.88), rgba(31,110,179,0.80)), url(${ctaBackgroundImage})`}
   >
     <div class="container">
       <div class="max-w-2xl mx-auto text-center">

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LocalizedInline from "../../components/UI/LocalizedInline.astro";
 import { getEventsApiUrl, getSermonApiUrl, isCampusExcludedFromOrangeKids } from "../../config/site";
+import { withBaseUrl } from "../../lib/urls";
 
 export async function getStaticPaths() {
   const campuses = await getCollection("campus", ({ data }) => !data.draft);
@@ -153,17 +154,19 @@ const campusLifeWiggle = [
 
 const SERMON_API_URL = getSermonApiUrl();
 const EVENTS_API_URL = getEventsApiUrl();
+
+const heroImgSrc = withBaseUrl(hero.image);
 ---
 
 <BaseLayout
   title={seo.title}
   description={seo.description}
-  image={{ url: hero.image, alt: heroAlt }}
+  image={{ url: heroImgSrc, alt: heroAlt }}
 >
   <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
   <section class="relative min-h-[320px] md:min-h-[380px] flex items-center justify-center overflow-hidden">
     <img
-      src={`${import.meta.env.BASE_URL}${hero.image}`}
+      src={heroImgSrc}
       alt={heroAlt}
       class="absolute inset-0 w-full h-full object-cover"
     />
@@ -275,7 +278,7 @@ const EVENTS_API_URL = getEventsApiUrl();
             >
               <div class="overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_-8px_rgba(9,21,41,0.25)] ring-1 ring-primary-900/8">
                 <img
-                  src={`${import.meta.env.BASE_URL}${photo.image}`}
+                  src={withBaseUrl(photo.image)}
                   alt={typeof photo.alt === "string" ? photo.alt : photo.alt.en}
                   class="h-52 w-full object-cover sm:h-56"
                   loading="lazy"
