@@ -83,8 +83,8 @@ campuses:
       - en: "Youth/English: 9:30 am"
         zh-Hant: "青少年英語崇拜：上午 9:30"
         zh-Hans: "青少年英語崇拜：上午 9:30"  
-      - en: "Mandarin: 11:45 am"
-        zh-Hant: "國語崇拜：上午 11:45"
-        zh-Hans: "国语崇拜：上午 11:45"
+      - en: "Mandarin: 11:15 am"
+        zh-Hant: "國語崇拜：上午 11:15"
+        zh-Hans: "国语崇拜：上午 11:15"
 draft: false
 ---

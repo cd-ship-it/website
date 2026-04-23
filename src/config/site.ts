@@ -45,6 +45,15 @@ export function getContactFormActionUrl(): string {
 }
 
 /**
+ * Google reCAPTCHA v3 public site key. Empty when not configured (reCAPTCHA is
+ * then skipped on the client; server must likewise be unconfigured).
+ * Get a key pair at https://www.google.com/recaptcha/admin (choose v3).
+ */
+export function getRecaptchaSiteKey(): string {
+  return import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+}
+
+/**
  * Base URL for resolving relative API paths (e.g. `/api/events.php`) when fetching.
  * Order matches previous behavior: WordPress origin → Astro `site` → local dev.
  */

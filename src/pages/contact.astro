@@ -2,9 +2,10 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import Button from "../components/UI/Button.astro";
-import { getContactFormActionUrl } from "../config/site";
+import { getContactFormActionUrl, getRecaptchaSiteKey } from "../config/site";
 
 const contactFormActionUrl = getContactFormActionUrl();
+const recaptchaSiteKey = getRecaptchaSiteKey();
 ---
 
 <BaseLayout
@@ -106,9 +107,27 @@ const contactFormActionUrl = getContactFormActionUrl();
                 Send Message
               </Button>
             </div>
+
+            {recaptchaSiteKey && (
+              <p class="text-xs text-muted mt-2">
+                This site is protected by reCAPTCHA and the Google
+                {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary-600">Privacy Policy</a>
+                {" "}and
+                {" "}<a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary-600">Terms of Service</a>
+                {" "}apply.
+              </p>
+            )}
           </form>
-          
-          <script define:vars={{ contactFormActionUrl }}>
+
+          {recaptchaSiteKey && (
+            <script
+              async
+              defer
+              src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}
+            ></script>
+          )}
+
+          <script define:vars={{ contactFormActionUrl, recaptchaSiteKey }}>
             document.getElementById("contact-form")?.addEventListener("submit", async function (e) {
               e.preventDefault();
               const form = this;
@@ -120,9 +139,26 @@ const contactFormActionUrl = getContactFormActionUrl();
               }
               if (submitBtn) submitBtn.disabled = true;
               try {
+                const formData = new FormData(form);
+
+                if (recaptchaSiteKey) {
+                  const grecaptcha = /** @type {any} */ (window).grecaptcha;
+                  if (!grecaptcha || typeof grecaptcha.ready !== "function") {
+                    throw new Error("reCAPTCHA failed to load. Please refresh and try again.");
+                  }
+                  const token = await new Promise((resolve, reject) => {
+                    grecaptcha.ready(() => {
+                      grecaptcha
+                        .execute(recaptchaSiteKey, { action: "contact" })
+                        .then(resolve, reject);
+                    });
+                  });
+                  formData.set("g-recaptcha-response", token);
+                }
+
                 const res = await fetch(contactFormActionUrl, {
                   method: "POST",
-                  body: new FormData(form),
+                  body: formData,
                 });
                 const data = await res.json().catch(() => ({}));
                 if (res.ok && data.ok) {
@@ -139,9 +175,10 @@ const contactFormActionUrl = getContactFormActionUrl();
                     status.classList.add("text-red-600");
                   }
                 }
-              } catch {
+              } catch (err) {
                 if (status) {
                   status.textContent =
+                    (err && err.message) ||
                     "Could not send. Check your connection or try again later.";
                   status.classList.add("text-red-600");
                 }
@@ -262,63 +299,7 @@ const contactFormActionUrl = getContactFormActionUrl();
   </section>
   
   <!-- Map Section -->
-  <section class="py-16 bg-cream">
-    <div class="container">
-      <div class="text-center mb-12">
-        <h2 class="section-heading mb-4">Location & Directions</h2>
-        <p class="text-xl text-muted max-w-3xl mx-auto">
-          We're easy to find in the heart of Anytown
-        </p>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div class="bg-gray-200 rounded-lg overflow-hidden h-96">
-          <!-- Placeholder for Google Maps iframe -->
-          <div class="w-full h-full flex items-center justify-center bg-gray-300">
-            <p class="text-muted text-center p-4">
-              Google Maps embed would go here<br>
-              <span class="text-sm">(For privacy reasons, not included in the template)</span>
-            </p>
-          </div>
-        </div>
-        
-        <div>
-          <div class="xp-panel-inner bg-white p-8">
-            <h3 class="text-xl font-bold mb-4">Getting Here</h3>
-            
-            <div class="space-y-6">
-              <div>
-                <h4 class="subhead-sm mb-2">By Car</h4>
-                <p class="body-copy">
-                  We have a large parking lot with plenty of free parking spaces, including accessible parking near the main entrance.
-                </p>
-              </div>
-              
-              <div>
-                <h4 class="subhead-sm mb-2">Public Transportation</h4>
-                <p class="body-copy">
-                  Bus lines 10 and 14 stop directly in front of our building. The nearest subway station is Central Station, a 10-minute walk from our church.
-                </p>
-              </div>
-              
-              <div>
-                <h4 class="subhead-sm mb-2">Accessibility</h4>
-                <p class="body-copy">
-                  Our building is fully accessible with ramp access at the main entrance and elevator access to all floors. Accessible restrooms are available on each floor.
-                </p>
-              </div>
-            </div>
-            
-            <div class="mt-6">
-              <Button href="https://maps.google.com/?q=123+Main+Street,+Anytown,+ST+12345" target="_blank" variant="primary">
-                Get Directions
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  
   
   <!-- Staff Contact -->
   <section id="prayer" class="py-16">
@@ -424,46 +405,5 @@ const contactFormActionUrl = getContactFormActionUrl();
     </div>
   </section>
   
-  <!-- Newsletter Signup -->
-  <section id="newsletter" class="py-16 bg-primary-50">
-    <div class="container">
-      <div class="max-w-3xl mx-auto text-center">
-        <h2 class="section-heading mb-4">Subscribe to Our Newsletter</h2>
-        <p class="body-copy text-lg mb-8">
-          Stay updated with the latest events, announcements, and inspiration from our church community.
-        </p>
-        
-        <form id="newsletter-form" class="max-w-md mx-auto">
-          <div class="flex flex-col sm:flex-row gap-4">
-            <input 
-              type="email" 
-              id="newsletter-email" 
-              placeholder="Your email address" 
-              required
-              class="flex-grow px-4 py-3 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-            />
-            
-            <Button type="submit" variant="primary">
-              Subscribe
-            </Button>
-          </div>
-          <p class="text-sm text-muted mt-3">
-            We respect your privacy. You can unsubscribe at any time.
-          </p>
-        </form>
-        
-        <script>
-          // Handle newsletter form submission
-          document.getElementById("newsletter-form")?.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const form = e.currentTarget;
-            if (!(form instanceof HTMLFormElement)) return;
-            // In a real implementation, you would handle the form submission here
-            alert("Thank you for subscribing to our newsletter!");
-            form.reset();
-          });
-        </script>
-      </div>
-    </div>
-  </section>
+  
 </BaseLayout>
