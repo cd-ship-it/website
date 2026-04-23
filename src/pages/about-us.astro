@@ -123,6 +123,44 @@ if (!mission || !vision || !history) {
     </div>
   </section>
 
+  <!-- ── Still Standing Banner ──────────────────────────────────────────── -->
+  <section class="still-standing-banner">
+    <div class="still-standing-grid" aria-hidden="true"></div>
+    <div class="container relative z-[1]">
+      <div class="max-w-3xl">
+        <h2 class="still-standing-title">
+          <span class="still-standing-white">
+            <LocalizedInline value={{ en: "Still", "zh-Hant": "依然", "zh-Hans": "依然" }} />
+          </span>
+          <span class="still-standing-orange">
+            <LocalizedInline value={{ en: "Standing.", "zh-Hant": "屹立。", "zh-Hans": "屹立。" }} />
+          </span>
+        </h2>
+        <p class="still-standing-lede">
+          <LocalizedInline value={{
+            en: "The storm came. We stayed.",
+            "zh-Hant": "風雨來襲，我們仍然堅守。",
+            "zh-Hans": "风雨来袭，我们仍然坚守。"
+          }} />
+        </p>
+        <p class="still-standing-body">
+          <LocalizedInline value={{
+            en: "Here's what it cost us, what it taught us, and where we're going.",
+            "zh-Hant": "這是我們所付出的代價、從中學到的功課，以及未來要走的方向。",
+            "zh-Hans": "这是我们所付出的代价、从中学到的功课，以及未来要走的方向。"
+          }} />
+        </p>
+        <a href={`${import.meta.env.BASE_URL}our-season`} class="btn still-standing-btn">
+          <LocalizedInline value={{
+            en: "Read Our Season",
+            "zh-Hant": "閱讀我們的季節",
+            "zh-Hans": "阅读我们的季节"
+          }} />
+        </a>
+      </div>
+    </div>
+  </section>
+
 
   <!-- ── History Timeline ───────────────────────────────────────────────── -->
   <section class="py-20 bg-white">
@@ -302,6 +340,86 @@ if (!mission || !vision || !history) {
      Timeline styles
      ─────────────────────────────────────────────────────────────────────── -->
 <style>
+/* ── Still Standing Banner ── */
+.still-standing-banner {
+  position: relative;
+  width: 100%;
+  background: #000;
+  color: #fff;
+  padding: clamp(4rem, 9vw, 7.5rem) 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.still-standing-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.still-standing-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  font-size: clamp(3.75rem, 10vw, 8rem);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.35em;
+}
+
+.still-standing-white {
+  color: #f5efe1;
+}
+
+.still-standing-orange {
+  color: var(--orange);
+  font-style: italic;
+}
+
+.still-standing-lede {
+  font-family: var(--sans, inherit);
+  font-weight: 600;
+  color: #fff;
+  font-size: clamp(1.1rem, 1.6vw, 1.375rem);
+  margin-bottom: 0.75rem;
+}
+
+.still-standing-body {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.6;
+  max-width: 38rem;
+  margin-bottom: 2.25rem;
+}
+
+.still-standing-btn {
+  background: #facc15;
+  color: #0a0a0a;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.9rem 1.75rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(250, 204, 21, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.still-standing-btn:hover {
+  background: #fde047;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(250, 204, 21, 0.35);
+}
+.still-standing-btn:focus-visible {
+  outline: 2px solid #fde047;
+  outline-offset: 3px;
+}
+
 /* ── Testimonies ── */
 .testimonies-grid {
   display: grid;
