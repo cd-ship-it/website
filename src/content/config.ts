@@ -361,6 +361,71 @@ const pagesCollection = defineCollection({
       }),
       draft: z.boolean().default(false),
     }),
+    z.object({
+      pageKind: z.literal('our-season'),
+      seo: z.object({
+        title: z.string(),
+        description: z.string(),
+      }),
+      /** Large decorative numeral rendered as a hero background (non-localized). */
+      heroGhost: z.string().default('25'),
+      heroTitle: z.object({
+        line1: localizedText,
+        line2: localizedText,
+      }),
+      heroSub: z.object({
+        lead: localizedText,
+        body: localizedText,
+      }),
+      heroCta: z.object({
+        primary: z.object({ label: localizedText, href: z.string() }),
+        secondary: z.object({ label: localizedText, href: z.string() }),
+      }),
+      openingQuote: z.object({
+        text: localizedText,
+        attribution: z.string(),
+      }),
+      reality: z.object({
+        chapterNumber: z.string().default('01'),
+        heading: localizedText,
+        wordMark: localizedText,
+        paragraphs: z.array(localizedText).min(1),
+      }),
+      numbers: z.array(z.object({
+        value: z.string(),
+        label: localizedText,
+      })).min(1),
+      stayed: z.object({
+        heading: localizedText,
+        body: localizedText,
+        scripture: z.object({
+          text: localizedText,
+          citation: z.string(),
+        }),
+      }),
+      hardPart: z.object({
+        label: localizedText,
+        paragraphs: z.array(localizedText).min(1),
+      }),
+      ahead: z.object({
+        chapterNumber: z.string().default('02'),
+        /** Stacked heading. Each line has a style: `primary` (regular) or `accent` (italic/gold). */
+        headingLines: z.array(z.object({
+          style: z.enum(['primary', 'accent']),
+          text: localizedText,
+        })).min(1),
+        body: localizedText,
+        milestones: z.array(z.object({
+          title: localizedText,
+          body: localizedText,
+        })).min(1),
+      }),
+      finale: z.object({
+        lines: z.array(localizedText).min(1),
+        body: localizedText,
+      }),
+      draft: z.boolean().default(false),
+    }),
   ]),
 });
 

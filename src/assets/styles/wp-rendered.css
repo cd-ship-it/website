@@ -1,0 +1,167 @@
+/*
+ * Styles for WordPress content rendered via `set:html` on this site
+ * (curated dynamic pages + mirrored posts in `src/pages/[slug].astro`).
+ *
+ * WP's own stylesheets aren't loaded here, so without this file anchors
+ * inside a Gutenberg button block render as plain text links.
+ *
+ * Approach: don't try to reproduce WP's block-style system. Just take any
+ * `<a>` that WP emits with a button class and give it the project's primary
+ * pill-button look (matches `src/components/UI/Button.astro` → md / primary).
+ *
+ * Selectors are scoped under `.prose` to beat Tailwind Typography's default
+ * `.prose a` specificity (0,1,1) with 0,2,0.
+ */
+
+/* Row wrapper so multiple buttons sit side-by-side with a sane gap. */
+.prose .wp-block-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5em 0;
+  padding-left: 0;
+  list-style: none;
+}
+.prose .wp-block-buttons.is-content-justification-center {
+  justify-content: center;
+}
+.prose .wp-block-buttons.is-content-justification-right {
+  justify-content: flex-end;
+}
+
+.prose .wp-block-button {
+  display: inline-block;
+  margin: 0;
+}
+
+/* The actual button — any anchor WP flags as a button gets the primary style.
+ * Covers Gutenberg (`wp-block-button__link`, `wp-element-button`), Elementor
+ * (`elementor-button`, `elementor-button-link`), and the legacy custom class
+ * used in this site's older WP pages (`mybutton`). Add more here if the
+ * content uses other conventions (e.g. `.btn-primary`). */
+.prose a.wp-block-button__link,
+.prose a.wp-element-button,
+.prose .wp-block-button__link,
+.prose a.elementor-button,
+.prose a.elementor-button-link,
+.prose a.mybutton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+  margin: 0.25rem 0.25rem 0.25rem 0;
+  border: 0;
+  border-radius: 9999px;
+  background-color: #1B3A6B; /* primary-600 */
+  color: #ffffff;
+  font-family: "Chivo", system-ui, -apple-system, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  transition: background-color 200ms ease, box-shadow 200ms ease;
+}
+.prose a.wp-block-button__link:hover,
+.prose a.wp-element-button:hover,
+.prose .wp-block-button__link:hover,
+.prose a.elementor-button:hover,
+.prose a.elementor-button-link:hover,
+.prose a.mybutton:hover {
+  background-color: #142D54; /* primary-700 */
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.08);
+}
+.prose a.wp-block-button__link:focus-visible,
+.prose a.wp-element-button:focus-visible,
+.prose .wp-block-button__link:focus-visible,
+.prose a.elementor-button:focus-visible,
+.prose a.elementor-button-link:focus-visible,
+.prose a.mybutton:focus-visible {
+  outline: 2px solid #2D60AA; /* primary-500 */
+  outline-offset: 2px;
+}
+
+/* Elementor button internals — keep text visible, hide the Font Awesome icon
+ * spans since FA isn't loaded on this site (would render as empty squares). */
+.prose .elementor-button .elementor-button-content-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.prose .elementor-button .elementor-button-text {
+  display: inline;
+  color: inherit;
+  font-weight: inherit;
+}
+.prose .elementor-button .elementor-button-icon {
+  display: none;
+}
+
+/* ---------- Other Gutenberg blocks (kept for layout sanity) --------------- */
+
+.prose .wp-block-image {
+  margin: 1.75em 0;
+}
+.prose .wp-block-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+.prose .wp-block-image figcaption {
+  font-size: 0.875rem;
+  color: #6B7280;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.prose .wp-block-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1.75em 0;
+}
+.prose .wp-block-column {
+  flex: 1 1 calc(50% - 0.75rem);
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .prose .wp-block-column {
+    flex-basis: 100%;
+  }
+}
+
+.prose .wp-block-separator {
+  border: 0;
+  border-top: 1px solid #E5E7EB;
+  margin: 2em auto;
+  max-width: 6rem;
+}
+.prose .wp-block-separator.is-style-wide {
+  max-width: 100%;
+}
+
+.prose .wp-block-embed,
+.prose .wp-block-video {
+  margin: 1.75em 0;
+}
+.prose .wp-block-embed iframe,
+.prose .wp-block-video video {
+  max-width: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+.prose .has-text-align-center {
+  text-align: center;
+}
+.prose .has-text-align-right {
+  text-align: right;
+}
+.prose .has-text-align-left {
+  text-align: left;
+}

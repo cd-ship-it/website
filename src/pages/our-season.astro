@@ -1,12 +1,33 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import LocalizedInline from "../components/UI/LocalizedInline.astro";
 
-const seoTitle = "Still Standing — Our Season | Crosspoint Church";
-const seoDesc =
-  "The storm came. We stayed. Here's what it cost us, what it taught us, and where Crosspoint Church is going next.";
+const entry = (await getCollection("pages")).find(
+  (e) => e.data.pageKind === "our-season",
+);
+
+if (!entry || entry.data.pageKind !== "our-season") {
+  throw new Error('Content entry "pages/our-season" not found or wrong pageKind.');
+}
+
+const {
+  seo,
+  heroGhost,
+  heroTitle,
+  heroSub,
+  heroCta,
+  openingQuote,
+  reality,
+  numbers,
+  stayed,
+  hardPart,
+  ahead,
+  finale,
+} = entry.data;
 ---
 
-<BaseLayout title={seoTitle} description={seoDesc}>
+<BaseLayout title={seo.title} description={seo.description}>
 
   <!-- Page-specific fonts. Rendered in body; browsers handle stylesheet links here fine. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,42 +42,46 @@ const seoDesc =
     <!-- HERO: meta is minimal, just year + name -->
     <section class="hero">
       <div class="hero-grid-bg"></div>
-      <div class="hero-ghost" aria-hidden="true">25</div>
-      <!-- <div class="hero-meta">
-        <span class="hero-meta-year">2025</span>
-        <span class="hero-meta-rule" aria-hidden="true"></span>
-        <span class="hero-meta-name">Crosspoint Church</span>
-      </div> -->
-      <h1>Still<br /><em>Standing.</em></h1>
+      <div class="hero-ghost" aria-hidden="true">{heroGhost}</div>
+      <h1>
+        <LocalizedInline value={heroTitle.line1} /><br />
+        <em><LocalizedInline value={heroTitle.line2} /></em>
+      </h1>
       <p class="hero-sub">
-        <strong>The storm came. We stayed.</strong><br />
-        Here's what it cost us, what it taught us, and where we're going.
+        <strong><LocalizedInline value={heroSub.lead} /></strong><br />
+        <LocalizedInline value={heroSub.body} />
       </p>
       <div class="hero-cta">
-        <a href="#reality" class="btn-primary">Our Story</a>
-        <a href="#ahead" class="btn-ghost">What's Next</a>
+        <a href={heroCta.primary.href} class="btn-primary">
+          <LocalizedInline value={heroCta.primary.label} />
+        </a>
+        <a href={heroCta.secondary.href} class="btn-ghost">
+          <LocalizedInline value={heroCta.secondary.label} />
+        </a>
       </div>
     </section>
-  <!-- QUOTE: large decorative opening mark, no label -->
-  <div class="quote-band reveal">
-    <blockquote>&ldquo;I have learned to kiss the wave that throws me against the Rock of Ages</blockquote>
-    <cite>Charles Spurgeon</cite>
-  </div>
+
+    <!-- QUOTE: large decorative opening mark, no label -->
+    <div class="quote-band reveal">
+      <blockquote>&ldquo;<LocalizedInline value={openingQuote.text} /></blockquote>
+      <cite>{openingQuote.attribution}</cite>
+    </div>
+
     <!-- REALITY: word-mark is tucked under the h2, not floating above -->
     <section id="reality" class="section-wrap reveal">
-      <div class="ch" aria-hidden="true">01</div>
+      <div class="ch" aria-hidden="true">{reality.chapterNumber}</div>
       <div class="max-w">
         <div class="reality-layout">
           <div class="reality-left">
-            <h2>We made it.</h2>
-            <span class="word-mark" style="margin-top:1rem;">The Reality</span>
+            <h2><LocalizedInline value={reality.heading} /></h2>
+            <span class="word-mark" style="margin-top:1rem;">
+              <LocalizedInline value={reality.wordMark} />
+            </span>
           </div>
           <div class="reality-right">
-            <p>Crosspoint went through one of the most painful stretches in its 25-year history. <p>People we loved walked away. </p><p>Structures we'd built shifted overnight. </p><p>For a while, the question wasn't where we were going. It was whether we'd make it at all.</p>
-            <!-- <div class="pull-stat">Not without pain. Not without loss. But we're here, and we believe that matters.</div> -->
-            <p>The people who stayed had options. They knew what was happening. They had every reason to walk away. 
-              <p>They didn't.</p> 
-              <!-- <p>That choice means more than anything we could say.</p> -->
+            {reality.paragraphs.map((p) => (
+              <p><LocalizedInline value={p} /></p>
+            ))}
           </div>
         </div>
       </div>
@@ -65,146 +90,92 @@ const seoDesc =
     <!-- NUMBERS: no label at all — numbers speak -->
     <div class="numbers-band reveal">
       <div class="numbers-grid">
-        <div class="number-cell">
-          <div class="num-big">25</div>
-          <div class="num-label">Years of Faith That Held</div>
-        </div>
-        <div class="number-cell">
-          <div class="num-big">5</div>
-          <div class="num-label">Bay Area Locations</div>
-        </div>
-        <div class="number-cell">
-          <div class="num-big">1</div>
-          <div class="num-label">Church Family That Stayed</div>
-        </div>
+        {numbers.map((n) => (
+          <div class="number-cell">
+            <div class="num-big">{n.value}</div>
+            <div class="num-label"><LocalizedInline value={n.label} /></div>
+          </div>
+        ))}
       </div>
     </div>
-   <!-- STAYED: headline does ALL the work, zero labeling -->
+
+    <!-- STAYED: headline does ALL the work, zero labeling -->
     <section class="section-wrap bg-dark reveal">
       <div class="max-w">
         <div class="stayed-layout">
           <div>
-            <div class="stayed-h">We see you.</div>
+            <div class="stayed-h"><LocalizedInline value={stayed.heading} /></div>
           </div>
           <div class="stayed-body">
-            <p>You knew what was happening. You had every reason to leave. You stayed anyway. That decision was quiet, costly, and faithful. It's the ground this church stands on now. We don't take that lightly. We never will.</p>
-            <!-- <div class="promise-box">
-              <p>We will not waste what you gave. Every prayer. Every Sunday you showed up. Every dollar you trusted us with. It counts. We're building with it.</p>
-            </div> -->
+            <p><LocalizedInline value={stayed.body} /></p>
             <div class="scripture">
-              &ldquo;Now to him who is able to do immeasurably more than all we ask or imagine, according to his power that is at work within us.&rdquo;
-              神能照著運行在我們心裡的大力充足足的成就一切 ，超過我們所求所想的。
-              <cite>Ephesians 3:20</cite>
+              &ldquo;<LocalizedInline value={stayed.scripture.text} />&rdquo;
+              <cite>{stayed.scripture.citation}</cite>
             </div>
           </div>
         </div>
       </div>
     </section>
-  
 
     <!-- HARD PART: vertical text on the left edge, not an eyebrow -->
     <section class="section-wrap bg-mid reveal">
       <div class="max-w">
         <div class="hard-wrap">
-          <div class="vert-label">The Hard Part</div>
+          <div class="vert-label"><LocalizedInline value={hardPart.label} /></div>
           <div class="hard-copy">
-            <!-- <p>We didn't lose a few people. We lost a significant portion of our congregation. 
-              Friends. Families. Young people we'd poured years into. And the way some of it happened left wounds that people who chose to stay are still working through.</p>
-            <p>We're not going to retell every detail. Not because we're hiding anything. We simply believe that focusing only on what broke isn't the same as honoring what held.</p> -->
-            <p> We didn't lose a few people. <p> Friends. Families. Young people we'd poured years into. </p> <p>And the way some of it happened left wounds that people who chose to stay are still working through.</p>
-            <p>We're not going to retell every detail. Not because we're hiding anything. We simply believe that focusing only on what broke isn't the same as honoring what held.</p>
+            {hardPart.paragraphs.map((p) => (
+              <p><LocalizedInline value={p} /></p>
+            ))}
           </div>
         </div>
       </div>
     </section>
-
-    <!-- LESSONS: headline intro, then numbered grid — numbers ARE the section identity -->
-    <!-- <section id="learned" class="section-wrap reveal">
-      <div class="max-w">
-        <div class="lessons-intro">
-          <h2>Five things<br />the storm <em>taught us.</em></h2>
-        </div>
-        <div class="lessons-grid">
-          <div class="lesson-card">
-            <span class="l-num">— 01</span>
-            <div class="l-ghost" aria-hidden="true">01</div>
-            <div class="l-title">Roots matter more than numbers.</div>
-            <div class="l-body">A smaller group of fully committed people is worth more than a large crowd halfway in. We learned that the hard way. We'd learn it again.</div>
-          </div>
-          <div class="lesson-card">
-            <span class="l-num">— 02</span>
-            <div class="l-ghost" aria-hidden="true">02</div>
-            <div class="l-title">Pruning is how growth happens.</div>
-            <div class="l-body">Every gardener knows pruning hurts the plant. It also produces fruit. The seasons ahead will show it.</div>
-          </div>
-          <div class="lesson-card">
-            <span class="l-num">— 03</span>
-            <div class="l-ghost" aria-hidden="true">03</div>
-            <div class="l-title">God builds what He wants to build.</div>
-            <div class="l-body">&ldquo;Unless the Lord builds the house, the builders labor in vain.&rdquo; Psalm 127:1. This is His church. The last few years proved it.</div>
-          </div>
-          <div class="lesson-card">
-            <span class="l-num">— 04</span>
-            <div class="l-ghost" aria-hidden="true">04</div>
-            <div class="l-title">Community is a choice, not a convenience.</div>
-            <div class="l-body">The people in our seats on any given Sunday chose to be there. Knowing that raises the stakes in the best way.</div>
-          </div>
-          <div class="lesson-card">
-            <span class="l-num">— 05</span>
-            <div class="l-ghost" aria-hidden="true">05</div>
-            <div class="l-title">Accountability builds what apology alone cannot.</div>
-            <div class="l-body">We name our mistakes rather than spin them. A church that can't be honest about its own failures can't be trusted to lead anyone else.</div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
- 
 
     <!-- AHEAD: ghost chapter number, headline leads -->
     <section id="ahead" class="section-wrap reveal">
-      <div class="ch" aria-hidden="true">02</div>
+      <div class="ch" aria-hidden="true">{ahead.chapterNumber}</div>
       <div class="max-w">
         <div class="ahead-top">
           <div>
-            <h2>Building<br />better<br /><em>ground.</em></h2>
+            <h2>
+              {ahead.headingLines.map((line, idx) => (
+                <>
+                  {idx > 0 && <br />}
+                  {line.style === "accent" ? (
+                    <em><LocalizedInline value={line.text} /></em>
+                  ) : (
+                    <LocalizedInline value={line.text} />
+                  )}
+                </>
+              ))}
+            </h2>
           </div>
           <div class="ahead-body">
-            <p>We are consolidating. Bringing people closer together. Concentrating our strength around where God is clearly moving.</p>
-            <!-- <p>Fewer commitments, made more fully. Deeper roots before wider reach. Regroup, grow, then expand. That is the sequence and we're committed to it.</p> -->
+            <p><LocalizedInline value={ahead.body} /></p>
           </div>
         </div>
         <div class="milestones-grid">
-          <div class="ms-cell">
-            <div class="ms-title">New Building</div>
-            <div class="ms-body">A third building purchased in San Leandro, bringing our people closer together.</div>
-          </div>
-          <div class="ms-cell">
-            <div class="ms-title">New Leadership</div>
-            <div class="ms-body">New pastoral leadership in place, committed to building depth before spread.</div>
-          </div>
-          <div class="ms-cell">
-            <div class="ms-title">Three Languages</div>
-            <div class="ms-body">Gathering every week in English, Cantonese, and Mandarin across the Bay Area.</div>
-          </div>
+          {ahead.milestones.map((m) => (
+            <div class="ms-cell">
+              <div class="ms-title"><LocalizedInline value={m.title} /></div>
+              <div class="ms-body"><LocalizedInline value={m.body} /></div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
 
-    <!-- MISSION: thin rule above, large type, no eyebrow -->
-    <!-- <div class="mission-band reveal">
-      <div class="max-w">
-        <div class="mission-rule" aria-hidden="true"></div>
-        <h2>The Bay Area needs a church like this.</h2>
-        <p>Trilingual &bull; Multigenerational &bull; Still Called</p>
-      </div>
-    </div> -->
-
     <!-- FINAL -->
     <div class="final-band">
-      <div class="final-h">Every high.<br />Every low.<br />God is with us.<br />We stay strong.</div>
-      <p class="final-p">That's not a slogan. It's a testimony. 
-        <!-- It's what we know because we lived it. And we believe the best of what God has for Crosspoint is still ahead.</p> -->
+      <div class="final-h">
+        {finale.lines.map((line, idx) => (
+          <>
+            {idx > 0 && <br />}
+            <LocalizedInline value={line} />
+          </>
+        ))}
+      </div>
+      <p class="final-p"><LocalizedInline value={finale.body} /></p>
     </div>
 
   </div>

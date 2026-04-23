@@ -1,30 +1,120 @@
 ---
+import type { GetStaticPaths } from "astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
+import "../assets/styles/wp-rendered.css";
 import { WP_DYNAMIC_PAGES, getWpDynamicPageConfig } from "../config/wpDynamicPages";
 import { getWordPressUrl } from "../config/site";
 import { fetchCategoryLatestPostLinkPreview } from "../lib/wpLinkPreview";
 import {
+  fetchExplicitWordPressItemsById,
+  fetchWordPressItemsByCategorySlug,
   fetchWpDynamicPageRecord,
+  mergeWordPressMirrorItems,
+  parseWordPressIds,
   shouldShowWpDynamicPostTitle,
   type WpMirrorItem,
   wpMirrorDisplayDates,
 } from "../lib/wordpress/mirror";
 
-export function getStaticPaths() {
-  return WP_DYNAMIC_PAGES.map((p) => ({ params: { slug: p.slug } }));
-}
+type DynamicPageProps = {
+  kind: "dynamic";
+};
+
+type MirrorPageProps = {
+  kind: "mirror";
+  item: WpMirrorItem;
+};
+
+type PageProps = DynamicPageProps | MirrorPageProps;
+
+/**
+ * When true, `WP_DYNAMIC_PAGES` entries (weekly-prayer, heart-of-a-shepherd, …)
+ * skip the build-time WordPress fetch and instead hit the WP REST API from the
+ * browser on page load. Mirror items (`PUBLIC_WP_MIRROR_IDS` / categories) are
+ * unaffected — they always prebuild.
+ *
+ * Accepts `true` / `1` / `yes` (case-insensitive) to enable.
+ */
+const CLIENT_FETCH_DYNAMIC = ((): boolean => {
+  const raw = (import.meta.env.PUBLIC_WP_DYNAMIC_CLIENT_FETCH ?? "")
+    .toString()
+    .trim()
+    .toLowerCase();
+  return raw === "true" || raw === "1" || raw === "yes";
+})();
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths: Array<{ params: { slug: string }; props: PageProps }> = [];
+  const reservedSlugs = new Set(
+    WP_DYNAMIC_PAGES.map((p) => p.slug.toLowerCase()),
+  );
+
+  for (const cfg of WP_DYNAMIC_PAGES) {
+    paths.push({
+      params: { slug: cfg.slug },
+      props: { kind: "dynamic" },
+    });
+  }
+
+  const wpBaseUrl = getWordPressUrl();
+  if (!wpBaseUrl) {
+    return paths;
+  }
+
+  const categorySlugsRaw =
+    import.meta.env.PUBLIC_WP_MIRROR_CATEGORY_SLUG ?? "wp_mirror";
+  const categorySlugs = categorySlugsRaw
+    .split(",")
+    .map((value: string) => value.trim())
+    .filter(Boolean);
+  const mirrorIds = parseWordPressIds(import.meta.env.PUBLIC_WP_MIRROR_IDS);
+
+  const [explicitItems, categoryBuckets] = await Promise.all([
+    fetchExplicitWordPressItemsById(mirrorIds),
+    Promise.all(
+      categorySlugs.map((slug: string) =>
+        fetchWordPressItemsByCategorySlug(slug).catch(() => [] as WpMirrorItem[]),
+      ),
+    ),
+  ]);
+  const categoryItems = categoryBuckets.flat();
+  const mergedMirrorItems = mergeWordPressMirrorItems(categoryItems, explicitItems);
+
+  const seenRouteSlugs = new Set<string>();
+
+  for (const item of mergedMirrorItems) {
+    const canonicalSlug = item.slug;
+    const slugLower = canonicalSlug.toLowerCase();
+
+    if (reservedSlugs.has(slugLower)) {
+      console.warn(
+        `[wp-mirror] skipping "${canonicalSlug}" (id ${item.id}) — slug is reserved by WP_DYNAMIC_PAGES`,
+      );
+      continue;
+    }
+
+    const routeCandidates =
+      canonicalSlug === slugLower ? [canonicalSlug] : [canonicalSlug, slugLower];
+
+    for (const routeSlug of routeCandidates) {
+      const routeKey = routeSlug.toLowerCase();
+      if (seenRouteSlugs.has(routeKey) || reservedSlugs.has(routeKey)) {
+        continue;
+      }
+      seenRouteSlugs.add(routeKey);
+      paths.push({
+        params: { slug: routeSlug },
+        props: { kind: "mirror", item },
+      });
+    }
+  }
+
+  return paths;
+};
 
 const { slug } = Astro.params;
-const cfg = slug ? getWpDynamicPageConfig(slug) : undefined;
-
-if (!cfg) {
-  return new Response("Not Found", {
-    status: 404,
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
-  });
-}
-
+const props = Astro.props as PageProps;
 const wpBaseUrl = getWordPressUrl();
 
 const heartFallbackImage = {
@@ -32,36 +122,89 @@ const heartFallbackImage = {
   alt: "Heart of a Shepherd — Crosspoint Church",
 };
 
-let layoutTitle = cfg.seo.title;
-let layoutDescription = cfg.seo.description;
+let layoutTitle = "";
+let layoutDescription = "";
 let layoutImage = heartFallbackImage;
 let layoutType: "website" | "article" = "website";
-let record: WpMirrorItem | null = null;
 
-if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategorySlug) {
-  try {
-    const preview = await fetchCategoryLatestPostLinkPreview(wpBaseUrl, cfg.wpCategorySlug, {
-      title: cfg.seo.title,
-      description: cfg.seo.description,
-      image: heartFallbackImage,
+let cfg: ReturnType<typeof getWpDynamicPageConfig> = undefined;
+let record: WpMirrorItem | null = null;
+let headerTitle = "";
+let headerSubtitle: string | undefined;
+let showPostTitle = false;
+let mirrorItem: WpMirrorItem | null = null;
+
+/** True only when we will render a client-fetched placeholder shell. */
+let useClientFetch = false;
+
+if (props.kind === "mirror") {
+  mirrorItem = props.item;
+  const rawTitle = mirrorItem.title?.rendered ?? mirrorItem.slug ?? "";
+  const plainTitle = rawTitle.replace(/<[^>]+>/g, "").trim();
+  layoutTitle = plainTitle || "Crosspoint Church";
+  layoutDescription =
+    (mirrorItem.excerpt?.rendered ?? "")
+      .replace(/<[^>]+>/g, "")
+      .trim()
+      .slice(0, 200) || "Crosspoint Church";
+  layoutType = "article";
+  headerTitle = plainTitle || mirrorItem.slug;
+} else {
+  cfg = typeof slug === "string" ? getWpDynamicPageConfig(slug) : undefined;
+
+  if (!cfg) {
+    return new Response("Not Found", {
+      status: 404,
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
-    if (preview) {
-      layoutTitle = preview.title;
-      layoutDescription = preview.description;
-      layoutImage = preview.image;
-      layoutType = "article";
+  }
+
+  layoutTitle = cfg.seo.title;
+  layoutDescription = cfg.seo.description;
+  headerTitle = cfg.pageHeader.title;
+  headerSubtitle = cfg.pageHeader.subtitle;
+
+  useClientFetch = CLIENT_FETCH_DYNAMIC && Boolean(wpBaseUrl);
+
+  if (!useClientFetch) {
+    if (cfg.kind === "wordpress_category_latest_post" && wpBaseUrl && cfg.wpCategorySlug) {
+      try {
+        const preview = await fetchCategoryLatestPostLinkPreview(wpBaseUrl, cfg.wpCategorySlug, {
+          title: cfg.seo.title,
+          description: cfg.seo.description,
+          image: heartFallbackImage,
+        });
+        if (preview) {
+          layoutTitle = preview.title;
+          layoutDescription = preview.description;
+          layoutImage = preview.image;
+          layoutType = "article";
+        }
+      } catch {
+        /* build-time fetch unavailable or network error — keep static SEO from config */
+      }
     }
-  } catch {
-    /* build-time fetch unavailable or network error — keep static SEO from config */
+
+    if (wpBaseUrl) {
+      record = await fetchWpDynamicPageRecord(cfg);
+    }
+
+    showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
   }
 }
 
-if (wpBaseUrl) {
-  record = await fetchWpDynamicPageRecord(cfg);
-}
-
-const { dateIso, dateLong } = wpMirrorDisplayDates(record);
-const showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
+const isMirror = props.kind === "mirror";
+const activeRecord = isMirror ? mirrorItem : record;
+// Mirror posts/pages intentionally hide the date + hero banner; curated
+// WP_DYNAMIC_PAGES entries (weekly-prayer, heart-of-a-shepherd) keep both.
+const { dateIso, dateLong } = isMirror
+  ? { dateIso: null as string | null, dateLong: null as string | null }
+  : wpMirrorDisplayDates(activeRecord);
+const renderRecord = isMirror ? mirrorItem : record;
+const renderTitleHtml =
+  isMirror && mirrorItem
+    ? mirrorItem.title?.rendered ?? ""
+    : record?.title?.rendered ?? "";
 ---
 
 <BaseLayout
@@ -70,13 +213,15 @@ const showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
   image={layoutImage}
   type={layoutType}
 >
-  <PageHeader
-    title={cfg.pageHeader.title}
-    subtitle={cfg.pageHeader.subtitle}
-    backgroundImage={`${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`}
-  />
+  {!isMirror && (
+    <PageHeader
+      title={headerTitle}
+      subtitle={headerSubtitle}
+      backgroundImage={`${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`}
+    />
+  )}
 
-  <section class="py-16 bg-white">
+  <section class={isMirror ? "pt-8 pb-16 bg-white" : "py-16 bg-white"}>
     <div class="container max-w-4xl">
       {!wpBaseUrl ? (
         <div class="xp-panel-inner bg-red-50 p-6 text-red-700">
@@ -85,7 +230,21 @@ const showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
             in your environment.
           </p>
         </div>
-      ) : !record ? (
+      ) : useClientFetch && cfg ? (
+        <article
+          class="xp-panel-inner bg-white p-6 md:p-8"
+          data-wp-dynamic
+          data-wp-base={wpBaseUrl}
+          data-wp-kind={cfg.kind}
+          data-wp-page-slug={cfg.wpPageSlug ?? ""}
+          data-wp-category-slug={cfg.wpCategorySlug ?? ""}
+          data-wp-show-title={cfg.showPostTitle === false ? "0" : "1"}
+        >
+          <div class="py-8 text-center text-muted" data-wp-state="loading">
+            Loading latest content…
+          </div>
+        </article>
+      ) : !renderRecord ? (
         <div class="xp-panel-inner bg-red-50 p-6 text-red-700">
           <p>No published content found yet.</p>
         </div>
@@ -97,25 +256,152 @@ const showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
             </p>
           )}
 
-          {showPostTitle && (
-            <h1 class="text-3xl md:text-4xl font-bold mb-6" set:html={record.title?.rendered ?? ""} />
+          {(props.kind === "mirror" || showPostTitle) && (
+            <h1 class="text-3xl md:text-4xl font-bold mb-6" set:html={renderTitleHtml} />
           )}
 
-          <div class="prose prose-lg max-w-none" set:html={record.content?.rendered ?? ""} />
-          {record.link && (
+          <div class="prose prose-lg max-w-none" set:html={renderRecord.content?.rendered ?? ""} />
+          {renderRecord.link && (
             <p class="mt-8">
-              <a
-                href={record.link}
+              {/* <a
+                href={renderRecord.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary-600 font-medium hover:underline"
               >
                 View on WordPress →
-              </a>
+              </a> */}
             </p>
           )}
         </article>
       )}
     </div>
   </section>
+
+  {useClientFetch && (
+    <script is:inline>
+      (function () {
+        var el = document.querySelector("[data-wp-dynamic]");
+        if (!el) return;
+
+        var base = el.getAttribute("data-wp-base") || "";
+        var kind = el.getAttribute("data-wp-kind") || "";
+        var pageSlug = el.getAttribute("data-wp-page-slug") || "";
+        var categorySlug = el.getAttribute("data-wp-category-slug") || "";
+        var showTitle = el.getAttribute("data-wp-show-title") === "1";
+
+        if (!base) return;
+
+        var apiRoot = new URL("/wp-json/wp/v2/", base).toString();
+
+        function wpFetch(path, params) {
+          var url = new URL(path, apiRoot);
+          if (params) {
+            Object.keys(params).forEach(function (key) {
+              var value = params[key];
+              if (value !== undefined && value !== null) {
+                url.searchParams.set(key, String(value));
+              }
+            });
+          }
+          return fetch(url.toString()).then(function (r) {
+            if (!r.ok) throw new Error("WP HTTP " + r.status);
+            return r.json();
+          });
+        }
+
+        function loadRecord() {
+          if (kind === "wordpress_page" && pageSlug) {
+            return wpFetch("pages", { slug: pageSlug, per_page: 1, _embed: 1 }).then(function (
+              list
+            ) {
+              return list && list[0] ? list[0] : null;
+            });
+          }
+          if (kind === "wordpress_category_latest_post" && categorySlug) {
+            return wpFetch("categories", {
+              slug: categorySlug,
+              per_page: 1,
+              hide_empty: false,
+            }).then(function (cats) {
+              if (!cats || !cats[0]) return null;
+              return wpFetch("posts", {
+                categories: cats[0].id,
+                per_page: 1,
+                orderby: "date",
+                order: "desc",
+                _embed: 1,
+              }).then(function (posts) {
+                return posts && posts[0] ? posts[0] : null;
+              });
+            });
+          }
+          return Promise.resolve(null);
+        }
+
+        function escapeAttr(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function render(record) {
+          if (!record) {
+            el.innerHTML =
+              '<div class="bg-red-50 p-6 text-red-700"><p>No published content found yet.</p></div>';
+            return;
+          }
+
+          var parts = [];
+          if (record.date) {
+            var d = new Date(record.date);
+            var iso = d.toISOString().slice(0, 10);
+            var long = d.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+            parts.push(
+              '<p class="text-sm text-muted mb-3"><time datetime="' +
+                escapeAttr(iso) +
+                '">' +
+                long +
+                "</time></p>"
+            );
+          }
+
+          var titleHtml = record.title && record.title.rendered ? record.title.rendered : "";
+          if (showTitle && titleHtml) {
+            parts.push('<h1 class="text-3xl md:text-4xl font-bold mb-6">' + titleHtml + "</h1>");
+          }
+
+          var contentHtml =
+            record.content && record.content.rendered ? record.content.rendered : "";
+          parts.push('<div class="prose prose-lg max-w-none">' + contentHtml + "</div>");
+
+          // if (record.link) {
+          //   parts.push(
+          //     '<p class="mt-8"><a href="' +
+          //       escapeAttr(record.link) +
+          //       '" target="_blank" rel="noopener noreferrer" class="text-primary-600 font-medium hover:underline">View on WordPress &rarr;</a></p>'
+          //   );
+          // }
+
+          el.innerHTML = parts.join("");
+        }
+
+        loadRecord()
+          .then(render)
+          .catch(function (err) {
+            if (typeof console !== "undefined" && console.error) {
+              console.error("[wp-dynamic] fetch failed", err);
+            }
+            el.innerHTML =
+              '<div class="bg-red-50 p-6 text-red-700"><p>Failed to load content.</p></div>';
+          });
+      })();
+    </script>
+  )}
 </BaseLayout>
