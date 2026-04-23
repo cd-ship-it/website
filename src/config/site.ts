@@ -36,7 +36,12 @@ export function getEventsApiUrl(): string {
 
 /** POST target for the contact form (PHP on SiteGround or any host that runs `public/api/contact.php`). */
 export function getContactFormActionUrl(): string {
-  return import.meta.env.PUBLIC_CONTACT_FORM_URL ?? "/api/contact.php";
+  const override = import.meta.env.PUBLIC_CONTACT_FORM_URL;
+  if (override) return override;
+  // Default: resolve against Astro's `base` so it works under /v2/ in production
+  // and / in dev. BASE_URL always has a trailing slash.
+  const base = import.meta.env.BASE_URL ?? "/";
+  return `${base}api/contact.php`;
 }
 
 /**

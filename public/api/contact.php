@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // ─── Edit for your church / SiteGround mailbox ─────────────────────────────
-const MAIL_TO = 'office@yourchurch.org';
+const MAIL_TO = 'cd@crosspointchurchsv.org';
 /** Use an address @ your site domain (SiteGround and most hosts require this for PHP mail). */
-const MAIL_FROM = 'noreply@yourchurch.org';
+const MAIL_FROM = 'noreply@crosspointchurchsv.org';
 const MAIL_FROM_NAME = 'Website Contact Form';
 
 // Honeypot: leave empty in real submissions; bots often fill hidden fields.
