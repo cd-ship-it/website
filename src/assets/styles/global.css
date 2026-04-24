@@ -539,7 +539,7 @@ details[open] > summary svg:not([class*="learn-more-chevron"]) {
   flex: 1;
 }
 .campus-card-time {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--ink-3);
 }
 .campus-card-cta {

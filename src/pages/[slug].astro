@@ -14,7 +14,6 @@ import {
   parseWordPressIds,
   shouldShowWpDynamicPostTitle,
   type WpMirrorItem,
-  wpMirrorDisplayDates,
 } from "../lib/wordpress/mirror";
 
 type DynamicPageProps = {
@@ -194,12 +193,6 @@ if (props.kind === "mirror") {
 }
 
 const isMirror = props.kind === "mirror";
-const activeRecord = isMirror ? mirrorItem : record;
-// Mirror posts/pages intentionally hide the date + hero banner; curated
-// WP_DYNAMIC_PAGES entries (weekly-prayer, heart-of-a-shepherd) keep both.
-const { dateIso, dateLong } = isMirror
-  ? { dateIso: null as string | null, dateLong: null as string | null }
-  : wpMirrorDisplayDates(activeRecord);
 const renderRecord = isMirror ? mirrorItem : record;
 const renderTitleHtml =
   isMirror && mirrorItem
@@ -221,10 +214,10 @@ const renderTitleHtml =
     />
   )}
 
-  <section class={isMirror ? "pt-8 pb-16 bg-white" : "py-16 bg-white"}>
+  <section class={isMirror ? "pt-8 pb-16" : "py-16"}>
     <div class="container max-w-4xl">
       {!wpBaseUrl ? (
-        <div class="xp-panel-inner bg-red-50 p-6 text-red-700">
+        <div class="bg-red-50 p-6 text-red-700">
           <p>
             WordPress URL is not configured. Set <code class="text-sm">PUBLIC_WORDPRESS_URL</code>{" "}
             in your environment.
@@ -232,7 +225,6 @@ const renderTitleHtml =
         </div>
       ) : useClientFetch && cfg ? (
         <article
-          class="xp-panel-inner bg-white p-6 md:p-8"
           data-wp-dynamic
           data-wp-base={wpBaseUrl}
           data-wp-kind={cfg.kind}
@@ -245,17 +237,11 @@ const renderTitleHtml =
           </div>
         </article>
       ) : !renderRecord ? (
-        <div class="xp-panel-inner bg-red-50 p-6 text-red-700">
+        <div class="bg-red-50 p-6 text-red-700">
           <p>No published content found yet.</p>
         </div>
       ) : (
-        <article class="xp-panel-inner bg-white p-6 md:p-8">
-          {dateIso && dateLong && (
-            <p class="text-sm text-muted mb-3">
-              <time datetime={dateIso}>{dateLong}</time>
-            </p>
-          )}
-
+        <article>
           {(props.kind === "mirror" || showPostTitle) && (
             <h1 class="text-3xl md:text-4xl font-bold mb-6" set:html={renderTitleHtml} />
           )}
@@ -355,22 +341,6 @@ const renderTitleHtml =
           }
 
           var parts = [];
-          if (record.date) {
-            var d = new Date(record.date);
-            var iso = d.toISOString().slice(0, 10);
-            var long = d.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            });
-            parts.push(
-              '<p class="text-sm text-muted mb-3"><time datetime="' +
-                escapeAttr(iso) +
-                '">' +
-                long +
-                "</time></p>"
-            );
-          }
 
           var titleHtml = record.title && record.title.rendered ? record.title.rendered : "";
           if (showTitle && titleHtml) {

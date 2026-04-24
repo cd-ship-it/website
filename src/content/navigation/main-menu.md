@@ -1,48 +1,17 @@
 ---
 title: "Main Navigation"
 items:
-  - id: "campuses"
+  - id: "sermons"
     label:
-      en: "Campuses"
-      zh-Hant: "會堂"
-      zh-Hans: "会堂"
-    href: "#"
-    children:
-      - id: "milpitas"
-        label:
-          en: "Milpitas"
-          zh-Hant: "Milpitas"
-          zh-Hans: "Milpitas"
-        href: "/campus/milpitas"
-      - id: "pleasanton"
-        label:
-          en: "Pleasanton"
-          zh-Hant: "Pleasanton"
-          zh-Hans: "Pleasanton"
-        href: "/campus/pleasanton"
-      - id: "san-leandro"
-        label:
-          en: "San Leandro"
-          zh-Hant: "San Leandro"
-          zh-Hans: "San Leandro"
-        href: "/campus/san-leandro"
-      - id: "tracy"
-        label:
-          en: "Tracy"
-          zh-Hant: "Tracy"
-          zh-Hans: "Tracy"
-        href: "/campus/tracy"
-      - id: "peninsula"
-        label:
-          en: "Peninsula"
-          zh-Hant: "Peninsula"
-          zh-Hans: "Peninsula"
-        href: "/campus/peninsula"
-  - id: "connect"
+      en: "Sermons"
+      zh-Hant: "講道"
+      zh-Hans: "讲道"
+    href: "/sermons"
+  - id: "community"
     label:
-      en: "Connect"
-      zh-Hant: "連繫"
-      zh-Hans: "連繫"
+      en: "Community"
+      zh-Hant: "社群"
+      zh-Hans: "社群"
     href: "#"
     children:
       - id: "im-new"
@@ -106,19 +75,6 @@ items:
           zh-Hant: "兒童事工"
           zh-Hans: "兒童事工"
         href: "/orangekids"
-  - id: "growth"
-    label:
-      en: "Grow"
-      zh-Hant: "成長"
-      zh-Hans: "成长"
-    href: "#"
-    children:
-      - id: "sermons"
-        label:
-          en: "Sermons"
-          zh-Hant: "講道"
-          zh-Hans: "讲道"
-        href: "/sermons"
       - id: "weekly-prayer"
         label:
           en: "Weekly Prayer"
@@ -150,6 +106,43 @@ items:
       zh-Hans: "关于我们"
     href: "#"
     children:
+      - id: "campuses"
+        label:
+          en: "Campuses"
+          zh-Hant: "會堂"
+          zh-Hans: "会堂"
+        href: "#"
+        children:
+          - id: "milpitas"
+            label:
+              en: "Milpitas"
+              zh-Hant: "Milpitas"
+              zh-Hans: "Milpitas"
+            href: "/campus/milpitas"
+          - id: "pleasanton"
+            label:
+              en: "Pleasanton"
+              zh-Hant: "Pleasanton"
+              zh-Hans: "Pleasanton"
+            href: "/campus/pleasanton"
+          - id: "san-leandro"
+            label:
+              en: "San Leandro"
+              zh-Hant: "San Leandro"
+              zh-Hans: "San Leandro"
+            href: "/campus/san-leandro"
+          - id: "tracy"
+            label:
+              en: "Tracy"
+              zh-Hant: "Tracy"
+              zh-Hans: "Tracy"
+            href: "/campus/tracy"
+          - id: "peninsula"
+            label:
+              en: "Peninsula"
+              zh-Hant: "Peninsula"
+              zh-Hans: "Peninsula"
+            href: "/campus/peninsula"
       - id: "about-overview"
         label:
           en: "About Us"

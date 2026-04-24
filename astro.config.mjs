@@ -20,7 +20,7 @@ export default defineConfig({
    * Required when the built site is served under a subpath (e.g. /v2/).
    * Without this, CSS/JS links point to /_astro/... and 404 at the domain root.
    */
-  base: platform === 'production' ? '/v2/' : '/',
+  base: platform === 'production' ? '/' : '/',
 
   integrations: [tailwind(), sitemap()],
   markdown: {
