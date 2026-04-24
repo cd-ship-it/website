@@ -169,7 +169,7 @@ if (!mission || !vision || !history) {
       <!-- Section heading -->
       <div
         class="relative mb-16 overflow-hidden rounded-2xl bg-cover bg-center px-4 py-14 text-center text-white md:py-16"
-        style={`background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(${withBaseUrl("/uploads/about/25-years-faith-growth.png)")}`}
+        style={`background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(${withBaseUrl("/uploads/about/25-years-faith-growth.png")})`}
       >
         <p class="eyebrow mb-3 text-white/90">
           <LocalizedInline value={{ en: "Our Amazing Story", "zh-Hant": "我們的奇妙故事", "zh-Hans": "我们的奇妙故事" }} />
@@ -259,7 +259,7 @@ if (!mission || !vision || !history) {
               data-thumb-offset={t.poster ? undefined : "1"}
               aria-label={`Testimony by ${t.name}`}
             >
-              <source src={`${withBaseUrl("/uploads/testimonies/${encodeURIComponent(t.file)")}}`} type="video/mp4" />
+              <source src={withBaseUrl(`/uploads/testimonies/${encodeURIComponent(t.file)}`)} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             <p class="testimony-name">{t.name}</p>
