@@ -281,21 +281,25 @@ const campusNames = await getCampusNames();
       if (thisRequest !== requestSeq) return;
 
       loading.classList.add('hidden');
+      const rows = Array.isArray(json) ? json : (json?.data ?? []);
+      const pagination = json?.pagination ?? { page, total: rows.length, total_pages: 1 };
 
-      if (json.data.length === 0) {
+      if (rows.length === 0) {
         noRes.classList.remove('hidden');
-        countEl.textContent = '';
+        if (countEl) countEl.textContent = '';
       } else {
-        grid.innerHTML = json.data.map(sermonCard).join('');
+        grid.innerHTML = rows.map(sermonCard).join('');
         grid.classList.remove('hidden');
-        countEl.textContent = `${json.pagination.total} sermon${json.pagination.total !== 1 ? 's' : ''}`;
+        if (countEl) {
+          countEl.textContent = `${pagination.total} sermon${pagination.total !== 1 ? 's' : ''}`;
+        }
 
         // Pagination
-        if (json.pagination.total_pages > 1) {
+        if (pagination.total_pages > 1) {
           document.getElementById('page-info').textContent =
-            `Page ${json.pagination.page} of ${json.pagination.total_pages}`;
+            `Page ${pagination.page} of ${pagination.total_pages}`;
           document.getElementById('prev-page').disabled = page <= 1;
-          document.getElementById('next-page').disabled = page >= json.pagination.total_pages;
+          document.getElementById('next-page').disabled = page >= pagination.total_pages;
           pagEl.classList.remove('hidden');
         }
       }
