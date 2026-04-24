@@ -7,7 +7,7 @@ title:
 
 seo:
   title: "Orange Kids - Crosspoint Church"
-  description: "We partner with parents to create a crosspoint between children and God. A safe and fun environment for kids to learn about God's Word and the love of Jesus."
+  description: "We partner with parents to help children build a strong relationship with God. A safe and fun environment for kids to learn about God's Word and the love of Jesus."
 
 pageHeader:
   backgroundImage: "/uploads/orange-kids/collage.jpg"
@@ -28,7 +28,7 @@ heroImage:
     zh-Hans: "Orange Kids崇拜"
 
 missionStatement:
-  en: "We partner with parents to create a crosspoint between children and God. We desire to see a generation of children come to know God and trust in Jesus at an early age."
+  en: "We partner with parents to help children build a meaningful connection with God. We desire to see a generation of children come to know God and trust in Jesus at an early age."
   zh-Hant: "我們與家長攜手，為孩子與神之間建立一個交點。我們渴望看見一代孩子從小認識神，信靠耶穌。"
   zh-Hans: "我们与家长携手，为孩子与神之间建立一个交点。我们渴望看见一代孩子从小认识神，信靠耶稣。"
 
@@ -44,7 +44,7 @@ pillars:
       zh-Hant: "信仰"
       zh-Hans: "信仰"
     description:
-      en: "We commit to helping kids see how God's Word fits in to their daily lives through the Four Faith Skills: Hear, Pray, Talk, Live."
+      en: "We commit to helping kids see how God's Word fits into their daily lives through the Four Faith Skills: Hear, Pray, Talk, Live."
       zh-Hant: "我們致力幫助孩子透過四個信仰技能——聆聽、禱告、分享、實踐——將神的話語融入日常生活。"
       zh-Hans: "我们致力帮助孩子透过四个信仰技能——聆听、祷告、分享、实践——将神的话语融入日常生活。"
 
@@ -74,7 +74,7 @@ sundayMorning:
     zh-Hant: "主日早晨"
     zh-Hans: "主日早晨"
   description:
-    en: "Our Orange Kids program is provided during each Sunday worship service in all campuses. A powerful kids worship experience where kids discover:"
+    en: "Our Orange Kids program is provided during each Sunday worship service at all campuses. A powerful kids worship experience where kids discover:"
     zh-Hant: "我們的Orange Kids課程在各會堂的主日崇拜期間提供，讓孩子在充滿活力的敬拜體驗中學習："
     zh-Hans: "我们的Orange Kids课程在各会堂的主日崇拜期间提供，让孩子在充满活力的敬拜体验中学习："
   keyPoints:

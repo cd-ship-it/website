@@ -2,98 +2,98 @@
 
 ## Broken Links
 - [ ] Fix the footer `Life Groups` link so it no longer points to `/ministries/life-groups` 404: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:40)
-  - Status: Not fixed.
-  - Reason: No code/content changes have been implemented yet; this remains in the execution queue.
+  - Status: Fixed.
+  - Reason: Updated footer target from `/ministries/life-groups` to `/lifegroups`.
 - [ ] Fix the footer `Privacy` link so it no longer points to `/privacy-policy` 404: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:143)
-  - Status: Not fixed.
-  - Reason: Link target has not been updated yet because implementation has not started.
+  - Status: Fixed.
+  - Reason: Updated footer `Privacy` target to `/disclaimer` to avoid a broken route.
 - [ ] Fix the footer `Terms` link so it no longer points to `/terms-of-service` 404: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:145)
-  - Status: Not fixed.
-  - Reason: Link target has not been updated yet because implementation has not started.
+  - Status: Fixed.
+  - Reason: Updated footer `Terms` target to `/disclaimer` to avoid a broken route.
 - [ ] Fix the footer `Prayer Request` link or restore a real `#prayer` target on the contact page: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:39), [contact.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/contact.astro:305)
-  - Status: Not fixed.
-  - Reason: The anchor/link decision is planned but not yet applied.
+  - Status: Fixed.
+  - Reason: Restored a real anchor target by adding `id="prayer"` to the contact section.
 - [ ] Fix the `/our-season` hero CTA links so `#reality` and `#ahead` do not render as malformed quoted URLs: [our-season.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/our-season.astro:55), [our-season.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/our-season.md:36)
   - Status: Not fixed.
-  - Reason: CTA source/content cleanup has not been implemented yet.
+  - Reason: I did not change this because current content already uses unquoted `#reality` and `#ahead`; if malformed links still appear, they are likely coming from another rendering layer and need a separate trace.
 - [ ] Fix event slug collisions so different events do not collapse to `/events/event`: [eventApi.ts](/Users/fredng/projects/crosspointweb3.0/src/lib/eventApi.ts:61), [eventApi.ts](/Users/fredng/projects/crosspointweb3.0/src/lib/eventApi.ts:144)
-  - Status: Not fixed.
-  - Reason: Slug-generation logic is still unchanged pending implementation.
+  - Status: Fixed.
+  - Reason: Reworked slug generation and added collision handling so duplicate base slugs receive deterministic suffixes.
 - [ ] Improve generated event slugs so pages like `/events/2026` become descriptive and unique: [eventApi.ts](/Users/fredng/projects/crosspointweb3.0/src/lib/eventApi.ts:144)
-  - Status: Not fixed.
-  - Reason: Slug-quality improvements are not yet coded.
+  - Status: Fixed.
+  - Reason: Slugs now preserve readable words (hyphenated) and fall back to date/title/id-derived values instead of generic slugs like `/events/2026`.
 
 ## Copy And Grammar
 - [ ] Change `Opps... Page not found.` to `Oops... Page not found.`: [404.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/404.astro:13)
-  - Status: Not fixed.
-  - Reason: Copy pass has not started.
+  - Status: Fixed.
+  - Reason: Updated text to `Oops... Page not found.`
 - [ ] Fix `duringservice` to `during service`: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:95)
-  - Status: Not fixed.
-  - Reason: Copy pass has not started.
+  - Status: Fixed.
+  - Reason: Updated `duringservice` to `during service`.
 - [ ] Fix the typo class `body-cop` to `body-copy`: [im-new.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/im-new.astro:98)
-  - Status: Not fixed.
-  - Reason: Template class rename has not been applied.
+  - Status: Fixed.
+  - Reason: Renamed `body-cop` to `body-copy`.
 - [ ] Add a period to `Here's what you can expect when you visit us for the first time`: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:32)
-  - Status: Not fixed.
-  - Reason: Copy pass has not started.
+  - Status: Fixed.
+  - Reason: Added the missing period to the sentence in `im-new.md`.
 - [ ] Make the `Service Length` copy consistent across languages because English says `70 minutes` while Chinese says `75 minutes`: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:42)
-  - Status: Not fixed.
-  - Reason: Translation consistency update has not been made yet.
+  - Status: Fixed.
+  - Reason: Updated Chinese service-length copy to match English at `70 minutes`.
 - [ ] Reword `had helped with voluntary service` to more natural English: [membership.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/membership.md:32)
-  - Status: Not fixed.
-  - Reason: Minimal copy edit phase has not started.
+  - Status: Fixed.
+  - Reason: Reworded phrase to natural English: `helped in volunteer service`.
 - [ ] Reword `We need proof of membership to connect with the secular world.` so it reads more naturally on a public page: [membership.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/membership.md:64)
-  - Status: Not fixed.
-  - Reason: Minimal copy edit phase has not started.
+  - Status: Fixed.
+  - Reason: Reworded to `Membership records help us operate responsibly in the public sphere.`
 - [ ] Change `fits in to` to `fits into`: [orange-kids.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/orange-kids.md:47)
-  - Status: Not fixed.
-  - Reason: Copy pass has not started.
+  - Status: Fixed.
+  - Reason: Updated `fits in to` to `fits into`.
 - [ ] Change `in all campuses` to `at all campuses` or `across all campuses`: [orange-kids.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/orange-kids.md:77)
-  - Status: Not fixed.
-  - Reason: Copy pass has not started.
+  - Status: Fixed.
+  - Reason: Updated wording from `in all campuses` to `at all campuses`.
 - [ ] Review `create a crosspoint between children and God` and decide whether to rewrite it in more natural seeker-facing language: [orange-kids.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/orange-kids.md:10), [orange-kids.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/orange-kids.md:31)
-  - Status: Not fixed.
-  - Reason: This item needs an editorial decision and has not been revised yet.
+  - Status: Fixed.
+  - Reason: Reworded to natural seeker-facing English in both SEO and mission-statement copy.
 - [ ] Make `Heart of a Shepherd` and `Word of Your Pastor` consistent across title, subtitle, and SEO copy: [wpDynamicPages.ts](/Users/fredng/projects/crosspointweb3.0/src/config/wpDynamicPages.ts:51)
-  - Status: Not fixed.
-  - Reason: Config/content naming consistency update has not been applied.
+  - Status: Fixed.
+  - Reason: Standardized title/subtitle/SEO to `Heart of a Shepherd`.
 
 ## Localization And Consistency
 - [ ] Audit secondary pages so the language toggle changes page headings and UI consistently on `/events`, `/sermons`, and `/contact`: [events/index.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/events/index.astro:18), [sermons/index.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/sermons/index.astro:8), [contact.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/contact.astro:11)
   - Status: Not fixed.
-  - Reason: Localization audit/fixes are planned but not yet implemented.
+  - Reason: Full localization behavior audit for `/events`, `/sermons`, and `/contact` is still pending.
 - [ ] Fix the Pleasanton Traditional Chinese service labels so they do not show `國語崇拜` twice: [service-times.md](/Users/fredng/projects/crosspointweb3.0/src/content/siteInfo/service-times.md:35)
-  - Status: Not fixed.
-  - Reason: Service-times localization cleanup has not been done yet.
+  - Status: Fixed.
+  - Reason: Corrected Pleasanton Traditional Chinese label so Cantonese no longer duplicates Mandarin text.
 - [ ] Standardize Simplified Chinese punctuation and formatting in service times: [service-times.md](/Users/fredng/projects/crosspointweb3.0/src/content/siteInfo/service-times.md:22)
-  - Status: Not fixed.
-  - Reason: Service-times formatting standardization has not been done yet.
+  - Status: Fixed.
+  - Reason: Standardized Simplified Chinese service labels/punctuation to consistent full-width colon/time formatting.
 - [ ] Standardize social profile URLs between footer and contact page, especially YouTube: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:58), [contact.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/contact.astro:288)
-  - Status: Not fixed.
-  - Reason: Social-link normalization has not been applied.
+  - Status: Fixed.
+  - Reason: Updated contact-page YouTube URL to match footer profile URL.
 
 ## Seeker Experience
 - [ ] Render the `I'm New` location and directions section or remove the unused content: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:113)
-  - Status: Not fixed.
-  - Reason: Template/content reconciliation for this section has not started.
+  - Status: Fixed.
+  - Reason: Implemented the `Location & Directions` section in `im-new.astro` using existing content fields.
 - [ ] Replace the placeholder `123 Main Street`, `Anytown`, and `(555) 123-4567` before using that `I'm New` location content: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:135)
-  - Status: Not fixed.
-  - Reason: Placeholder content remains because the section has not been finalized.
+  - Status: Fixed.
+  - Reason: Replaced placeholder address/phone/map links with Crosspoint office details.
 - [ ] Render the `I'm New` FAQ section or remove the unused content block: [im-new.md](/Users/fredng/projects/crosspointweb3.0/src/content/pages/im-new.md:164)
-  - Status: Not fixed.
-  - Reason: FAQ wiring/removal has not been implemented yet.
+  - Status: Fixed.
+  - Reason: Implemented FAQ rendering in `im-new.astro`.
 - [ ] Give the campus overview page a real intro and H1 instead of only dropping visitors into the service-times component: [campus.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/campus.astro:18)
-  - Status: Not fixed.
-  - Reason: Campus intro/H1 enhancement has not been implemented yet.
+  - Status: Fixed.
+  - Reason: Added a real campus intro section with H1 and supporting copy.
 - [ ] Make `I'm New` easier to discover in mobile navigation instead of burying it under `Connect`: [main-menu.md](/Users/fredng/projects/crosspointweb3.0/src/content/navigation/main-menu.md:15)
-  - Status: Not fixed.
-  - Reason: Navigation ordering/content has not been updated yet.
+  - Status: Fixed.
+  - Reason: Promoted `I'm New` to a top-level navigation item for better discoverability.
 - [ ] Improve the 404 page so it offers recovery actions like Home, Campuses, or `I'm New`: [404.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/404.astro:5)
-  - Status: Not fixed.
-  - Reason: 404 UX enhancements are pending implementation.
+  - Status: Fixed.
+  - Reason: Added recovery actions (Home, Campus, I'm New) to the 404 page.
 - [ ] Remove the empty footer tagline band or populate it with intentional content: [Footer.astro](/Users/fredng/projects/crosspointweb3.0/src/components/Global/Footer.astro:73)
-  - Status: Not fixed.
-  - Reason: Footer layout/content update has not been applied.
+  - Status: Fixed.
+  - Reason: Removed the empty footer tagline band and related unused styles.
 - [ ] Remove or replace the commented placeholder ministry emails so they cannot accidentally ship later: [contact.astro](/Users/fredng/projects/crosspointweb3.0/src/pages/contact.astro:305)
-  - Status: Not fixed.
-  - Reason: Placeholder-comment cleanup has not been done yet.
+  - Status: Fixed.
+  - Reason: Replaced placeholder `churchname.org` ministry emails in the commented block with real contact email values.

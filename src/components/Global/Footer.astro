@@ -37,7 +37,7 @@ const footerNavs = [
     items: [
       { text: "Giving", href: u("/giving") },
       { text: "Prayer Request", href: u("/contact") + "#prayer" },
-      { text: "Life Groups", href: u("/ministries/life-groups") },
+      { text: "Life Groups", href: u("/lifegroups") },
       { text: "Campuses", href: u("/campus") },
     ],
   },
@@ -71,10 +71,6 @@ if (officeHours) {
 ---
 
 <footer class="site-footer">
-  <!-- Tagline band -->
-  <div class="footer-tagline">
-
-
   <!-- Main content -->
   <div class="footer-body">
     <div class="container">
@@ -139,11 +135,11 @@ if (officeHours) {
   <div class="footer-bottom">
     <div class="container footer-bottom-inner">
       <p>&copy; {currentYear} Crosspoint Church. All rights reserved.</p>
-      <div class="footer-legal">
-        <a href={u("/privacy-policy")}>Privacy</a>
+      <!-- <div class="footer-legal">
+        <a href={u("/disclaimer")}>Privacy</a>
         <span class="footer-legal-sep" aria-hidden="true">&middot;</span>
-        <a href={u("/terms-of-service")}>Terms</a>
-      </div>
+        <a href={u("/disclaimer")}>Terms</a>
+      </div> -->
     </div>
   </div>
 </footer>
@@ -157,39 +153,6 @@ if (officeHours) {
     --footer-border: rgba(249, 250, 251, 0.08);
     background: var(--footer-bg);
     color: var(--footer-text);
-  }
-
-  /* ── Tagline band ────────────────────────────────── */
-  .footer-tagline {
-    border-bottom: 1px solid var(--footer-border);
-    padding: 3rem 0 2.5rem;
-  }
-  .footer-tagline .container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  @media (min-width: 768px) {
-    .footer-tagline .container {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-  .footer-logo-link { display: inline-block; flex-shrink: 0; }
-  .footer-logo {
-    height: 2.75rem;
-    width: auto;
-    filter: brightness(0) invert(1);
-    opacity: 0.85;
-  }
-  .footer-tagline-text {
-    font-family: var(--serif);
-    font-size: clamp(1.15rem, 2vw, 1.5rem);
-    font-weight: 600;
-    line-height: 1.4;
-    color: rgba(249, 250, 251, 0.82);
-    max-width: 22ch;
   }
 
   /* ── Body ─────────────────────────────────────────── */

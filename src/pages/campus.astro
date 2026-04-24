@@ -19,6 +19,14 @@ const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText |
   title="Campuses · Crosspoint Church"
   description="Service times and locations across our campuses."
 >
+  <section class="py-12 border-b border-gray-100">
+    <div class="container">
+      <h1 class="section-heading mb-4">Our Campuses</h1>
+      <p class="text-lg text-muted max-w-3xl mb-0">
+        Find service times and locations across the Bay Area, and plan your visit to the campus that is closest to you.
+      </p>
+    </div>
+  </section>
   {campuses.length > 0 && (
     <ServiceTimesCampuses sectionHeading={sectionHeading} campuses={campuses} />
   )}

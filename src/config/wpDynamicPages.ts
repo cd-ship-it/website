@@ -49,11 +49,11 @@ export const WP_DYNAMIC_PAGES: WpDynamicPageConfig[] = [
     wpCategorySlug: "word-of-your-pastor",
     pageHeader: {
       title: "Heart of a Shepherd",
-      subtitle: "Word of Your Pastor",
+      subtitle: "Heart of a Shepherd",
     },
     seo: {
-      title: "Word of Your Pastor - Crosspoint Church",
-      description: "Latest Word of Your Pastor post from Crosspoint Church.",
+      title: "Heart of a Shepherd - Crosspoint Church",
+      description: "Latest Heart of a Shepherd post from Crosspoint Church.",
     },
     showPostTitle: false,
   },

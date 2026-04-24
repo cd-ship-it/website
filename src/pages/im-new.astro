@@ -95,7 +95,7 @@ const iconPaths: Record<string, string> = {
             ))}
           </ul>
           
-          <p class="body-cop mb-6">
+          <p class="body-copy mb-6">
             <LocalizedInline value={data.kidsSection.safetyNote} />
           </p>
           
@@ -111,6 +111,27 @@ const iconPaths: Record<string, string> = {
             class="rounded-lg shadow-lg object-cover w-full h-full"
           />
         </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- FAQ -->
+  <section class="py-16 bg-cream">
+    <div class="container">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4"><LocalizedInline value={data.faqSection.heading} /></h2>
+        <p class="text-xl text-muted max-w-3xl mx-auto">
+          <LocalizedInline value={data.faqSection.subheading} />
+        </p>
+      </div>
+      <div class="max-w-4xl mx-auto space-y-4">
+        {data.faqSection.items.map((item) => (
+          <div class="xp-panel-inner p-6">
+            <h3 class="text-xl font-bold mb-2"><LocalizedInline value={item.question} /></h3>
+            <p class="body-copy mb-0"><LocalizedInline value={item.answer} /></p>
+          </div>
+        ))}
       </div>
     </div>
   </section>

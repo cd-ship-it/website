@@ -29,7 +29,7 @@ expectSection:
     zh-Hant: "你可以期待什麼"
     zh-Hans: "你可以期待什么"
   subheading:
-    en: "Here's what you can expect when you visit us for the first time"
+    en: "Here's what you can expect when you visit us for the first time."
     zh-Hant: "以下是你第一次來訪時可以期待的內容"
     zh-Hans: "以下是你第一次来访时可以期待的内容"
   cards:
@@ -40,8 +40,8 @@ expectSection:
         zh-Hans: "聚会时长"
       body:
         en: "Starts on time. Lasts about 70 minutes."
-        zh-Hant: "準時開始。我們的聚會通常約 75 分鐘"
-        zh-Hans: "準時開始。我们的聚会通常约 75 分钟"
+        zh-Hant: "準時開始。我們的聚會通常約 70 分鐘。"
+        zh-Hans: "准时开始。我们的聚会通常约 70 分钟。"
     - icon: music
       title:
         en: "Worship Style"
@@ -92,7 +92,7 @@ kidsSection:
         zh-Hant: "小學（K-5 年級）"
         zh-Hans: "小学（K-5 年级）"
       body:
-        en: "Interactive lessons, games, and worship duringservice."
+        en: "Interactive lessons, games, and worship during service."
         zh-Hant: "在聚會期間，提供互動課程、遊戲與敬拜。"
         zh-Hans: "在聚会期间，提供互动课程、游戏与敬拜。"
   safetyNote:
@@ -132,13 +132,13 @@ locationSection:
     zh-Hant: "教會地址"
     zh-Hans: "教会地址"
   addressLines:
-    - en: "123 Main Street"
-      zh-Hant: "123 Main Street"
-      zh-Hans: "123 Main Street"
-    - en: "Anytown, ST 12345"
-      zh-Hant: "Anytown, ST 12345"
-      zh-Hans: "Anytown, ST 12345"
-  phone: "(555) 123-4567"
+    - en: "658 Gibraltar Ct."
+      zh-Hant: "658 Gibraltar Ct."
+      zh-Hans: "658 Gibraltar Ct."
+    - en: "Milpitas, CA 95035"
+      zh-Hant: "Milpitas, CA 95035"
+      zh-Hans: "Milpitas, CA 95035"
+  phone: "(408) 586-8688"
   parkingHeading:
     en: "Parking Information"
     zh-Hant: "停車資訊"
@@ -159,7 +159,7 @@ locationSection:
     en: "Get Directions"
     zh-Hant: "取得路線"
     zh-Hans: "获取路线"
-  directionsHref: "https://maps.google.com/?q=123+Main+Street,+Anytown,+ST+12345"
+  directionsHref: "https://maps.google.com/?q=658+Gibraltar+Ct,+Milpitas,+CA+95035"
 
 faqSection:
   heading:
@@ -231,5 +231,5 @@ visitCta:
     en: "Get Directions"
     zh-Hant: "取得路線"
     zh-Hans: "获取路线"
-  directionsHref: "https://maps.google.com/?q=123+Main+Street,+Anytown,+ST+12345"
+  directionsHref: "https://maps.google.com/?q=658+Gibraltar+Ct,+Milpitas,+CA+95035"
 ---

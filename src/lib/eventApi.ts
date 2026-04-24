@@ -61,7 +61,19 @@ function normalizeDateInput(input: string): string {
 function compactSlug(input: string): string {
   return (input ?? "")
     .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function uniqueEventsBySlug(events: EventItem[]): EventItem[] {
+  const slugCounts = new Map<string, number>();
+  return events.map((event) => {
+    const baseSlug = event.slug || "event";
+    const count = slugCounts.get(baseSlug) ?? 0;
+    slugCounts.set(baseSlug, count + 1);
+    if (count === 0) return event;
+    return { ...event, slug: `${baseSlug}-${count + 1}` };
+  });
 }
 
 export function normalizeEvent(raw: unknown): EventItem {
@@ -141,11 +153,20 @@ export function normalizeEvent(raw: unknown): EventItem {
     pickString(acf, ["registration_link", "registrationLink"]) ||
     undefined;
 
-  const safeSlug = compactSlug(title);
+  const explicitSlug =
+    pickString(rec, ["slug", "post_name", "event_slug"]) ||
+    pickString(acf, ["slug", "event_slug"]);
+  const idSlug = compactSlug(id);
+  const safeSlug = compactSlug(explicitSlug || title);
+  const fallbackSlug =
+    safeSlug ||
+    compactSlug(`${startDate || "event"}-${title || id || "item"}`) ||
+    compactSlug(`${id || "event"}-${startDate || ""}`);
+  const finalSlug = idSlug || fallbackSlug || "event";
 
   return {
-    id: id || safeSlug || "event",
-    slug: safeSlug || "event",
+    id: id || finalSlug,
+    slug: finalSlug,
     title,
     summary: "",
     content,
@@ -159,10 +180,10 @@ export function normalizeEvent(raw: unknown): EventItem {
 }
 
 export function parseEventsPayload(payload: unknown): EventItem[] {
-  if (Array.isArray(payload)) return payload.map(normalizeEvent);
+  if (Array.isArray(payload)) return uniqueEventsBySlug(payload.map(normalizeEvent));
   const root = asRecord(payload);
-  if (Array.isArray(root.data)) return (root.data as unknown[]).map(normalizeEvent);
-  if (Array.isArray(root.events)) return (root.events as unknown[]).map(normalizeEvent);
+  if (Array.isArray(root.data)) return uniqueEventsBySlug((root.data as unknown[]).map(normalizeEvent));
+  if (Array.isArray(root.events)) return uniqueEventsBySlug((root.events as unknown[]).map(normalizeEvent));
   return [];
 }
 
@@ -196,7 +217,9 @@ export async function fetchEvents(
     (Array.isArray(root.events) ? root.events : null) ??
     [];
 
-  return { data: arr.map(normalizeEvent).filter((e) => !!e.startDate && !!e.slug) };
+  return {
+    data: uniqueEventsBySlug(arr.map(normalizeEvent)).filter((e) => !!e.startDate && !!e.slug),
+  };
 }
 
 export async function fetchAllEvents(): Promise<EventItem[]> {

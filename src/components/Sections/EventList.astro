@@ -3,6 +3,7 @@ import { fetchAllEvents } from "../../lib/eventApi";
 import type { EventItem } from "../../lib/eventApi";
 import { monthLabel, dayNum, fullDate } from "../../lib/events/format";
 import Button from "../UI/Button.astro";
+import LocalizedInline from "../UI/LocalizedInline.astro";
 
 export interface Props {
   count?: number;
@@ -30,8 +31,18 @@ const compactEvents = events.slice(0, 6);
 >
   <div class="container">
     <div class="home-section-intro pl-5">
-      <h2 id="events-heading" class="section-heading">Upcoming Events</h2>
-      <p class="section-sub">Join us across campuses for upcoming gatherings and ministry events.</p>
+      <h2 id="events-heading" class="section-heading">
+        <LocalizedInline value={{ en: "Upcoming Events", "zh-Hant": "近期活動", "zh-Hans": "近期活动" }} />
+      </h2>
+      <p class="section-sub">
+        <LocalizedInline
+          value={{
+            en: "Join us across campuses for upcoming gatherings and ministry events.",
+            "zh-Hant": "歡迎你來參與活動。",
+            "zh-Hans": "欢迎你來参与活动。",
+          }}
+        />
+      </p>
     </div>
 
     <div class="home-section-body">
@@ -75,11 +86,10 @@ const compactEvents = events.slice(0, 6);
       )}
 
       {showViewAll && compactEvents.length > 0 && (
-        <div class="mt-8 flex justify-end">            
+        <div class="mt-8 flex justify-end">
           <Button href={`${import.meta.env.BASE_URL}events`} variant="primary" size="lg">
             View all events
           </Button>
-          </div>
         </div>
       )}
     </div>
