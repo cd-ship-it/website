@@ -38,6 +38,14 @@ export function getEventsApiUrl(): string {
 export function getContactFormActionUrl(): string {
   const override = import.meta.env.PUBLIC_CONTACT_FORM_URL;
   if (override) return override;
+  const site = import.meta.env.SITE;
+  if (site) {
+    try {
+      return new URL("api/contact.php", site).toString();
+    } catch {
+      // fall through to BASE_URL variant
+    }
+  }
   // Default: resolve against Astro's `base` so it works under /v2/ in production
   // and / in dev. BASE_URL always has a trailing slash.
   const base = import.meta.env.BASE_URL ?? "/";
