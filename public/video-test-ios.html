@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testimony Video Test (iOS)</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0d1b2e;
+        color: #ffffff;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      h1 {
+        margin: 0 0 18px;
+        font-size: 1.5rem;
+      }
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 800px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .testimony-video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background: #000;
+      }
+      .name {
+        margin: 0;
+        padding: 12px 14px;
+        text-align: center;
+        font-weight: 600;
+      }
+      .hint {
+        margin-top: 16px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>iOS Video Embed Test</h1>
+
+      <div class="grid">
+        <div class="card">
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            class="testimony-video"
+            data-thumb-offset="1"
+            aria-label="Testimony by Pastor Fung"
+          >
+            <source src="/uploads/testimonies/web_Sharing_Pastor_Fung.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <p class="name">Pastor Fung</p>
+        </div>
+
+        <div class="card">
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            class="testimony-video"
+            data-thumb-offset="1"
+            aria-label="Testimony by Peony"
+          >
+            <source src="/uploads/testimonies/web_Sharing_Peony.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <p class="name">Peony</p>
+        </div>
+      </div>
+
+      <p class="hint">
+        Open this page directly at <code>/video-test-ios.html</code> and test on iPhone/iPad.
+      </p>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".testimony-video[data-thumb-offset]").forEach(function (el) {
+          if (!(el instanceof HTMLVideoElement)) return;
+          var raw = el.getAttribute("data-thumb-offset");
+          var offset = raw ? parseFloat(raw) : 1;
+
+          el.addEventListener("play", function jumpToStartFromThumbPreview() {
+            if (el.dataset.thumbPreview === "1") {
+              el.currentTime = 0;
+              delete el.dataset.thumbPreview;
+              el.removeEventListener("play", jumpToStartFromThumbPreview);
+            }
+          });
+
+          var seek = function () {
+            if (!(el.duration > 0) || Number.isNaN(offset)) return;
+            var t = Math.min(offset, Math.max(0, el.duration - 0.05));
+            el.addEventListener(
+              "seeked",
+              function () {
+                el.dataset.thumbPreview = "1";
+              },
+              { once: true }
+            );
+            el.currentTime = t;
+          };
+
+          if (el.readyState >= 1) seek();
+          else el.addEventListener("loadedmetadata", seek, { once: true });
+        });
+      });
+    </script>
+  </body>
+</html>

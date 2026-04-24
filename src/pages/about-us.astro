@@ -12,6 +12,28 @@ if (!page) throw new Error('Content entry "about/about-us" not found.');
 const { seo, pageHeader, mission, vision, history, testimonies = [] } = page.data;
 const ctaBackgroundImage = withBaseUrl(pageHeader.backgroundImage);
 
+const getYouTubeEmbedUrl = (url: string) => {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) {
+      const id = parsed.pathname.replace(/^\/+/, "").split("/")[0];
+      if (id) return `https://www.youtube-nocookie.com/embed/${id}?rel=0`;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      if (id) return `https://www.youtube-nocookie.com/embed/${id}?rel=0`;
+      const parts = parsed.pathname.split("/").filter(Boolean);
+      const embedIndex = parts.indexOf("embed");
+      if (embedIndex >= 0 && parts[embedIndex + 1]) {
+        return `https://www.youtube-nocookie.com/embed/${parts[embedIndex + 1]}?rel=0`;
+      }
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+};
+
 if (!mission || !vision || !history) {
   throw new Error('about-us.md must define mission, vision, and history.');
 }
@@ -248,23 +270,23 @@ if (!mission || !vision || !history) {
       </div>
 
       <div class="testimonies-grid">
-        {testimonies.map((t) => (
-          <div class="testimony-card">
-            <video
-              controls
-              preload="metadata"
-              playsinline
-              class="testimony-video"
-              {...(t.poster ? { poster: t.poster } : {})}
-              data-thumb-offset={t.poster ? undefined : "1"}
-              aria-label={`Testimony by ${t.name}`}
-            >
-              <source src={withBaseUrl(`/uploads/testimonies/${encodeURIComponent(t.file)}`)} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <p class="testimony-name">{t.name}</p>
-          </div>
-        ))}
+        {testimonies.map((t) => {
+          const youtubeEmbed = getYouTubeEmbedUrl(t.youtubeUrl ?? "");
+          return (
+            <div class="testimony-card">
+              <iframe
+                class="testimony-embed"
+                src={youtubeEmbed}
+                title={`Testimony by ${t.name}`}
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              />
+              <p class="testimony-name">{t.name}</p>
+            </div>
+          );
+        })}
       </div>
 
     </div>
@@ -301,40 +323,6 @@ if (!mission || !vision || !history) {
   </section>
 
 </BaseLayout>
-
-<script is:inline>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".testimony-video[data-thumb-offset]").forEach((el) => {
-      const v = el;
-      if (!(v instanceof HTMLVideoElement)) return;
-      const raw = v.getAttribute("data-thumb-offset");
-      const offset = raw ? parseFloat(raw, 10) : 1;
-
-      v.addEventListener("play", function jumpToStartFromThumbPreview() {
-        if (v.dataset.thumbPreview === "1") {
-          v.currentTime = 0;
-          delete v.dataset.thumbPreview;
-          v.removeEventListener("play", jumpToStartFromThumbPreview);
-        }
-      });
-
-      const seek = () => {
-        if (!(v.duration > 0) || Number.isNaN(offset)) return;
-        const t = Math.min(offset, Math.max(0, v.duration - 0.05));
-        v.addEventListener(
-          "seeked",
-          () => {
-            v.dataset.thumbPreview = "1";
-          },
-          { once: true },
-        );
-        v.currentTime = t;
-      };
-      if (v.readyState >= 1) seek();
-      else v.addEventListener("loadedmetadata", seek, { once: true });
-    });
-  });
-</script>
 
 <!-- ─────────────────────────────────────────────────────────────────────────
      Timeline styles
@@ -451,10 +439,11 @@ if (!mission || !vision || !history) {
   overflow: hidden;
 }
 
-.testimony-video {
+.testimony-embed {
   width: 100%;
   aspect-ratio: 16 / 9;
   display: block;
+  border: 0;
   background: #000;
 }
 

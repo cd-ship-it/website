@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iOS Plain Video Test</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #111827;
+        color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 800px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      video {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #000;
+        display: block;
+      }
+      p {
+        margin: 8px 0 0;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>Plain iOS Video Test (No JS)</h1>
+      <div class="grid">
+        <div>
+          <video controls playsinline preload="metadata">
+            <source src="/uploads/testimonies/web_Sharing_Pastor_Fung.mp4?v=plain2" type="video/mp4" />
+          </video>
+          <p>Pastor Fung</p>
+        </div>
+        <div>
+          <video controls playsinline preload="metadata">
+            <source src="/uploads/testimonies/web_Sharing_Peony.mp4?v=plain2" type="video/mp4" />
+          </video>
+          <p>Peony</p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

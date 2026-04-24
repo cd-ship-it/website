@@ -140,15 +140,15 @@ history:
 
 testimonies:                                                                                               
   - name: "Pastor Fung"                                                                                      
-    file: "web_Sharing_Pastor_Fung.mp4"                                                                    
+    youtubeUrl: "https://youtu.be/zH01f_CGi3g"
   - name: "Stephen"                                                                             
-    file: "web_Sharing_Stephen_Huang.mp4"                                                             
+    youtubeUrl: "https://youtu.be/favGZgFU8MM"
   - name: "Peony"                                                                                     
-    file: "web_Sharing_Peony.mp4"                                                                     
+    youtubeUrl: "https://youtu.be/fy348fZCUmk"
   - name: "Rich"                                                                                      
-    file: "web_Sharing_Rich.mp4"                                                                      
+    youtubeUrl: "https://youtu.be/FalTnviS_9I"
   - name: "Elsa"                                                                                      
-    file: "web_Sharing_Elsa.mp4"                                                                      
+    youtubeUrl: "https://youtu.be/gJNB6g5W_Hc"
                                                
 
 draft: false

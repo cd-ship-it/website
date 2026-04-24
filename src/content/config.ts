@@ -595,12 +595,14 @@ const aboutCollection = defineCollection({
           }),
         )
         .optional(),
-      testimonies: z.array(z.object({
-        name: z.string(),
-        file: z.string(),
-        /** Still image shown before play; omit to auto-seek past black video leaders. */
-        poster: z.string().optional(),
-      })).optional(),
+      testimonies: z
+        .array(
+          z.object({
+            name: z.string(),
+            youtubeUrl: z.string().url(),
+          }),
+        )
+        .optional(),
       pastors: z.array(aboutPastorEntry).optional(),
       contactPhone: z.string().optional(),
       draft: z.boolean().default(false),
