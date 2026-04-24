@@ -15,3 +15,50 @@
 <FilesMatch "\.(webp|png|jpg|jpeg|gif|svg|ico|mp4|webm)$">
   Header set Cache-Control "public, max-age=604800, must-revalidate"
 </FilesMatch>
+
+# -----------------------------------------
+# Existing host/path redirects
+# -----------------------------------------
+Redirect 301 /joyfulkidsclub http://crosspointchurchsv.org/JoyfulKidsClub
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Host redirects
+  RewriteCond %{HTTP_HOST} ^my\.crosspointchurchsv\.org$ [OR]
+  RewriteCond %{HTTP_HOST} ^www\.my\.crosspointchurchsv\.org$
+  RewriteRule ^/?$ https://www.crosspointchurchsv.org/my-crosspoint [R=301,L]
+
+  RewriteCond %{HTTP_HOST} ^youtube\.crosspointchurchsv\.org$ [OR]
+  RewriteCond %{HTTP_HOST} ^www\.youtube\.crosspointchurchsv\.org$
+  RewriteRule ^/?$ https://www.youtube.com/channel/UCVkld8qmvxHk7l6CfZX_1Vw [R=301,L]
+
+  RewriteCond %{HTTP_HOST} ^rc\.crosspointchurchsv\.org$ [OR]
+  RewriteCond %{HTTP_HOST} ^www\.rc\.crosspointchurchsv\.org$
+  RewriteRule ^/?$ https://www.crosspointchurchsv.org/resourcecenter/openbiblio/opac/index.php [R=301,L]
+
+  RewriteCond %{HTTP_HOST} ^rc-admin\.crosspointchurchsv\.org$ [OR]
+  RewriteCond %{HTTP_HOST} ^www\.rc-admin\.crosspointchurchsv\.org$
+  RewriteRule ^/?$ https://www.crosspointchurchsv.org/resourcecenter/openbiblio/home/index.php [R=301,L]
+
+  RewriteRule ^(.*)/churchoffice/(.*)$ https://sites.google.com/crosspointchurchsv.org/mycrosspoint/home [R=301,L]
+
+  # Let API PHP endpoints execute directly (no frontend fallback rewrite).
+  RewriteRule ^api/ - [L]
+
+  # Serve real files/directories as-is.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Frontend fallback.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# -----------------------------------------
+# SGO headers
+# -----------------------------------------
+<IfModule mod_headers.c>
+  Header unset Vary
+</IfModule>

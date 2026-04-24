@@ -1,0 +1,145 @@
+# =========================================
+# ROOT public_html/.htaccess
+# =========================================
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# -----------------------------------------
+# Canonical old domains -> primary domain
+# -----------------------------------------
+RewriteCond %{HTTP_HOST} ^(www\.)?xpch\.cc$ [NC]
+RewriteRule ^(.*)$ https://crosspointchurchsv.org/$1 [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^(www\.)?xpch\.org$ [NC]
+RewriteRule ^(.*)$ https://crosspointchurchsv.org/$1 [R=301,L]
+
+# -----------------------------------------
+# Force HTTPS
+# -----------------------------------------
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [OR]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# -----------------------------------------
+# Existing app rewrites (preserved)
+# -----------------------------------------
+RewriteCond %{REQUEST_URI} !^/app/
+RewriteCond %{REQUEST_URI} !^/webapp/
+RewriteRule ^MeetingMinutesSystem(/.*)?$ /webapp/MeetingMinutesSystem/public$1 [L]
+RewriteRule ^jobreferral(/.*)?$ /webapp/jobreferral$1 [L]
+RewriteRule ^jobsreferral(/.*)?$ /webapp/jobreferral$1 [L]
+RewriteRule ^OnlineRegistration(/.*)?$ /webapp/OnlineRegistration$1 [L]
+RewriteRule ^WorshipAttendance(/.*)?$ /webapp/WorshipAttendance$1 [L]
+RewriteRule ^youtubeSermon(/.*)?$ /webapp/youtubeSermon$1 [L]
+
+# -----------------------------------------
+# API endpoints (root docroot)
+# Let /api/* pass through directly.
+# -----------------------------------------
+RewriteRule ^api/ - [L]
+
+# -----------------------------------------
+# REST API hard pass-through (critical)
+# -----------------------------------------
+RewriteRule ^wp-json/?$ /index.php?rest_route=/ [QSA,L]
+RewriteRule ^wp-json/(.*)$ /index.php?rest_route=/$1 [QSA,L]
+
+# -----------------------------------------
+# Optional canonical: typed /v2/... -> clean URL
+# Use 302 while testing, change to 301 later
+# -----------------------------------------
+RewriteCond %{THE_REQUEST} \s/+v2/([^\s?]*) [NC]
+RewriteRule ^v2/(.*)$ /$1 [R=302,L]
+
+# -----------------------------------------
+# V2 mode (apex only), kill switch file:
+# /public_html/.disable-v2
+# If file exists => WordPress mode
+# -----------------------------------------
+
+# Homepage
+RewriteCond %{DOCUMENT_ROOT}/.disable-v2 !-f
+RewriteCond %{HTTP_HOST} ^(www\.)?crosspointchurchsv\.org$ [NC]
+RewriteRule ^$ /v2/index.html [L]
+
+# Never send WP internals to v2
+RewriteRule ^wp-admin(?:/|$) - [L]
+RewriteRule ^wp-login\.php$ - [L]
+RewriteRule ^wp-content(?:/|$) - [L]
+RewriteRule ^wp-includes(?:/|$) - [L]
+RewriteRule ^xmlrpc\.php$ - [L]
+RewriteRule ^wp-cron\.php$ - [L]
+RewriteRule ^index\.php$ - [L]
+
+# Astro static assets from /v2
+RewriteCond %{DOCUMENT_ROOT}/.disable-v2 !-f
+RewriteCond %{HTTP_HOST} ^(www\.)?crosspointchurchsv\.org$ [NC]
+RewriteRule ^_astro/(.*)$ /v2/_astro/$1 [L]
+
+RewriteCond %{DOCUMENT_ROOT}/.disable-v2 !-f
+RewriteCond %{HTTP_HOST} ^(www\.)?crosspointchurchsv\.org$ [NC]
+RewriteRule ^uploads/(.*)$ /v2/uploads/$1 [L]
+
+# Pretty URLs -> /v2/<slug>/index.html
+RewriteCond %{DOCUMENT_ROOT}/.disable-v2 !-f
+RewriteCond %{HTTP_HOST} ^(www\.)?crosspointchurchsv\.org$ [NC]
+RewriteCond %{REQUEST_URI} !^/v2/ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+?)/?$ /v2/$1/index.html [L]
+
+</IfModule>
+
+# -----------------------------------------
+# WordPress block (leave as generated)
+# -----------------------------------------
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+
+# If request starts with /api/, do not rewrite
+RewriteRule ^api/ - [L]
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# -----------------------------------------
+# Existing host/path redirects
+# -----------------------------------------
+Redirect 301 /joyfulkidsclub http://crosspointchurchsv.org/JoyfulKidsClub
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^my\.crosspointchurchsv\.org$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.my\.crosspointchurchsv\.org$
+RewriteRule ^/?$ https://www.crosspointchurchsv.org/my-crosspoint [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^youtube\.crosspointchurchsv\.org$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.youtube\.crosspointchurchsv\.org$
+RewriteRule ^/?$ https://www.youtube.com/channel/UCVkld8qmvxHk7l6CfZX_1Vw [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^rc\.crosspointchurchsv\.org$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.rc\.crosspointchurchsv\.org$
+RewriteRule ^/?$ https://www.crosspointchurchsv.org/resourcecenter/openbiblio/opac/index.php [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^rc-admin\.crosspointchurchsv\.org$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.rc-admin\.crosspointchurchsv\.org$
+RewriteRule ^/?$ https://www.crosspointchurchsv.org/resourcecenter/openbiblio/home/index.php [R=301,L]
+
+RewriteRule ^(.*)/churchoffice/(.*)$ https://sites.google.com/crosspointchurchsv.org/mycrosspoint/home [R=301,L]
+</IfModule>
+
+# -----------------------------------------
+# SGO headers
+# -----------------------------------------
+<IfModule mod_headers.c>
+Header unset Vary
+</IfModule>
