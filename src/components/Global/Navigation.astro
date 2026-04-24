@@ -439,6 +439,10 @@ function firstNavigableHref(item: NavMenuTop): string {
   #mobile-menu.show {
     transform: scaleY(1);
     pointer-events: auto;
+    max-height: calc(100dvh - var(--mobile-menu-header-height, 4.5rem));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   
   /* Smooth hover effects */
@@ -587,6 +591,13 @@ function firstNavigableHref(item: NavMenuTop): string {
     const mobileMenu = document.getElementById('mobile-menu');
     
     let isMenuOpen = false;
+
+    const syncMobileMenuMaxHeight = () => {
+      if (!mobileMenu) return;
+      const header = mobileMenu.closest("#site-header");
+      const headerHeight = header instanceof HTMLElement ? header.getBoundingClientRect().height : 72;
+      mobileMenu.style.setProperty("--mobile-menu-header-height", `${Math.ceil(headerHeight)}px`);
+    };
     
     const collapseMobileSubmenus = () => {
       mobileMenu?.querySelectorAll(".mobile-submenu.mobile-submenu-open").forEach((el) => {
@@ -670,6 +681,7 @@ function firstNavigableHref(item: NavMenuTop): string {
     });
     
     window.addEventListener('resize', () => {
+      syncMobileMenuMaxHeight();
       if (window.innerWidth >= 1024 && isMenuOpen) {
         toggleMobileMenu();
       }
@@ -694,5 +706,7 @@ function firstNavigableHref(item: NavMenuTop): string {
         }
       });
     });
+
+    syncMobileMenuMaxHeight();
   });
 </script>
