@@ -63,6 +63,12 @@ items:
               zh-Hant: "兒童事工"
               zh-Hans: "兒童事工"
             href: "/orangekids"
+          - id: "social-media-chat-groups"
+            label:
+              en: "Social Media / Chat Groups"
+              zh-Hant: "社交媒體 / 群組聊天"
+              zh-Hans: "社交媒体 / 群组聊天"
+            href: "/social-media-chat-groups"
       - id: "grow"
         label:
           en: "Grow"

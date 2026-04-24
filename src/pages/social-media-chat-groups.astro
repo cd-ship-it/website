@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import Button from "../components/UI/Button.astro";
+import { withBaseUrl } from "../lib/urls";
+---
+
+<BaseLayout
+  title="Social Media / Chat Groups · Crosspoint Church"
+  description="Stay connected with Crosspoint Church through our WhatsApp, Signal, Facebook, and Instagram groups."
+>
+  <PageHeader
+    title="Social Media / Chat Groups"
+    subtitle="Stay connected. Join our social media groups now!"
+    backgroundImage={withBaseUrl("/uploads/page-header-bg.webp")}
+  />
+
+  <section class="py-12">
+    <div class="container">
+      <div class="mx-auto max-w-4xl space-y-8">
+        <article class="card p-8">
+          <img
+            src={withBaseUrl("/uploads/social-media-chat-groups-logo.png")}
+            alt="Crosspoint Church logo"
+            class="mx-auto h-auto w-full max-w-xl"
+            loading="lazy"
+            decoding="async"
+          />
+        </article>
+
+        <article class="card p-8">
+          <h2 class="section-heading mb-6 text-center">Join a Group</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Button
+              href="https://chat.whatsapp.com/JCeQkszWh8HDujJFB9Q18r?mode=ac_t"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="primary"
+              class="justify-center"
+            >
+              Join WhatsApp
+            </Button>
+            <Button
+              href="https://signal.group/#CjQKIAn1NgomLfe-fC0Chxcmlw3qRdv8in-qUULUkuc1_rxbEhBr2dvOOCTtDSyX3mlvG0rx"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="primary"
+              class="justify-center"
+            >
+              Join Signal
+            </Button>
+            <Button
+              href="https://www.facebook.com/CrosspointChurchSV"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              class="justify-center"
+            >
+              Join Facebook
+            </Button>
+            <Button
+              href="https://www.instagram.com/crosspointchurchsv?igsh=NTc4MTIwNjQ2YQ==&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              class="justify-center"
+            >
+              Join Instagram
+            </Button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
