@@ -3,6 +3,7 @@ import "../assets/styles/global.css";
 import Seo from "../components/UI/Seo.astro";
 import Header from "../components/Global/Header.astro";
 import Footer from "../components/Global/Footer.astro";
+import { withBaseUrl } from "../lib/urls";
 
 export interface Props {
   title?: string;
@@ -20,7 +21,7 @@ const {
   description =
     "Crosspoint Church serves the San Francisco Bay Area and Tri-Valley — including Livermore, Pleasanton, Dublin, San Ramon, Danville, San Jose, Oakland, Fremont, and nearby communities — with worship, community, and faith for every season.",
   image = {
-    url: `${import.meta.env.BASE_URL}uploads/church-default.webp`,
+    url: `${withBaseUrl("/uploads/church-default.webp")}`,
     alt: "Crosspoint Church",
   },
   type = "website",
@@ -40,8 +41,7 @@ function normalizeLang(input?: string): SiteLang {
  */
 const initialLang = normalizeLang("en");
 
-const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '';
----
+const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '';---
 
 <!doctype html>
 <html lang={initialLang} data-lang={initialLang}>

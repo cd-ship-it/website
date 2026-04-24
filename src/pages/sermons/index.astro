@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
+import { withBaseUrl } from "../../lib/urls";
 
-const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
----
+const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
 
 <BaseLayout
   title="Sermons - Crosspoint Church"
@@ -12,7 +12,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
   <PageHeader
     title="Sermons"
     subtitle="Messages from our Sunday services"
-    backgroundImage={`${import.meta.env.BASE_URL}uploads/microphone.webp`}
+    backgroundImage={`${withBaseUrl("/uploads/microphone.webp")}`}
   />
 
   <section class="py-16" data-sermons-root data-api-url={API_URL}>

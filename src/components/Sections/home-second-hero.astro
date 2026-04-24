@@ -3,6 +3,7 @@ import Button from "../UI/Button.astro";
 import LocalizedInline from "../UI/LocalizedInline.astro";
 import { getCollection } from "astro:content";
 import type { LocalizedText } from "../../lib/i18n";
+import { withBaseUrl } from "../../lib/urls";
 
 const entries = await getCollection("siteInfo");
 const entry = entries.find(
@@ -48,8 +49,7 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
       "zh-Hans": "教会家庭",
     },
   },
-];
----
+];---
 
 {s && (
   <section class="bg-primary-900 px-6 py-[72px] text-white" >
@@ -57,7 +57,7 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
       <div class="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <div class="relative overflow-hidden rounded-[1.75rem] bg-primary-950 min-h-[22rem] lg:min-h-[34rem]">
           <img
-            src={s.image?.startsWith('http') ? s.image : `${import.meta.env.BASE_URL}${s.image?.replace(/^\//, '')}`}
+            src={s.image?.startsWith('http') ? s.image : `${withBaseUrl(s.image?.replace(/^\//, ''))}`}
             alt={s.imageAlt?.en ?? ""}
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -95,7 +95,7 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
 
           {s.ctaText && s.ctaLink && (
             <div>
-              <Button href={s.ctaLink?.startsWith('http') ? s.ctaLink : `${import.meta.env.BASE_URL}${s.ctaLink?.replace(/^\//, '')}`} variant="primary" size="lg">
+              <Button href={s.ctaLink?.startsWith('http') ? s.ctaLink : `${withBaseUrl(s.ctaLink?.replace(/^\//, ''))}`} variant="primary" size="lg">
                 <LocalizedInline value={s.ctaText} />
               </Button>
             </div>

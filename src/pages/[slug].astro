@@ -6,6 +6,7 @@ import "../assets/styles/wp-rendered.css";
 import { WP_DYNAMIC_PAGES, getWpDynamicPageConfig } from "../config/wpDynamicPages";
 import { getWordPressUrl } from "../config/site";
 import { fetchCategoryLatestPostLinkPreview } from "../lib/wpLinkPreview";
+import { withBaseUrl } from "../lib/urls";
 import {
   fetchExplicitWordPressItemsById,
   fetchWordPressItemsByCategorySlug,
@@ -117,7 +118,7 @@ const props = Astro.props as PageProps;
 const wpBaseUrl = getWordPressUrl();
 
 const heartFallbackImage = {
-  url: `${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`,
+  url: `${withBaseUrl("/uploads/blog-header-bg.webp")}`,
   alt: "Heart of a Shepherd — Crosspoint Church",
 };
 
@@ -197,8 +198,7 @@ const renderRecord = isMirror ? mirrorItem : record;
 const renderTitleHtml =
   isMirror && mirrorItem
     ? mirrorItem.title?.rendered ?? ""
-    : record?.title?.rendered ?? "";
----
+    : record?.title?.rendered ?? "";---
 
 <BaseLayout
   title={layoutTitle}
@@ -210,7 +210,7 @@ const renderTitleHtml =
     <PageHeader
       title={headerTitle}
       subtitle={headerSubtitle}
-      backgroundImage={`${import.meta.env.BASE_URL}uploads/blog-header-bg.webp`}
+      backgroundImage={`${withBaseUrl("/uploads/blog-header-bg.webp")}`}
     />
   )}
 

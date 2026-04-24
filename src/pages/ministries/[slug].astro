@@ -35,7 +35,7 @@ const logoSrc = withBaseUrl(entry.data.logo);
 >
   <PageHeader 
     title={entry.data.name} 
-    backgroundImage={`${import.meta.env.BASE_URL}uploads/ministry-detail-bg.webp`}
+    backgroundImage={`${withBaseUrl("/uploads/ministry-detail-bg.webp")}`}
   />
   
   <section class="py-16">

@@ -3,10 +3,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import Button from "../components/UI/Button.astro";
 import { getContactFormActionUrl, getRecaptchaSiteKey } from "../config/site";
+import { withBaseUrl } from "../lib/urls";
 
 const contactFormActionUrl = getContactFormActionUrl();
-const recaptchaSiteKey = getRecaptchaSiteKey();
----
+const recaptchaSiteKey = getRecaptchaSiteKey();---
 
 <BaseLayout
   title="Contact Us · Crosspoint Church"
@@ -15,7 +15,7 @@ const recaptchaSiteKey = getRecaptchaSiteKey();
   <PageHeader 
     title="Contact Us" 
     subtitle="We'd love to hear from you"
-    backgroundImage={`${import.meta.env.BASE_URL}uploads/contact-header-bg.webp`}
+    backgroundImage={`${withBaseUrl("/uploads/contact-header-bg.webp")}`}
   />
   
   <!-- Contact Information -->

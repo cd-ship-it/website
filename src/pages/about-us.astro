@@ -42,7 +42,7 @@ if (!mission || !vision || !history) {
           </div>
           <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
             <img
-              src={`${import.meta.env.BASE_URL}uploads/about/mission.png`}
+              src={`${withBaseUrl("/uploads/about/mission.png")}`}
               alt={pickLocalizedText(mission.heading, "en")}
               class="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
@@ -57,7 +57,7 @@ if (!mission || !vision || !history) {
         <div class="grid grid-cols-1 md:grid-cols-2 md:min-h-[min(22rem,52vh)] items-stretch">
           <div class="order-2 md:order-1 relative min-h-[14rem] md:min-h-0 bg-cream-2">
             <img
-              src={`${import.meta.env.BASE_URL}uploads/about/vision.png`}
+              src={`${withBaseUrl("/uploads/about/vision.png")}`}
               alt={pickLocalizedText(vision.heading, "en")}
               class="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
@@ -107,7 +107,7 @@ if (!mission || !vision || !history) {
           </div>
           <div class="relative min-h-[14rem] md:min-h-0 bg-cream-2">
             <img
-              src={`${import.meta.env.BASE_URL}uploads/milpitas-Building-sq.webp`}
+              src={`${withBaseUrl("/uploads/milpitas-Building-sq.webp")}`}
               alt={pickLocalizedText(
                 { en: "Milpitas campus building", "zh-Hant": "Milpitas 會堂", "zh-Hans": "Milpitas 会堂" },
                 "en",
@@ -169,7 +169,7 @@ if (!mission || !vision || !history) {
       <!-- Section heading -->
       <div
         class="relative mb-16 overflow-hidden rounded-2xl bg-cover bg-center px-4 py-14 text-center text-white md:py-16"
-        style={`background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(${import.meta.env.BASE_URL}uploads/about/25-years-faith-growth.png)`}
+        style={`background-image: linear-gradient(rgba(211, 168, 140, 0.5) 0%, rgba(59, 39, 26, 0.78) 100%), url(${withBaseUrl("/uploads/about/25-years-faith-growth.png)")}`}
       >
         <p class="eyebrow mb-3 text-white/90">
           <LocalizedInline value={{ en: "Our Amazing Story", "zh-Hant": "我們的奇妙故事", "zh-Hans": "我们的奇妙故事" }} />
@@ -208,7 +208,7 @@ if (!mission || !vision || !history) {
                   <div class="mt-4 flex flex-col gap-2">
                     {entry.images!.map((src) => (
                       <img
-                        src={`${import.meta.env.BASE_URL}${src}`}
+                        src={`${withBaseUrl(src)}`}
                         alt={`Crosspoint Church ${entry.year}`}
                         class="w-full rounded-lg object-cover max-h-44"
                         loading="lazy"
@@ -259,7 +259,7 @@ if (!mission || !vision || !history) {
               data-thumb-offset={t.poster ? undefined : "1"}
               aria-label={`Testimony by ${t.name}`}
             >
-              <source src={`${import.meta.env.BASE_URL}uploads/testimonies/${encodeURIComponent(t.file)}`} type="video/mp4" />
+              <source src={`${withBaseUrl("/uploads/testimonies/${encodeURIComponent(t.file)")}}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             <p class="testimony-name">{t.name}</p>

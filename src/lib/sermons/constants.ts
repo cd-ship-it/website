@@ -1,3 +1,4 @@
+import { withBaseUrl } from "../../lib/urls";
 export const LANG_LABELS: Record<string, string> = {
   English: "English",
   Cantonese: "粵語",
@@ -10,4 +11,4 @@ export const LANG_COLORS: Record<string, string> = {
   Mandarin: "bg-accent-100 text-accent-800",
 };
 
-export const SERMON_PLACEHOLDER_IMAGE = `${import.meta.env.BASE_URL}uploads/sermon-placeholder.webp`;
+export const SERMON_PLACEHOLDER_IMAGE = `${withBaseUrl("/uploads/sermon-placeholder.webp")}`;

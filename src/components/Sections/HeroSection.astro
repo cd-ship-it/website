@@ -2,6 +2,7 @@
 import Button from "../UI/Button.astro";
 import LocalizedInline from "../UI/LocalizedInline.astro";
 import type { LocalizedText } from "../../lib/i18n";
+import { withBaseUrl } from "../../lib/urls";
 
 type LText = string | LocalizedText;
 
@@ -52,8 +53,7 @@ const overlayStatic =
   "linear-gradient(to bottom, rgba(9,21,41,0.75) 0%, rgba(9,21,41,0.25) 28%, rgba(9,21,41,0.55) 62%, rgba(9,21,41,0.90) 100%)";
 /** Stronger navy wash when video runs behind copy (lowers perceived contrast). */
 const overlayVideo =
-  "linear-gradient(to bottom, rgba(9,21,41,0.88) 0%, rgba(9,21,41,0.45) 30%, rgba(9,21,41,0.68) 62%, rgba(9,21,41,0.94) 100%)";
----
+  "linear-gradient(to bottom, rgba(9,21,41,0.88) 0%, rgba(9,21,41,0.45) 30%, rgba(9,21,41,0.68) 62%, rgba(9,21,41,0.94) 100%)";---
 
 <section
   class="relative flex items-end overflow-hidden bg-cover bg-center"
@@ -69,7 +69,7 @@ const overlayVideo =
       aria-hidden="true"
       poster={backgroundImage}
     >
-      <source src={backgroundVideo?.startsWith('http') ? backgroundVideo : `${import.meta.env.BASE_URL}${backgroundVideo?.replace(/^\//, '')}`} type="video/mp4" />
+      <source src={backgroundVideo?.startsWith('http') ? backgroundVideo : `${withBaseUrl(backgroundVideo?.replace(/^\//, ''))}`} type="video/mp4" />
     </video>
   )}
 

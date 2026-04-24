@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
 import { fetchAllEvents } from "../../lib/eventApi";
+import { withBaseUrl } from "../../lib/urls";
 const EVENTS_API_URL = import.meta.env.PUBLIC_EVENTS_API_URL ?? "/api/events.php";
 let PREBUILT_EVENT_SLUGS: string[] = [];
 
@@ -12,8 +13,7 @@ try {
     .filter((slug): slug is string => !!slug);
 } catch {
   PREBUILT_EVENT_SLUGS = [];
-}
----
+}---
 
 <BaseLayout
   title="Events - Crosspoint Church"
@@ -22,7 +22,7 @@ try {
   <PageHeader 
     title="Events" 
     subtitle="Join us for upcoming activities and gatherings"
-    backgroundImage={`${import.meta.env.BASE_URL}uploads/events-header-bg.webp`}
+    backgroundImage={`${withBaseUrl("/uploads/events-header-bg.webp")}`}
   />
 
   <section

@@ -2,6 +2,7 @@
 import type { Sermon } from "../../lib/sermonApi";
 import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
 import { formatDateLong, preacherLabel, summaryPreview, sermonThumb } from "../../lib/sermons/format";
+import { withBaseUrl } from "../../lib/urls";
 
 export interface Props {
   sermon: Sermon;
@@ -19,8 +20,7 @@ const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
 const date = formatDateLong(sermon.date);
 const langLabel = LANG_LABELS[sermon.language] ?? sermon.language;
 const langColor = LANG_COLORS[sermon.language] ?? "bg-cream-2 text-ink-3";
-const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWordLimit) : "";
----
+const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWordLimit) : "";---
 
 <a
   href={`/sermons/${sermon.youtube_id}`}
@@ -35,7 +35,7 @@ const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWord
       alt={sermon.sermon_title}
       class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 block"
       loading="lazy"
-      onerror={`this.src='${import.meta.env.BASE_URL}uploads/sermon-placeholder.webp'`}
+      onerror={`this.src='${withBaseUrl("/uploads/sermon-placeholder.webp'")}`}
     />
   </div>
   <div class="p-5">

@@ -6,6 +6,7 @@ import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import LearnMoreDisclosure from "../components/UI/LearnMoreDisclosure.astro";
 import LocalizedHtml from "../components/UI/LocalizedHtml.astro";
 import PageRailSection from "../components/UI/PageRailSection.astro";
+import { withBaseUrl } from "../lib/urls";
 
 const page = await getEntry("giving", "giving-page");
 if (!page) throw new Error('Content entry "giving/giving-page" not found.');
@@ -33,8 +34,7 @@ if (!additionalGivingOptions?.heading || !Array.isArray(additionalGivingOptions.
   );
 }
 
-const headerBg = pageHeader.backgroundImage;
----
+const headerBg = pageHeader.backgroundImage;---
 
 <BaseLayout title={seo.title} description={seo.description}>
 
@@ -170,7 +170,7 @@ const headerBg = pageHeader.backgroundImage;
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <figure class="m-0">
                     <img
-                      src={`${import.meta.env.BASE_URL}uploads/giving-sample-check-mission-funds.png`}
+                      src={`${withBaseUrl("/uploads/giving-sample-check-mission-funds.png")}`}
                       alt="Sample check: pay to Crosspoint Church and write Mission Funds on the memo line."
                       class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
                       loading="lazy"
@@ -187,7 +187,7 @@ const headerBg = pageHeader.backgroundImage;
                   </figure>
                   <figure class="m-0">
                     <img
-                      src={`${import.meta.env.BASE_URL}uploads/giving-sample-check-community-center-fund.png`}
+                      src={`${withBaseUrl("/uploads/giving-sample-check-community-center-fund.png")}`}
                       alt="Sample check: pay to Crosspoint Church and write Community Center Fund on the memo line."
                       class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
                       loading="lazy"

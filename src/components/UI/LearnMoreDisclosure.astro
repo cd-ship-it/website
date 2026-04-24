@@ -2,6 +2,7 @@
 import LocalizedInline from "./LocalizedInline.astro";
 import LocalizedHtml from "./LocalizedHtml.astro";
 import type { LocalizedText } from "../../lib/i18n";
+import { withBaseUrl } from "../../lib/urls";
 
 export interface Props {
   /** Body copy shown when expanded (same shape as other giving “Learn more” blocks). */
@@ -10,8 +11,7 @@ export interface Props {
   sampleCheckImage?: boolean;
 }
 
-const { details, sampleCheckImage = false } = Astro.props;
----
+const { details, sampleCheckImage = false } = Astro.props;---
 
 <details class="mt-4 mb-0 [&[open]_summary_.learn-more-chevron]:rotate-180">
   <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
@@ -42,7 +42,7 @@ const { details, sampleCheckImage = false } = Astro.props;
     {sampleCheckImage && (
       <figure class="m-0">
         <img
-          src={`${import.meta.env.BASE_URL}uploads/giving-sample-check-payee-memo.png`}
+          src={`${withBaseUrl("/uploads/giving-sample-check-payee-memo.png")}`}
           alt="Sample check: pay to Crosspoint Church only; write your campus name on the memo line."
           class="w-full rounded-lg border border-gray-200 bg-white shadow-sm object-contain"
           loading="lazy"

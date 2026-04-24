@@ -1,5 +1,6 @@
 ---
 import Button from "../UI/Button.astro";
+import { withBaseUrl } from "../../lib/urls";
 
 export interface Props {
   heading?: string;
@@ -18,14 +19,13 @@ const {
   primaryCtaLink = "/im-new",
   secondaryCtaText = "Contact Us",
   secondaryCtaLink = "/contact",
-  backgroundImage = `${import.meta.env.BASE_URL}uploads/PL-2_wide.webp`,
+  backgroundImage = `${withBaseUrl("/uploads/PL-2_wide.webp")}`,
 } = Astro.props;
 
 const B = import.meta.env.BASE_URL;
 const p = (path: string) => (!path || /^https?:\/\//.test(path)) ? path : `${B}${path.replace(/^\//, "")}`;
 const resolvedPrimaryLink = p(primaryCtaLink);
-const resolvedSecondaryLink = p(secondaryCtaLink);
----
+const resolvedSecondaryLink = p(secondaryCtaLink);---
 
 <section
   class="relative overflow-hidden py-24"
