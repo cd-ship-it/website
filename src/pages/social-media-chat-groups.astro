@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
-import Button from "../components/UI/Button.astro";
 import { withBaseUrl } from "../lib/urls";
 ---
 
@@ -18,55 +17,89 @@ import { withBaseUrl } from "../lib/urls";
   <section class="py-12">
     <div class="container">
       <div class="mx-auto max-w-4xl space-y-8">
-        <article class="card p-8">
-          <img
-            src={withBaseUrl("/uploads/social-media-chat-groups-logo.png")}
-            alt="Crosspoint Church logo"
-            class="mx-auto h-auto w-full max-w-xl"
-            loading="lazy"
-            decoding="async"
-          />
-        </article>
 
         <article class="card p-8">
           <h2 class="section-heading mb-6 text-center">Join a Group</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Button
+            <a
               href="https://chat.whatsapp.com/JCeQkszWh8HDujJFB9Q18r?mode=ac_t"
               target="_blank"
               rel="noopener noreferrer"
-              variant="primary"
-              class="justify-center"
+              class="card p-6 text-center flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-shadow duration-200"
             >
-              Join WhatsApp
-            </Button>
-            <Button
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 32 32"
+                class="w-8 h-8 text-primary-600"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <g>
+                  <path d="M16 2.933c-7.206 0-13.067 5.62-13.067 12.555 0 2.241.672 4.427 1.943 6.428l-2.085 6.378a1.087 1.087 0 001.345 1.367l6.68-1.797a13.326 13.326 0 005.184 1.084c7.208 0 13.067-5.62 13.067-12.555C29.067 8.553 23.208 2.933 16 2.933zm.001 23.297c-1.506 0-2.992-.287-4.395-.853l-.314-.127-4.557 1.226 1.242-3.806-.204-.317c-1.203-1.87-1.84-3.986-1.84-6.112 0-5.73 4.964-10.393 11.067-10.393 6.104 0 11.067 4.664 11.067 10.393s-4.963 10.392-11.066 10.392zm6.014-7.673c-.361-.181-2.142-1.059-2.473-1.178-.331-.12-.573-.18-.814.18-.24.359-.933 1.177-1.146 1.417-.213.24-.426.271-.787.09s-1.535-.566-2.926-1.806c-1.08-.964-1.81-2.155-2.023-2.515-.213-.359-.023-.554.16-.733.164-.162.37-.422.554-.633.184-.212.244-.359.367-.6.122-.24.062-.451-.03-.632-.09-.18-.814-1.92-1.115-2.633-.293-.702-.59-.59-.814-.598l-.693-.012c-.238 0-.624.09-.95.42-.327.33-1.245 1.178-1.245 2.873s1.275 3.328 1.453 3.561c.178.237 2.517 3.807 6.103 5.03.853.293 1.516.468 2.036.599.855.217 1.633.186 2.25.113.687-.082 2.142-.872 2.444-1.718.302-.846.302-1.57.213-1.718-.09-.147-.329-.24-.69-.42z"/>
+                </g>
+              </svg>
+              <span class="font-semibold">Join WhatsApp</span>
+            </a>
+
+            <a
               href="https://signal.group/#CjQKIAn1NgomLfe-fC0Chxcmlw3qRdv8in-qUULUkuc1_rxbEhBr2dvOOCTtDSyX3mlvG0rx"
               target="_blank"
               rel="noopener noreferrer"
-              variant="primary"
-              class="justify-center"
+              class="card p-6 text-center flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-shadow duration-200"
             >
-              Join Signal
-            </Button>
-            <Button
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="w-8 h-8 text-primary-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle cx="12" cy="12" r="9" stroke-dasharray="1.6 1.6"></circle>
+                <path d="M9 10.5h6M9 13h6" stroke-linecap="round"></path>
+                <path d="M12 21l-2.3-1.8" stroke-linecap="round"></path>
+              </svg>
+              <span class="font-semibold">Join Signal</span>
+            </a>
+            <a
               href="https://www.facebook.com/CrosspointChurchSV"
               target="_blank"
               rel="noopener noreferrer"
-              variant="secondary"
-              class="justify-center"
+              class="card p-6 text-center flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-shadow duration-200"
             >
-              Join Facebook
-            </Button>
-            <Button
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="w-8 h-8 text-primary-600"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.02 4.388 11.012 10.125 11.915v-8.43H7.078v-3.485h3.047V9.413c0-3.018 1.792-4.686 4.533-4.686 1.312 0 2.686.236 2.686.236v2.963H15.83c-1.49 0-1.956.928-1.956 1.88v2.268h3.328l-.532 3.485h-2.796v8.43C19.612 23.085 24 18.093 24 12.073z"/>
+              </svg>
+              <span class="font-semibold">Join Facebook</span>
+            </a>
+            <a
               href="https://www.instagram.com/crosspointchurchsv?igsh=NTc4MTIwNjQ2YQ==&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
-              variant="secondary"
-              class="justify-center"
+              class="card p-6 text-center flex flex-col items-center justify-center gap-3 hover:shadow-lg transition-shadow duration-200"
             >
-              Join Instagram
-            </Button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="w-8 h-8 text-primary-600"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M7.75 2h8.5A5.756 5.756 0 0 1 22 7.75v8.5A5.756 5.756 0 0 1 16.25 22h-8.5A5.756 5.756 0 0 1 2 16.25v-8.5A5.756 5.756 0 0 1 7.75 2zm0 1.8A3.954 3.954 0 0 0 3.8 7.75v8.5a3.954 3.954 0 0 0 3.95 3.95h8.5a3.954 3.954 0 0 0 3.95-3.95v-8.5a3.954 3.954 0 0 0-3.95-3.95h-8.5zm8.95 1.55a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z"/>
+              </svg>
+              <span class="font-semibold">Join Instagram</span>
+            </a>
           </div>
         </article>
       </div>
