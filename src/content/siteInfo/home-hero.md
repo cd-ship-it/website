@@ -3,7 +3,7 @@ title: "Home Hero"
 hero:
   heroTitleEditorial:
     kicker:
-      en: "Doubt, questions, hard seasons."
+      en: "Doubt, questions, hard times."
       zh-Hant: "疑惑、迷失、艱難的時光"
       zh-Hans: "疑惑、迷失、艱難的時光"
     lines:
@@ -21,7 +21,7 @@ hero:
     en: "25+ years of faith. Still learning."
     zh-Hant: "走過二十五年後，憑信，仍在成長"
     zh-Hans: "走過二十五年後，憑信，仍在成長"
-  backgroundImage: "https://crosspointchurchsv.org/wp-content/uploads/2026/03/HistoryHero2.jpg"
+  backgroundImage: ".uploads/xp_ai_first_frame.webp"
   backgroundVideo: "/uploads/xp_ai.mp4"
   ctaText:
     en: "Plan Your Visit"
