@@ -12,9 +12,9 @@ introTagline:
   zh-Hant: "這是一個穩定的三谷屬靈家，陪伴家庭、上班族和下一代一起成長。"
   zh-Hans: "这是一个稳定的三谷属灵家，陪伴家庭、上班族和下一代一起成长。"
 description:
-  en: "Pleasanton Campus is a welcoming church community in the Tri-Valley where people can find both spiritual grounding and genuine support. What began as a church planting journey has become a steady place to worship, serve, and grow in everyday faith. We gather in English and Mandarin, and we welcome new families warmly."
-  zh-Hant: "Pleasanton 會堂是在三谷地區一個溫暖的教會群體，讓人同時得到屬靈根基與真實支持。這裡從植堂旅程開始，如今已成為敬拜、服事和每天信仰成長的穩定家園。我們有英語與國語聚會，也很歡迎新家庭加入。"
-  zh-Hans: "Pleasanton 会堂是在三谷地区一个温暖的教会群体，让人同时得到属灵根基与真实支持。这里从植堂旅程开始，如今已成为敬拜、服事和每天信仰成长的稳定家园。我们有英语与国语聚会，也很欢迎新家庭加入。"
+  en: "Pleasanton Campus is a welcoming church community in the Tri-Valley where people can find both spiritual grounding and genuine support. What began as a church planting journey has become a steady place to worship, serve, and grow in everyday faith. We gather in Cantonese, English and Mandarin, and we welcome new families warmly."
+  zh-Hant: "Pleasanton 會堂是在三谷地區一個溫暖的教會群體，讓人同時得到屬靈根基與真實支持。這裡從植堂旅程開始，如今已成為敬拜、服事和每天信仰成長的穩定家園。我們有粵語，英語與國語聚會，也很歡迎新家庭加入。"
+  zh-Hans: "Pleasanton 会堂是在三谷地区一个温暖的教会群体，让人同时得到属灵根基与真实支持。这里从植堂旅程开始，如今已成为敬拜、服事和每天信仰成长的稳定家园。我们有粵語，英语与国语聚会，也很欢迎新家庭加入。"
 emotionalHighlights:
   - en: "This campus is calm and welcoming, especially for families building a new routine."
     zh-Hant: "這個會堂平穩而溫暖，特別適合正在建立新生活節奏的家庭。"

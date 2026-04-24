@@ -160,7 +160,11 @@ const recaptchaSiteKey = getRecaptchaSiteKey();---
                   method: "POST",
                   body: formData,
                 });
-                const data = await res.json().catch(() => ({}));
+                const contentType = res.headers.get("content-type") || "";
+                const isJson = contentType.includes("application/json");
+                const data = isJson ? await res.json().catch(() => ({})) : {};
+                const rawText = isJson ? "" : await res.text().catch(() => "");
+
                 if (res.ok && data.ok) {
                   if (status) {
                     status.textContent =
@@ -169,9 +173,17 @@ const recaptchaSiteKey = getRecaptchaSiteKey();---
                   }
                   form.reset();
                 } else {
+                  const fallbackError =
+                    res.status >= 500
+                      ? `Server error (${res.status}). Please try again later or email info@crosspointchurchsv.org.`
+                      : `Request failed (${res.status}). Please check your form and try again.`;
+                  const serverText = (rawText || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+                  const errorMessage =
+                    (data && typeof data.error === "string" && data.error.trim()) ||
+                    (serverText ? `${serverText.slice(0, 180)}${serverText.length > 180 ? "..." : ""}` : "") ||
+                    fallbackError;
                   if (status) {
-                    status.textContent =
-                      data.error || "Something went wrong. Please try again.";
+                    status.textContent = errorMessage;
                     status.classList.add("text-red-600");
                   }
                 }
