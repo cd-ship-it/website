@@ -3,8 +3,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
 import LocalizedInline from "../../components/UI/LocalizedInline.astro";
 import { withBaseUrl } from "../../lib/urls";
+import { getCampusNames } from "../../lib/siteInfo/serviceTimes";
 
-const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
+const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
+const campusNames = await getCampusNames();
+---
 
 <BaseLayout
   title="Sermons - Crosspoint Church"
@@ -42,11 +45,9 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
               <label for="filter-location" class="block text-sm font-medium text-ink-3 mb-1">Location</label>
               <select id="filter-location" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All Locations</option>
-                <option value="Pleasanton">Pleasanton</option>
-                <option value="Milpitas">Milpitas</option>
-                <option value="San Leandro">San Leandro</option>
-                <option value="Peninsula">Peninsula</option>
-                <option value="Tracy">Tracy</option>
+                {campusNames.map((campusName) => (
+                  <option value={campusName}>{campusName}</option>
+                ))}
               </select>
             </div>
 

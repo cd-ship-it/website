@@ -23,6 +23,7 @@ campuses:
       - en: "English/Youth: 11 am"
         zh-Hant: "英語/青少年：上午 11:00"
         zh-Hans: "英语/青少年：上午 11:00"
+    orangeKidsAvailable: true
   - campusName:
       en: "Pleasanton"
       zh-Hant: "Pleasanton"
@@ -41,6 +42,7 @@ campuses:
       - en: "English: 10 am"
         zh-Hant: "英語：上午 10:00"
         zh-Hans: "英语：上午 10:00"
+    orangeKidsAvailable: true
   - campusName:
       en: "Tracy"
       zh-Hant: "Tracy"
@@ -56,6 +58,7 @@ campuses:
       - en: "Mandarin: 10:00 am"
         zh-Hant: "國語崇拜：上午 10:00"
         zh-Hans: "国语崇拜：上午 10:00"
+    orangeKidsAvailable: false
   - campusName:
       en: "Peninsula"
       zh-Hant: "Peninsula"
@@ -68,6 +71,7 @@ campuses:
       - en: "Cantonese: 10:00 am"
         zh-Hant: "粵語崇拜：上午 10:00"
         zh-Hans: "粤语崇拜：上午 10:00"
+    orangeKidsAvailable: false
   - campusName:
       en: "San Leandro"
       zh-Hant: "San Leandro"
@@ -86,5 +90,6 @@ campuses:
       - en: "Mandarin: 11:15 am"
         zh-Hant: "國語崇拜：上午 11:15"
         zh-Hans: "国语崇拜：上午 11:15"
+    orangeKidsAvailable: true
 draft: false
 ---

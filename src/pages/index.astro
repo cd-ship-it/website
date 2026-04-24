@@ -9,7 +9,7 @@ import FinalCTA from "../components/Sections/FinalCTA.astro";
 import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.astro";
 import NewToCrosspoint from "../components/Sections/new-to-crosspoint.astro";
 import { getEntry } from "astro:content";
-import type { LocalizedText } from "../lib/i18n";
+import { getServiceTimesData } from "../lib/siteInfo/serviceTimes";
 
 // Use getEntry (not getCollection().find) so we resolve the canonical slug and avoid
 // duplicate-id glob warnings where the first match can be stale relative to the last.
@@ -17,13 +17,7 @@ import type { LocalizedText } from "../lib/i18n";
 const homeHeroEntry = await getEntry("siteInfo", "home-hero");
 const hero = homeHeroEntry?.data.hero;
 
-const serviceTimesEntry = await getEntry("siteInfo", "service-times");
-const campuses = (serviceTimesEntry?.data.campuses ?? []) as Array<{
-  campusName: string | LocalizedText;
-  worshipDate: string | LocalizedText;
-  services: (string | LocalizedText)[];
-}>;
-const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText | undefined;
+const { campuses, sectionHeading } = await getServiceTimesData();
 
 const homeGsapDisabled =
   import.meta.env.PUBLIC_HOME_GSAP_DISABLED === "true" ||
@@ -33,13 +27,14 @@ const homeGsapDisabled =
 
 <BaseLayout
   title="Crosspoint Church · San Francisco Bay Area & Tri-Valley"
-  description="Crosspoint Church serves the San Francisco Bay Area and Tri-Valley — including Livermore, Pleasanton, Dublin, San Ramon, Danville, San Jose, Oakland, Fremont, and nearby communities — with worship, community, and faith for every season."
+  description="Crosspoint Church serves the San Francisco Bay Area and Tri-Valley with worship, community, and faith for every season."
 >
   <div class="panel-deck">
     <!-- PANEL 1 — HERO -->
     <section class="panel panel--hero">
       <div class="panel-inner">
         
+
         {hero ? (
           <HeroSection
             title={hero.heroTitle}

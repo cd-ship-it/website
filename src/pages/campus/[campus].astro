@@ -2,11 +2,20 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import LocalizedInline from "../../components/UI/LocalizedInline.astro";
-import { getEventsApiUrl, getSermonApiUrl, isCampusExcludedFromOrangeKids } from "../../config/site";
+import { getEventsApiUrl, getSermonApiUrl } from "../../config/site";
 import { withBaseUrl } from "../../lib/urls";
+import {
+  assertKnownCampusNames,
+  getCampusByEnglishName,
+  getEnglishText,
+} from "../../lib/siteInfo/serviceTimes";
 
 export async function getStaticPaths() {
   const campuses = await getCollection("campus", ({ data }) => !data.draft);
+  await assertKnownCampusNames(
+    campuses.map((entry) => entry.data.campusId),
+    "campus content entries",
+  );
   return campuses.map((entry) => ({
     params: { campus: entry.data.campusId.toLowerCase().replace(/\s+/g, "-") },
     props: { entry },
@@ -47,15 +56,8 @@ function googleMapIframeSrc(url: string, zoom?: number): string {
 
 const mapIframeSrc = googleMapsUrl ? googleMapIframeSrc(googleMapsUrl, googleMapsZoom) : "";
 
-const showOrangeKidsPromoOnCampusPage = !isCampusExcludedFromOrangeKids(campusId);
-
-// Pull service times for this campus from service-times.md
-const siteInfoEntries = await getCollection("siteInfo");
-const serviceTimesEntry = siteInfoEntries.find((e) => e.slug === "service-times");
-const campusServiceData = serviceTimesEntry?.data.campuses?.find((c) => {
-  const name = typeof c.campusName === "string" ? c.campusName : c.campusName.en;
-  return name === campusId;
-});
+const campusServiceData = await getCampusByEnglishName(campusId);
+const showOrangeKidsPromoOnCampusPage = campusServiceData?.orangeKidsAvailable !== false;
 
 const heroAlt = typeof hero.alt === "string" ? hero.alt : hero.alt.en;
 const showHeroOrangeBlueGradient =
@@ -65,8 +67,8 @@ const campusDisplayName =
 
 function getEnglishValue(value: unknown): string {
   if (typeof value === "string") return value;
-  if (value && typeof value === "object" && "en" in value && typeof (value as { en?: unknown }).en === "string") {
-    return (value as { en: string }).en;
+  if (value && typeof value === "object" && "en" in value) {
+    return getEnglishText(value as { en: string });
   }
   return "";
 }

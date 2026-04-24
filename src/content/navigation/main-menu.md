@@ -65,7 +65,7 @@ items:
             href: "/orangekids"
           - id: "social-media-chat-groups"
             label:
-              en: "Social Media / Chat Groups"
+              en: "Join our Chat Groups"
               zh-Hant: "社交媒體 / 群組聊天"
               zh-Hans: "社交媒体 / 群组聊天"
             href: "/social-media-chat-groups"
@@ -107,43 +107,12 @@ items:
           zh-Hant: "會堂"
           zh-Hans: "会堂"
         href: "#"
-        children:
-          - id: "milpitas"
-            label:
-              en: "Milpitas"
-              zh-Hant: "Milpitas"
-              zh-Hans: "Milpitas"
-            href: "/campus/milpitas"
-          - id: "pleasanton"
-            label:
-              en: "Pleasanton"
-              zh-Hant: "Pleasanton"
-              zh-Hans: "Pleasanton"
-            href: "/campus/pleasanton"
-          - id: "san-leandro"
-            label:
-              en: "San Leandro"
-              zh-Hant: "San Leandro"
-              zh-Hans: "San Leandro"
-            href: "/campus/san-leandro"
-          - id: "tracy"
-            label:
-              en: "Tracy"
-              zh-Hant: "Tracy"
-              zh-Hans: "Tracy"
-            href: "/campus/tracy"
-          - id: "peninsula"
-            label:
-              en: "Peninsula"
-              zh-Hant: "Peninsula"
-              zh-Hans: "Peninsula"
-            href: "/campus/peninsula"
-      - id: "about-overview"
+      - id: "aboutCrosspoint"
         label:
-          en: "About Us"
-          zh-Hant: "匯點簡介"
-          zh-Hans: "匯點简介"
-        href: "/about-us"
+          en: "About Crosspoint"
+          zh-Hant: "關於匯點"
+          zh-Hans: "關於匯點"
+        href: "/about-us"        
       - id: "staff"
         label:
           en: "About Our Pastors"

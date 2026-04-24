@@ -81,6 +81,7 @@ const siteInfoCollection = defineCollection({
       campusName: localizedOrString,
       worshipDate: localizedOrString,
       services: z.array(localizedOrString).default([]),
+      orangeKidsAvailable: z.boolean().default(true),
     })).optional(),
     /** home-hero.md fields */
     hero: z.object({
@@ -136,7 +137,7 @@ const siteInfoCollection = defineCollection({
 const campusCollection = defineCollection({
   type: 'content',
   schema: z.object({
-    campusId: z.enum(['Milpitas', 'Pleasanton', 'Tracy', 'Peninsula', 'San Leandro']),
+    campusId: z.string(),
     /** WordPress post category ID used to filter campus-specific events. */
     wpEventCategoryId: z.string(),
     hero: z.object({

@@ -2,8 +2,11 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
-import { filterCampusesForOrangeKids } from "../config/site";
 import { withBaseUrl } from "../lib/urls";
+import {
+  filterCampusesForOrangeKids,
+  getServiceTimesCampuses,
+} from "../lib/siteInfo/serviceTimes";
 
 const page = (await getCollection("pages")).find(
   (entry) =>
@@ -29,10 +32,7 @@ const {
   contactPhone,
 } = page.data;
 
-// Pull service times for all campuses from service-times.md
-const siteInfoEntries = await getCollection("siteInfo");
-const serviceTimesEntry = siteInfoEntries.find((e) => e.slug === "service-times");
-const campuses = serviceTimesEntry?.data.campuses ?? [];
+const campuses = await getServiceTimesCampuses();
 const orangeKidsCampuses = filterCampusesForOrangeKids(campuses);
 
 const pillarPhotos = [

@@ -1,11 +1,12 @@
 ---
-import { getCollection, getEntry } from "astro:content";
+import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import Button from "../components/UI/Button.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import { pickLocalizedText } from "../lib/i18n";
 import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.astro";
+import { getServiceTimesCampuses } from "../lib/siteInfo/serviceTimes";
 
 
 const page = await getEntry("pages", "im-new");
@@ -13,9 +14,7 @@ if (!page || page.data.pageKind !== "im-new") {
   throw new Error('Content entry "pages/im-new" not found or wrong pageKind.');
 }
 const data = page.data;
-const siteInfoEntries = await getCollection("siteInfo");
-const serviceTimesEntry = siteInfoEntries.find((entry) => entry.slug === "service-times");
-const campuses = serviceTimesEntry?.data.campuses ?? [];
+const campuses = await getServiceTimesCampuses();
 
 const iconPaths: Record<string, string> = {
   clock: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",

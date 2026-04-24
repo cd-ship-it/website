@@ -1,11 +1,11 @@
 ---
 import LocalizedInline from "../UI/LocalizedInline.astro";
 import { pickLocalizedText, type LocalizedText } from "../../lib/i18n";
-import { homeCampusDisplayOrder, normalizeCampusOrderKey } from "../../config/site";
+import { slugifyCampusName } from "../../lib/siteInfo/serviceTimes";
 
 function campusPageHref(campusName: string | LocalizedText): string {
   const id = pickLocalizedText(campusName, "en");
-  const slug = id.toLowerCase().replace(/\s+/g, "-");
+  const slug = slugifyCampusName(id);
   return `${import.meta.env.BASE_URL}campus/${slug}`;
 }
 
@@ -18,8 +18,6 @@ export interface CampusRow {
 export interface Props {
   sectionHeading?: LocalizedText;
   campuses: CampusRow[];
-  /** Defaults match the homepage mockup. */
-  // eyebrow?: LocalizedText;
   sectionSub?: LocalizedText;
   planVisitHref?: string;
   planVisitLabel?: LocalizedText;
@@ -28,11 +26,6 @@ export interface Props {
 const {
   sectionHeading,
   campuses,
-  // eyebrow = {
-  //   en: "Five campuses across the Bay Area",
-  //   "zh-Hant": "灣區五個會堂",
-  //   "zh-Hans": "湾区五个會堂",
-  // },
   sectionSub = {
     en: "We gather every week in English, Cantonese, and Mandarin.",
     "zh-Hant": "我們每週以英語、粵語及國語聚會。",
@@ -46,25 +39,7 @@ const {
   },
 } = Astro.props;
 
-function campusRowKey(row: CampusRow): string {
-  const name = typeof row.campusName === "string" ? row.campusName : row.campusName.en;
-  return normalizeCampusOrderKey(name);
-}
-
-const placed = new Set<string>();
-const orderedCampuses: CampusRow[] = [];
-for (const label of homeCampusDisplayOrder) {
-  const want = normalizeCampusOrderKey(label);
-  const row = campuses.find((c) => campusRowKey(c) === want);
-  if (row) {
-    orderedCampuses.push(row);
-    placed.add(want);
-  }
-}
-for (const c of campuses) {
-  const k = campusRowKey(c);
-  if (!placed.has(k)) orderedCampuses.push(c);
-}
+const orderedCampuses: CampusRow[] = [...campuses];
 ---
 
 <section

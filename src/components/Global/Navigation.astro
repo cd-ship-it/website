@@ -2,6 +2,7 @@
 import { getEntry } from "astro:content";
 import { LANG_LABELS, I18N, type LocalizedText, type SiteLang, type LocaleStrings } from "../../lib/i18n";
 import LocalizedInline from "../UI/LocalizedInline.astro";
+import { getCampusNavChildren } from "../../lib/siteInfo/serviceTimes";
 
 type NavKey = keyof LocaleStrings["nav"];
 
@@ -40,6 +41,7 @@ function fallbackNavFromI18n(): NavMenuTop[] {
 const navEntry = await getEntry("navigation", "main-menu");
 const fromFile =
   navEntry && !navEntry.data.draft && navEntry.data.items?.length ? navEntry.data.items : null;
+const campusNavChildren = await getCampusNavChildren();
 
 const BASE = import.meta.env.BASE_URL;
 const u = (path: string) => (!path || path === "#" || /^https?:\/\//.test(path)) ? path : `${BASE}${path.replace(/^\//, "")}`;
@@ -56,8 +58,20 @@ function prefixItems(items: NavMenuTop[]): NavMenuTop[] {
   }));
 }
 
+function applyDynamicCampuses(items: NavMenuTop[]): NavMenuTop[] {
+  return items.map((item) => {
+    if (item.id !== "about" || !item.children?.length) return item;
+    return {
+      ...item,
+      children: item.children.map((child) =>
+        child.id === "campuses" ? { ...child, children: campusNavChildren } : child,
+      ),
+    };
+  });
+}
+
 const navItems: NavMenuTop[] = prefixItems(
-  (fromFile ?? fallbackNavFromI18n()).filter((item) => item.id !== "home"),
+  applyDynamicCampuses((fromFile ?? fallbackNavFromI18n()).filter((item) => item.id !== "home")),
 );
 
 const languageOptions: Array<{ value: SiteLang; label: string }> = [
@@ -89,16 +103,8 @@ function hasChildren(item: NavMenuTop): item is NavMenuTop & { children: NavMenu
   return Array.isArray(item.children) && item.children.length > 0;
 }
 
-/** First real URL for a parent whose own `href` may be `#`. */
-function firstNavigableHref(item: NavMenuTop): string {
-  if (item.href && item.href !== "#") return item.href;
-  for (const l2 of item.children ?? []) {
-    if (l2.href && l2.href !== "#") return l2.href;
-    for (const l3 of l2.children ?? []) {
-      if (l3.href && l3.href !== "#") return l3.href;
-    }
-  }
-  return "#";
+function isNavigableHref(href: string): boolean {
+  return !!href && href !== "#";
 }
 ---
 
@@ -108,30 +114,55 @@ function firstNavigableHref(item: NavMenuTop): string {
     {
       navItems.map((item) => {
         if (hasChildren(item)) {
-          const parentHref = firstNavigableHref(item);
+          const parentHref = item.href;
+          const isParentNavigable = isNavigableHref(parentHref);
           const isActive = isTopActive(item);
+          const flattenNestedForMenu = item.id === "community";
           return (
             <li class="relative group">
-              <a
-                href={parentHref}
-                class={`text-base font-normal transition-colors flex items-center gap-1 ${
-                  isActive ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
-                }`}
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <LocalizedInline value={item.label} />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-3.5 w-3.5 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
+              {isParentNavigable ? (
+                <a
+                  href={parentHref}
+                  class={`text-base font-normal transition-colors flex items-center gap-1 ${
+                    isActive ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
+                  }`}
+                  aria-haspopup="true"
+                  aria-expanded="false"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </a>
+                  <LocalizedInline value={item.label} />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  class={`text-base font-normal transition-colors flex items-center gap-1 ${
+                    isActive ? "text-secondary-600" : "text-ink-2 hover:text-secondary-600"
+                  }`}
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <LocalizedInline value={item.label} />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              )}
               <ul
                 class="nav-desktop-dropdown absolute left-0 top-full z-50 min-w-[280px] max-w-[min(100vw-2rem,22rem)] border-x border-b border-gray-200 border-t-[3px] border-t-secondary-500 bg-white py-0 opacity-0 shadow-[0_4px_12px_rgba(9,21,41,0.15)] transition-all duration-150 invisible group-hover:visible group-hover:opacity-100"
                 role="menu"
@@ -153,6 +184,50 @@ function firstNavigableHref(item: NavMenuTop): string {
                           <LocalizedInline value={child.label} />
                         </a>
                       </li>
+                    );
+                  }
+                  if (flattenNestedForMenu) {
+                    return (
+                      <>
+                        {child.href && child.href !== "#" && (
+                          <li role="none" class="border-b border-[#f0f0f0] last:border-b-0">
+                            <a
+                              href={child.href}
+                              class:list={[
+                                "block px-5 py-[15px] text-base font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50",
+                              ]}
+                              role="menuitem"
+                              aria-current={childActive ? "page" : undefined}
+                            >
+                              <LocalizedInline value={child.label} />
+                            </a>
+                          </li>
+                        )}
+                        {child.children!.map((g) => {
+                          const gActive = isL3Active(g);
+                          const gh = g.href?.trim();
+                          return (
+                            <li role="none" class="border-b border-[#f0f0f0] last:border-b-0">
+                              {gh ? (
+                                <a
+                                  href={gh}
+                                  class:list={[
+                                    "block px-5 py-[15px] text-base font-normal leading-snug text-primary-700 transition-colors hover:bg-gray-50",
+                                  ]}
+                                  role="menuitem"
+                                  aria-current={gActive ? "page" : undefined}
+                                >
+                                  <LocalizedInline value={g.label} />
+                                </a>
+                              ) : (
+                                <span class="block px-5 py-[15px] text-base font-normal leading-snug text-muted">
+                                  <LocalizedInline value={g.label} />
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </>
                     );
                   }
                   return (
@@ -258,6 +333,7 @@ function firstNavigableHref(item: NavMenuTop): string {
           if (hasChildren(item)) {
             const subId = `mobile-sub-${index}`;
             const isActive = isTopActive(item);
+            const flattenNestedForMobile = item.id === "community";
             return (
               <div class="flex flex-col gap-1 mobile-nav-parent">
                 <button
@@ -278,7 +354,7 @@ function firstNavigableHref(item: NavMenuTop): string {
                 </button>
                 <div
                   id={subId}
-                  class="mobile-submenu overflow-hidden transition-all duration-200 ease-out"
+                  class="mobile-submenu mobile-submenu-root overflow-hidden transition-all duration-200 ease-out"
                   role="menu"
                   aria-hidden="true"
                 >
@@ -300,6 +376,49 @@ function firstNavigableHref(item: NavMenuTop): string {
                           >
                             <LocalizedInline value={child.label} />
                           </a>
+                        );
+                      }
+                      if (flattenNestedForMobile) {
+                        const childActive = isLinkActive(child.href);
+                        return (
+                          <>
+                            {child.href && child.href !== "#" && (
+                              <a
+                                href={child.href}
+                                class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-normal leading-snug transition-colors ${
+                                  childActive
+                                    ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                    : "text-primary-700 hover:bg-gray-50"
+                                }`}
+                                role="menuitem"
+                                aria-current={childActive ? "page" : undefined}
+                              >
+                                <LocalizedInline value={child.label} />
+                              </a>
+                            )}
+                            {child.children!.map((g) => {
+                              const gActive = isLinkActive(g.href);
+                              const gh = g.href?.trim();
+                              return gh ? (
+                                <a
+                                  href={gh}
+                                  class={`block rounded-lg border border-transparent px-4 py-2.5 text-sm font-normal leading-snug transition-colors ${
+                                    gActive
+                                      ? "border-secondary-200 bg-secondary-50 text-primary-700"
+                                      : "text-primary-700 hover:bg-gray-50"
+                                  }`}
+                                  role="menuitem"
+                                  aria-current={gActive ? "page" : undefined}
+                                >
+                                  <LocalizedInline value={g.label} />
+                                </a>
+                              ) : (
+                                <span class="block rounded-lg px-4 py-2.5 text-sm font-normal leading-snug text-muted">
+                                  <LocalizedInline value={g.label} />
+                                </span>
+                              );
+                            })}
+                          </>
                         );
                       }
                       const nestedSubId = `mobile-sub-${index}-nested-${child.id}`;
@@ -600,13 +719,43 @@ function firstNavigableHref(item: NavMenuTop): string {
     };
     
     const collapseMobileSubmenus = () => {
-      mobileMenu?.querySelectorAll(".mobile-submenu.mobile-submenu-open").forEach((el) => {
+      mobileMenu?.querySelectorAll(".mobile-submenu-root.mobile-submenu-open").forEach((el) => {
         el.classList.remove("mobile-submenu-open");
         el.setAttribute("aria-hidden", "true");
       });
       mobileMenu?.querySelectorAll('.mobile-submenu-trigger[aria-expanded="true"]').forEach((btn) => {
         btn.setAttribute("aria-expanded", "false");
       });
+    };
+
+    const expandMobileSubmenuByTrigger = (trigger) => {
+      if (!(trigger instanceof HTMLElement)) return false;
+      const id = trigger.getAttribute("aria-controls") ?? trigger.getAttribute("data-submenu-id");
+      if (!id) return false;
+      const sub = document.getElementById(id);
+      if (!sub) return false;
+      sub.classList.add("mobile-submenu-open");
+      sub.setAttribute("aria-hidden", "false");
+      trigger.setAttribute("aria-expanded", "true");
+      return true;
+    };
+
+    const expandDefaultMobileSubmenu = () => {
+      if (!mobileMenu) return;
+      collapseMobileSubmenus();
+
+      const triggers = Array.from(mobileMenu.querySelectorAll(".mobile-submenu-trigger"));
+      if (!triggers.length) return;
+
+      const activeTrigger = triggers.find((trigger) => {
+        const id = trigger.getAttribute("aria-controls") ?? trigger.getAttribute("data-submenu-id");
+        if (!id) return false;
+        const sub = document.getElementById(id);
+        return !!sub?.querySelector('a[aria-current="page"]');
+      });
+
+      if (expandMobileSubmenuByTrigger(activeTrigger)) return;
+      expandMobileSubmenuByTrigger(triggers[0]);
     };
 
     /** Prefer this over toggling from `isMenuOpen` — keeps DOM + state in sync if they ever drift. */
@@ -628,6 +777,7 @@ function firstNavigableHref(item: NavMenuTop): string {
       if (isMenuOpen) {
         mobileMenu?.classList.add('show');
         mobileMenuButton?.setAttribute('aria-expanded', 'true');
+        expandDefaultMobileSubmenu();
       } else {
         mobileMenu?.classList.remove('show');
         mobileMenuButton?.setAttribute('aria-expanded', 'false');

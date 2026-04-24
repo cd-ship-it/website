@@ -3,7 +3,7 @@ import Button from "../UI/Button.astro";
 import LocalizedInline from "../UI/LocalizedInline.astro";
 import { getCollection } from "astro:content";
 import type { LocalizedText } from "../../lib/i18n";
-import { withBaseUrl } from "../../lib/urls";
+import { getCampusCount } from "../../lib/siteInfo/serviceTimes";
 
 const entries = await getCollection("siteInfo");
 const entry = entries.find(
@@ -15,18 +15,10 @@ const entry = entries.find(
     item.id === "home-second-hero.md",
 );
 const s = entry?.data.secondHero;
-const serviceTimesEntry = entries.find(
-  (item) =>
-    item.id === "service-times" ||
-    item.slug === "service-times" ||
-    item.id.endsWith("/service-times") ||
-    item.id.endsWith("/service-times.md") ||
-    item.id === "service-times.md",
-);
-const campusCount = serviceTimesEntry?.data.campuses?.length ?? 0;
+const campusCount = await getCampusCount();
 const storyStats: Array<{ value: string; label: LocalizedText }> = [
   {
-    value: String(campusCount || 5),
+    value: String(campusCount),
     label: {
       en: "Bay Area campuses",
       "zh-Hant": "灣區會堂",
@@ -49,15 +41,16 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
       "zh-Hans": "教会家庭",
     },
   },
-];---
+];
+---
 
 {s && (
-  <section class="bg-primary-900 px-6 py-[72px] text-white" >
+  <section class="bg-primary-900 px-6 py-[72px] text-white" style="background-image: url('/uploads/bg-home-second-hero.webp'); background-size: cover; background-position: center;">
     <div class="container">
       <div class="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <div class="relative overflow-hidden rounded-[1.75rem] bg-primary-950 min-h-[22rem] lg:min-h-[34rem]">
           <img
-            src={s.image?.startsWith('http') ? s.image : `${withBaseUrl(s.image?.replace(/^\//, ''))}`}
+            src={s.image}
             alt={s.imageAlt?.en ?? ""}
             class="absolute inset-0 h-full w-full object-cover"
           />
@@ -95,7 +88,7 @@ const storyStats: Array<{ value: string; label: LocalizedText }> = [
 
           {s.ctaText && s.ctaLink && (
             <div>
-              <Button href={s.ctaLink?.startsWith('http') ? s.ctaLink : `${withBaseUrl(s.ctaLink?.replace(/^\//, ''))}`} variant="primary" size="lg">
+              <Button href={s.ctaLink} variant="primary" size="lg">
                 <LocalizedInline value={s.ctaText} />
               </Button>
             </div>

@@ -1,18 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.astro";
-import { getCollection } from "astro:content";
-import type { LocalizedText } from "../lib/i18n";
+import { getServiceTimesData } from "../lib/siteInfo/serviceTimes";
 
-const siteInfoEntries = await getCollection("siteInfo");
-const serviceTimesEntry = siteInfoEntries.find((entry) => entry.slug === "service-times");
-const campuses =
-  (serviceTimesEntry?.data.campuses ?? []) as Array<{
-    campusName: string | LocalizedText;
-    worshipDate: string | LocalizedText;
-    services: (string | LocalizedText)[];
-  }>;
-const sectionHeading = serviceTimesEntry?.data.sectionHeading as LocalizedText | undefined;
+const { campuses, sectionHeading } = await getServiceTimesData();
 ---
 
 <BaseLayout

@@ -6,6 +6,7 @@
 import { getEntry } from "astro:content";
 import { LANG_LABELS, I18N, type LocalizedText, type SiteLang, type LocaleStrings } from "../../lib/i18n";
 import LocalizedInline from "../UI/LocalizedInline.astro";
+import { getCampusNavChildren } from "../../lib/siteInfo/serviceTimes";
 
 type NavKey = keyof LocaleStrings["nav"];
 
@@ -45,6 +46,7 @@ function fallbackNavFromI18n(): NavMenuTop[] {
 const navEntry = await getEntry("navigation", "main-menu");
 const fromFile =
   navEntry && !navEntry.data.draft && navEntry.data.items?.length ? navEntry.data.items : null;
+const campusNavChildren = await getCampusNavChildren();
 
 const BASE = import.meta.env.BASE_URL;
 const u = (path: string) => (!path || path === "#" || /^https?:\/\//.test(path)) ? path : `${BASE}${path.replace(/^\//, "")}`;
@@ -61,8 +63,20 @@ function prefixItems(items: NavMenuTop[]): NavMenuTop[] {
   }));
 }
 
+function applyDynamicCampuses(items: NavMenuTop[]): NavMenuTop[] {
+  return items.map((item) => {
+    if (item.id !== "about" || !item.children?.length) return item;
+    return {
+      ...item,
+      children: item.children.map((child) =>
+        child.id === "campuses" ? { ...child, children: campusNavChildren } : child,
+      ),
+    };
+  });
+}
+
 const navItems: NavMenuTop[] = prefixItems(
-  (fromFile ?? fallbackNavFromI18n()).filter((item) => item.id !== "home"),
+  applyDynamicCampuses((fromFile ?? fallbackNavFromI18n()).filter((item) => item.id !== "home")),
 );
 
 const languageOptions: Array<{ value: SiteLang; label: string }> = [
