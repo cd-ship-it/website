@@ -8,7 +8,9 @@ import LocalizedHtml from "../components/UI/LocalizedHtml.astro";
 import PageRailSection from "../components/UI/PageRailSection.astro";
 import { withBaseUrl } from "../lib/urls";
 
-const page = await getEntry("giving", "giving-page");
+const page =
+  (await getEntry("giving", "giving-page.md")) ??
+  (await getEntry("giving", "giving-page"));
 if (!page) throw new Error('Content entry "giving/giving-page" not found.');
 
 const {

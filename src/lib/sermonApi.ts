@@ -29,7 +29,8 @@ function isTruthyEnvValue(value: unknown): boolean {
 }
 
 function shouldBypassSermonArchiveCache(): boolean {
-  return isTruthyEnvValue(import.meta.env.SERMON_CACHE_BYPASS);
+  // Always bypass local archive cache: this project now prefers fresh API data.
+  return true;
 }
 
 function isOlderThanTwoWeeks(dateInput: string): boolean {
@@ -83,7 +84,9 @@ export async function fetchSermons(
   }
   const url = new URL(raw);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  const res = await fetch(url.toString());
+  // Add a timestamp to defeat intermediary caches and force fresh payloads.
+  url.searchParams.set("_ts", String(Date.now()));
+  const res = await fetch(url.toString(), { cache: "no-store" });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -123,7 +126,9 @@ export async function fetchAllSermons(): Promise<Sermon[]> {
       ? dedupeSermonsByYoutubeId([...olderFetchedThisBuild, ...cachedOlderSermons])
       : dedupeSermonsByYoutubeId(olderFetchedThisBuild);
 
-    await writeOlderSermonsCache(mergedOlderSermons);
+    if (!bypassCache) {
+      await writeOlderSermonsCache(mergedOlderSermons);
+    }
 
     const combined = dedupeSermonsByYoutubeId([...recentSermons, ...mergedOlderSermons]);
 
@@ -142,8 +147,10 @@ export async function fetchAllSermons(): Promise<Sermon[]> {
 }
 
 export async function fetchSermon(id: string): Promise<Sermon | null> {
-  const url = `${getApiUrl()}?id=${encodeURIComponent(id)}`;
-  const res = await fetch(url);
+  const urlObj = new URL(getApiUrl());
+  urlObj.searchParams.set("id", id);
+  urlObj.searchParams.set("_ts", String(Date.now()));
+  const res = await fetch(urlObj.toString(), { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();

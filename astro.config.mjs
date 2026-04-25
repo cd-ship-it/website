@@ -1,7 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
+import autoprefixer from 'autoprefixer';
+import tailwindcss from 'tailwindcss';
 import { loadEnv } from 'vite';
 
 // https://astro.build/config
@@ -22,11 +23,24 @@ export default defineConfig({
    */
   base: platform === 'production' ? '/' : '/',
 
-  integrations: [tailwind(), sitemap()],
+  integrations: [sitemap()],
+  vite: {
+    css: {
+      postcss: {
+        plugins: [
+          tailwindcss({ config: './tailwind.config.cjs' }),
+          autoprefixer(),
+        ],
+      },
+    },
+  },
   markdown: {
     shikiConfig: {
       theme: 'github-light',
       wrap: true,
     },
+  },
+  legacy: {
+    collectionsBackwardsCompat: true,
   },
 });

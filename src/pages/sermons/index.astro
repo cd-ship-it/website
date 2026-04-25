@@ -240,6 +240,7 @@ const campusNames = await getCampusNames();
   function buildParams(page = 1) {
     const f = getFilters();
     const p = new URLSearchParams({ page });
+    p.set('_ts', String(Date.now()));
     if (f.location) p.set('location', f.location);
     if (f.language) p.set('language', f.language);
     if (f.preacher) p.set('preacher', f.preacher);

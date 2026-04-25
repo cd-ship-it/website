@@ -33,7 +33,9 @@ export function slugifyCampusName(name: string): string {
 }
 
 export async function getServiceTimesData(): Promise<ServiceTimesData> {
-  const serviceTimesEntry = await getEntry("siteInfo", "service-times");
+  const serviceTimesEntry =
+    (await getEntry("siteInfo", "service-times.md")) ??
+    (await getEntry("siteInfo", "service-times"));
   return {
     sectionHeading: serviceTimesEntry?.data.sectionHeading,
     campuses: (serviceTimesEntry?.data.campuses ?? []) as ServiceTimesCampus[],

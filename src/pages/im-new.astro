@@ -9,7 +9,9 @@ import ServiceTimesCampuses from "../components/Sections/ServiceTimesCampuses.as
 import { getServiceTimesCampuses } from "../lib/siteInfo/serviceTimes";
 
 
-const page = await getEntry("pages", "im-new");
+const page =
+  (await getEntry("pages", "im-new.md")) ??
+  (await getEntry("pages", "im-new"));
 if (!page || page.data.pageKind !== "im-new") {
   throw new Error('Content entry "pages/im-new" not found or wrong pageKind.');
 }

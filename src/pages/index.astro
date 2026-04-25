@@ -14,7 +14,9 @@ import { getServiceTimesData } from "../lib/siteInfo/serviceTimes";
 // Use getEntry (not getCollection().find) so we resolve the canonical slug and avoid
 // duplicate-id glob warnings where the first match can be stale relative to the last.
 // ── Hero ─────────────────────────────────────────────────────────────────────
-const homeHeroEntry = await getEntry("siteInfo", "home-hero");
+const homeHeroEntry =
+  (await getEntry("siteInfo", "home-hero.md")) ??
+  (await getEntry("siteInfo", "home-hero"));
 const hero = homeHeroEntry?.data.hero;
 
 const { campuses, sectionHeading } = await getServiceTimesData();

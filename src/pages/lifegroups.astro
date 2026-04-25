@@ -7,7 +7,9 @@ import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import Button from "../components/UI/Button.astro";
 import { pickLocalizedText } from "../lib/i18n";
 
-const page = await getEntry("pages", "lifegroups");
+const page =
+  (await getEntry("pages", "lifegroups.md")) ??
+  (await getEntry("pages", "lifegroups"));
 if (!page || page.data.pageKind !== "lifegroups") {
   throw new Error('Content entry "pages/lifegroups" not found or wrong pageKind.');
 }

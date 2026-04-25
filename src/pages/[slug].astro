@@ -84,7 +84,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const seenRouteSlugs = new Set<string>();
 
   for (const item of mergedMirrorItems) {
-    const canonicalSlug = item.slug;
+    const canonicalSlug = item.slug?.trim();
+    if (!canonicalSlug) {
+      continue;
+    }
     const slugLower = canonicalSlug.toLowerCase();
 
     if (reservedSlugs.has(slugLower)) {
@@ -110,7 +113,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }
   }
 
-  return paths;
+  return paths.filter((path) => typeof path?.params?.slug === "string" && path.params.slug.length > 0);
 };
 
 const { slug } = Astro.params;

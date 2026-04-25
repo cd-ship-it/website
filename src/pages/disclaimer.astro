@@ -5,7 +5,9 @@ import PageHeader from "../components/Sections/PageHeader.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import PageRailSection from "../components/UI/PageRailSection.astro";
 
-const page = await getEntry("disclaimer", "partners-affiliations");
+const page =
+  (await getEntry("disclaimer", "partners-affiliations.md")) ??
+  (await getEntry("disclaimer", "partners-affiliations"));
 if (!page) throw new Error('Content entry "disclaimer/partners-affiliations" not found.');
 
 const { seo, pageHeader, partnersSection, disclaimerSection } = page.data;

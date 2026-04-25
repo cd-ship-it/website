@@ -1,5 +1,5 @@
 ---
-import { getEntry } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/Sections/PageHeader.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
@@ -7,7 +7,10 @@ import LocalizedHtml from "../components/UI/LocalizedHtml.astro";
 import { pickLocalizedText, resolveLocalizedSlot, type LocalizedText } from "../lib/i18n";
 import { withBaseUrl } from "../lib/urls";
 
-const page = await getEntry("about", "about-pastors");
+const page =
+  (await getEntry("about", "about-pastors.md")) ??
+  (await getEntry("about", "about-pastors")) ??
+  (await getCollection("about")).find((entry) => entry.id === "about-pastors");
 if (!page) throw new Error('Content entry "about/about-pastors" not found.');
 
 const { title, seo, pageHeader, pageIntro, pastors, contactPhone } = page.data;
@@ -63,7 +66,8 @@ function firstParagraph(
   };
 }
 
-const allPastors = pastors ?? [];---
+const allPastors = pastors ?? [];
+---
 
 <BaseLayout title={seo.title} description={seo.description}>
   <div class="about-pastors-page">

@@ -43,7 +43,9 @@ function fallbackNavFromI18n(): NavMenuTop[] {
   ];
 }
 
-const navEntry = await getEntry("navigation", "main-menu");
+const navEntry =
+  (await getEntry("navigation", "main-menu.md")) ??
+  (await getEntry("navigation", "main-menu"));
 const fromFile =
   navEntry && !navEntry.data.draft && navEntry.data.items?.length ? navEntry.data.items : null;
 const campusNavChildren = await getCampusNavChildren();

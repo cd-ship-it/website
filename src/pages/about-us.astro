@@ -6,7 +6,9 @@ import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import { pickLocalizedText, resolveLocalizedSlot } from "../lib/i18n";
 import { withBaseUrl } from "../lib/urls";
 
-const page = await getEntry("about", "about-us");
+const page =
+  (await getEntry("about", "about-us.md")) ??
+  (await getEntry("about", "about-us"));
 if (!page) throw new Error('Content entry "about/about-us" not found.');
 
 const { seo, pageHeader, mission, vision, history, testimonies = [] } = page.data;
