@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "";
 ---
 
 <BaseLayout
@@ -21,4 +23,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <a href="/im-new" class="btn btn-secondary">I'm New</a>
     </div>
   </section>
+
+  {
+    GA_ID && (
+      <script define:vars={{ GA_ID }}>
+        function notFoundPayload() {
+          return {
+            requested_path:
+              window.location.pathname + window.location.search + window.location.hash,
+            page_location: window.location.href,
+            from_referrer: document.referrer || undefined,
+          };
+        }
+
+        function sendNotFoundEvent() {
+          if (typeof gtag !== "function") return false;
+          gtag("event", "page_not_found", notFoundPayload());
+          return true;
+        }
+
+        function trySend(attemptsLeft) {
+          if (sendNotFoundEvent()) return;
+          if (attemptsLeft <= 0) return;
+          window.setTimeout(function () {
+            trySend(attemptsLeft - 1);
+          }, 250);
+        }
+
+        window.addEventListener("load", function () {
+          trySend(20);
+        });
+      </script>
+    )
+  }
 </BaseLayout>

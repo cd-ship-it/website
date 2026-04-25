@@ -21,7 +21,7 @@ hero:
     en: "25+ years of faith. Still learning."
     zh-Hant: "走過二十五年後，憑信，仍在成長"
     zh-Hans: "走過二十五年後，憑信，仍在成長"
-  backgroundImage: ".uploads/xp_ai_first_frame.webp"
+  backgroundImage: "/uploads/xp_ai_first_frame.webp"
   backgroundVideo: "/uploads/xp_ai.mp4"
   ctaText:
     en: "Plan Your Visit"

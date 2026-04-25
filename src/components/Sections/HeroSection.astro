@@ -29,7 +29,7 @@ const {
   title            = { en: "Welcome to Crosspoint", "zh-Hant": "歡迎來到匯點教會", "zh-Hans": "欢迎来到汇点教会" },
   titleEditorial,
   subtitle         = { en: "25 Years Strong. Still Moving Forward in Faith.", "zh-Hant": "25 年恩典。繼續在信仰中前行。", "zh-Hans": "25 年恩典。继续在信仰中前行。" },
-  backgroundImage  = "https://crosspointchurchsv.org/wp-content/uploads/2026/03/HistoryHero2.jpg",
+  backgroundImage  = "/uploads/xp_ai_first_frame.webp",
   backgroundVideo,
   ctaText          = { en: "Plan Your Visit",  "zh-Hant": "計劃探訪",  "zh-Hans": "计划探访" },
   ctaLink          = "/im-new",
@@ -62,10 +62,13 @@ const overlayVideo =
   {useVideo && (
     <video
       class="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover"
+      data-hero-video
       autoplay
       muted
       loop
       playsinline
+      webkit-playsinline="true"
+      preload="auto"
       aria-hidden="true"
       poster={backgroundImage}
     >
@@ -139,3 +142,38 @@ const overlayVideo =
     </div>
   </div>
 </section>
+
+{useVideo && (
+  <script>
+    const video = document.querySelector("video[data-hero-video]");
+    if (video instanceof HTMLVideoElement) {
+      // iOS requires the properties as well as attributes for reliable muted autoplay.
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+
+      const attemptPlay = () => {
+        void video.play().catch(() => {
+          // Ignore autoplay rejections; we'll retry on the next lifecycle event.
+        });
+      };
+
+      if (video.readyState >= 2) {
+        attemptPlay();
+      } else {
+        video.addEventListener("loadeddata", attemptPlay, { once: true });
+        video.addEventListener("canplay", attemptPlay, { once: true });
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && video.paused) {
+          attemptPlay();
+        }
+      });
+
+      document.addEventListener("touchstart", () => {
+        if (video.paused) attemptPlay();
+      }, { once: true, passive: true });
+    }
+  </script>
+)}
