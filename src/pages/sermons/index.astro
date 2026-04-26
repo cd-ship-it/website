@@ -160,7 +160,8 @@ const campusNames = await getCampusNames();
     const thumb = `https://img.youtube.com/vi/${esc(sermon.youtube_id)}/mqdefault.jpg`;
     const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
     const date = formatDateLong(sermon.date);
-    const summaryText = summaryPreview(sermon.summary, 30);
+    // Keep for future re-enable:
+    // const summaryText = summaryPreview(sermon.summary, 30);
 
     return `
       <a href="${BASE}sermons/${esc(sermon.youtube_id)}"
@@ -198,7 +199,7 @@ const campusNames = await getCampusNames();
             </svg>
             <span>${esc(sermon.location)}</span>
           </div>
-          ${summaryText ? `<p class="text-muted text-sm mb-4 leading-relaxed">${esc(summaryText)}</p>` : ''}
+          <!-- Summary hidden for now. Re-enable with summaryText block when needed. -->
           <p class="text-blue-600 font-medium text-sm group-hover:underline">Watch / 觀看 →</p>
         </div>
       </a>
