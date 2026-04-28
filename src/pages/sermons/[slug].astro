@@ -44,11 +44,13 @@ function parseSummaryPayload(raw: string): SermonSummaryPayload | null {
   }
 
   const { sermon } = Astro.props as { sermon: Sermon };
-  const latest = await fetchSermon(sermon.youtube_id).catch(() => null);
+  const slugId = (Astro.params.slug ?? sermon.youtube_id ?? "").trim();
+  const latest = await fetchSermon(slugId || sermon.youtube_id).catch(() => null);
   const sermonData: Sermon = latest
     ? {
         ...sermon,
         ...latest,
+        youtube_id: latest.youtube_id || slugId || sermon.youtube_id,
         // Prevent empty strings from clobbering list values.
         sermon_title: latest.sermon_title || sermon.sermon_title,
         preacher_chi: latest.preacher_chi || sermon.preacher_chi,

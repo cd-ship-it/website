@@ -1,13 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
-import LocalizedInline from "../../components/UI/LocalizedInline.astro";
 import { withBaseUrl } from "../../lib/urls";
-import { getCampusNames } from "../../lib/siteInfo/serviceTimes";
 
-const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';
-const campusNames = await getCampusNames();
----
+const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
 
 <BaseLayout
   title="Sermons - Crosspoint Church"
@@ -45,9 +41,11 @@ const campusNames = await getCampusNames();
               <label for="filter-location" class="block text-sm font-medium text-ink-3 mb-1">Location</label>
               <select id="filter-location" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 <option value="">All Locations</option>
-                {campusNames.map((campusName) => (
-                  <option value={campusName}>{campusName}</option>
-                ))}
+                <option value="Pleasanton">Pleasanton</option>
+                <option value="Milpitas">Milpitas</option>
+                <option value="San Leandro">San Leandro</option>
+                <option value="Peninsula">Peninsula</option>
+                <option value="Tracy">Tracy</option>
               </select>
             </div>
 
@@ -86,9 +84,7 @@ const campusNames = await getCampusNames();
         <!-- Sermons Grid -->
         <div class="lg:col-span-3">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold">
-              <LocalizedInline value={{ en: "Sermons", "zh-Hant": "講道", "zh-Hans": "讲道" }} />
-            </h2>
+            <h2 class="text-2xl font-bold">Sermons</h2>
           </div>
 
           <!-- Loading state -->
@@ -156,12 +152,31 @@ const campusNames = await getCampusNames();
     return `<span class="inline-block px-2 py-0.5 text-xs font-medium rounded-full ${color}">${esc(label)}</span>`;
   }
 
+  function summaryTextForCard(rawSummary) {
+    const trimmed = (rawSummary ?? '').trim();
+    if (!trimmed) return '';
+
+    const fencedMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    const jsonSource = (fencedMatch?.[1] ?? trimmed).trim();
+    if (jsonSource.startsWith('{') && jsonSource.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(jsonSource);
+        if (typeof parsed?.excerpt === 'string' && parsed.excerpt.trim()) {
+          return parsed.excerpt.trim();
+        }
+      } catch {
+        // Fall through to generic summary preview.
+      }
+    }
+
+    return summaryPreview(rawSummary, 30);
+  }
+
   function sermonCard(sermon) {
     const thumb = `https://img.youtube.com/vi/${esc(sermon.youtube_id)}/mqdefault.jpg`;
     const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
     const date = formatDateLong(sermon.date);
-    // Keep for future re-enable:
-    // const summaryText = summaryPreview(sermon.summary, 30);
+    const summaryText = summaryTextForCard(sermon.summary);
 
     return `
       <a href="${BASE}sermons/${esc(sermon.youtube_id)}"
@@ -199,7 +214,7 @@ const campusNames = await getCampusNames();
             </svg>
             <span>${esc(sermon.location)}</span>
           </div>
-          <!-- Summary hidden for now. Re-enable with summaryText block when needed. -->
+          ${summaryText ? `<p class="text-muted text-sm mb-4 leading-relaxed">${esc(summaryText)}</p>` : ''}
           <p class="text-blue-600 font-medium text-sm group-hover:underline">Watch / 觀看 →</p>
         </div>
       </a>
@@ -282,9 +297,10 @@ const campusNames = await getCampusNames();
       const json = await res.json();
       if (thisRequest !== requestSeq) return;
 
-      loading.classList.add('hidden');
       const rows = Array.isArray(json) ? json : (json?.data ?? []);
       const pagination = json?.pagination ?? { page, total: rows.length, total_pages: 1 };
+
+      loading.classList.add('hidden');
 
       if (rows.length === 0) {
         noRes.classList.remove('hidden');
