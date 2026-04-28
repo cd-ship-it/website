@@ -20,7 +20,7 @@ export interface SermonListResponse {
 }
 
 const TWO_WEEKS_IN_MS = 14 * 24 * 60 * 60 * 1000;
-const SERMON_ARCHIVE_CACHE_FILE = ".cache/sermons-archive.json";
+const SERMON_ARCHIVE_CACHE_FILE = "cache/sermons-archive.json";
 
 function isTruthyEnvValue(value: unknown): boolean {
   if (typeof value !== "string") return false;
@@ -29,8 +29,10 @@ function isTruthyEnvValue(value: unknown): boolean {
 }
 
 function shouldBypassSermonArchiveCache(): boolean {
-  // Always bypass local archive cache: this project now prefers fresh API data.
-  return true;
+  const envValue =
+    import.meta.env.SERMON_CACHE_BYPASS ??
+    process.env.SERMON_CACHE_BYPASS;
+  return isTruthyEnvValue(envValue);
 }
 
 function isOlderThanTwoWeeks(dateInput: string): boolean {

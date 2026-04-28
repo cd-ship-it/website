@@ -342,6 +342,18 @@ function isNavigableHref(href: string): boolean {
   <!-- Navigation Links -->
   <div class="px-4 py-6">
     <div class="flex flex-col gap-2">
+      <a
+        href={`${BASE}search`}
+        class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-normal transition-colors ${
+          isLinkActive(`${BASE}search`)
+            ? "border-secondary-200 bg-secondary-50 text-primary-700"
+            : "text-ink-2 hover:bg-gray-50 hover:text-primary-700"
+        }`}
+        role="menuitem"
+        aria-current={isLinkActive(`${BASE}search`) ? "page" : undefined}
+      >
+        Search
+      </a>
       {
         navItems.map((item, index) => {
           if (hasChildren(item)) {

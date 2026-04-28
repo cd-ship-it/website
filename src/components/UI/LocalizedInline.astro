@@ -12,8 +12,8 @@ const v: LocalizedText = typeof value === "string" ? { en: value } : value;
 
 <span class:list={["st-i18n", className]}>
   <span class="st-lang st-lang-en">{resolveLocalizedSlot(v, "en")}</span>
-  <span class="st-lang st-lang-zh-Hant">{resolveLocalizedSlot(v, "zh-Hant")}</span>
-  <span class="st-lang st-lang-zh-Hans">{resolveLocalizedSlot(v, "zh-Hans")}</span>
+  <span class="st-lang st-lang-zh-Hant" data-pagefind-ignore>{resolveLocalizedSlot(v, "zh-Hant")}</span>
+  <span class="st-lang st-lang-zh-Hans" data-pagefind-ignore>{resolveLocalizedSlot(v, "zh-Hans")}</span>
 </span>
 
 <style is:global>

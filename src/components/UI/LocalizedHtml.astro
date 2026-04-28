@@ -21,8 +21,8 @@ const zhHans = resolveLocalizedSlot(v, "zh-Hans");
 
 <div class:list={["st-i18n", "st-i18n-html", className]}>
   <div class="st-lang st-lang-en" set:html={en} />
-  <div class="st-lang st-lang-zh-Hant" set:html={zhHant} />
-  <div class="st-lang st-lang-zh-Hans" set:html={zhHans} />
+  <div class="st-lang st-lang-zh-Hant" data-pagefind-ignore set:html={zhHant} />
+  <div class="st-lang st-lang-zh-Hans" data-pagefind-ignore set:html={zhHans} />
 </div>
 
 <style is:global>
