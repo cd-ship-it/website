@@ -1,0 +1,186 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const suggestedSearches = [
+  "Easter",
+  "Milpitas",
+  "Pleasanton",
+  "Youth",
+  "Life Groups",
+  "Giving",
+  "Kids",
+  "Prayer",
+];
+---
+
+<BaseLayout
+  title="Search | Crosspoint Church"
+  description="Search the Crosspoint Church website."
+>
+  <section class="search-page">
+    <div class="container search-page__container">
+      <h1 class="search-page__title">Search</h1>
+      <p class="search-page__subtitle">Find sermons, events, ministries, and more.</p>
+
+      <div class="search-page__examples" aria-label="Suggested searches">
+        <p class="search-page__examples-label">Try searching for:</p>
+        <div class="search-page__example-list">
+          {suggestedSearches.map((term) => (
+            <button type="button" class="search-page__example-chip" data-search-example={term}>
+              {term}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div id="search-ui" class="search-page__ui"></div>
+      <p id="search-ui-message" class="search-page__message" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", () => {
+      const message = document.getElementById("search-ui-message");
+      const root = document.getElementById("search-ui");
+      if (!root) return;
+
+      if (!window.pagefindUI) {
+        if (message) {
+          message.textContent =
+            "Search index is unavailable in development preview. Run a production build to enable search.";
+        }
+        return;
+      }
+
+      // Render a centered search experience similar to a simple web search homepage.
+      new window.pagefindUI({
+        element: "#search-ui",
+        showSubResults: true,
+        resetStyles: false,
+      });
+
+      const getSearchInput = () => root.querySelector(".pagefind-ui__search-input");
+
+      const runSearch = (term) => {
+        const input = getSearchInput();
+        if (!(input instanceof HTMLInputElement)) return false;
+        input.value = term;
+        input.focus();
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        return true;
+      };
+
+      const runSearchWhenReady = (term, retries = 20) => {
+        if (runSearch(term) || retries <= 0) return;
+        window.setTimeout(() => runSearchWhenReady(term, retries - 1), 100);
+      };
+
+      document.querySelectorAll("[data-search-example]").forEach((el) => {
+        el.addEventListener("click", () => {
+          const term = el.getAttribute("data-search-example");
+          if (!term) return;
+          runSearchWhenReady(term);
+        });
+      });
+
+      const q = new URLSearchParams(window.location.search).get("q");
+      if (q) runSearchWhenReady(q);
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .search-page {
+    padding: 5rem 0 7rem;
+  }
+
+  .search-page__container {
+    max-width: 56rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .search-page__title {
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0d2f4f;
+  }
+
+  .search-page__subtitle {
+    margin-top: 0.75rem;
+    color: #4b5563;
+    font-size: 1.05rem;
+  }
+
+  .search-page__ui {
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .search-page__examples {
+    margin-top: 1.25rem;
+  }
+
+  .search-page__examples-label {
+    color: #4b5563;
+    font-size: 0.95rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .search-page__example-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    justify-content: center;
+  }
+
+  .search-page__example-chip {
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #0d2f4f;
+    border-radius: 9999px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    transition: all 0.15s ease;
+  }
+
+  .search-page__example-chip:hover {
+    border-color: #f97316;
+    color: #c2410c;
+    background: #fff7ed;
+  }
+
+  .search-page__message {
+    margin-top: 1rem;
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  :global(.search-page .pagefind-ui) {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: #f97316;
+    --pagefind-ui-text: #0d2f4f;
+    --pagefind-ui-background: #fff;
+    --pagefind-ui-border: #e5e7eb;
+    --pagefind-ui-tag: #f3f4f6;
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 9999px;
+    --pagefind-ui-image-border-radius: 0.75rem;
+    --pagefind-ui-image-box-ratio: 3 / 2;
+    --pagefind-ui-font: inherit;
+  }
+
+  :global(.search-page .pagefind-ui__search-input) {
+    min-height: 3.5rem;
+    padding-inline: 1.5rem;
+    font-size: 1.05rem;
+  }
+
+  :global(.search-page .pagefind-ui__result-title a) {
+    color: #0d2f4f;
+  }
+</style>

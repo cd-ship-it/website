@@ -292,6 +292,18 @@ function isNavigableHref(href: string): boolean {
     }
     
     <li>
+      <a
+        href={`${BASE}search`}
+        class="inline-flex items-center justify-center rounded-full p-2 text-ink-2 transition-colors hover:text-secondary-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-700/30"
+        aria-label="Search"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+        </svg>
+      </a>
+    </li>
+
+    <li>
       <div class="nav-lang-pills" role="group" aria-label="Language">
         {languageOptions.map((opt) => (
           <button
