@@ -1,16 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const suggestedSearches = [
-  "Easter",
-  "Milpitas",
-  "Pleasanton",
-  "Youth",
-  "Life Groups",
-  "Giving",
-  "Kids",
-  "Prayer",
-];
+const BASE = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -28,8 +18,8 @@ const suggestedSearches = [
     </div>
   </section>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <link rel="stylesheet" href={`${BASE}pagefind/pagefind-ui.css`} />
+  <script is:inline src={`${BASE}pagefind/pagefind-ui.js`}></script>
   <script is:inline>
     document.addEventListener("DOMContentLoaded", () => {
       const message = document.getElementById("search-ui-message");
