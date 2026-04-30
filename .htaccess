@@ -114,7 +114,8 @@ RewriteRule ^storytime/?$ https://crosspointchurchsv.org/events/friday-story-tim
 RewriteRule ^events\/storytime/?$ https://crosspointchurchsv.org/events/friday-story-time-age-3-5 [R=301,L,NC]
 RewriteRule ^10steps/?$ https://crosspointchurchsv.org/bible-study/ [R=301,L,NC]
 RewriteRule ^VBS/?$ https://crosspointchurchsv.org/vbs/ [R=301,L]
-RewriteRule ^about-our-pastors/?$ https://crosspointchurchsv.org/https://crosspointchurchsv.org/about-pastors/ [R=301,L]
+RewriteRule ^about-our-pastors/?$ https://crosspointchurchsv.org/about-pastors/ [R=301,L]
+RewriteRule ^about-our-pastor/?$ https://crosspointchurchsv.org/about-pastors/ [R=301,L]
 RewriteRule ^churchoffice/?$ https://sites.google.com/crosspointchurchsv.org/mycrosspoint/home [R=301,L]
 
 

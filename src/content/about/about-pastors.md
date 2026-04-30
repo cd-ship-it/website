@@ -194,7 +194,7 @@ pastors:
       zh-Hant: "國語傳道（San Leandro）"
       zh-Hans: "普通话传道（San Leandro）"
     image: "/uploads/pastors/xiaoling-mao.jpg"
-    email: "xmao@crosspointchurchsv.org"
+    email: "xlmao@crosspointchurchsv.org"
     bio:
       en: |
         I was born in Tangshan, Hebei, and studied and worked in Beijing for over twenty years. In 2005, during a visiting scholar program in the United States, I first encountered the Christian faith and gradually came to know and experience God's grace and love. In 2012, I made a profession of faith, and in 2013 I was baptized, committing my life to following Christ and devoting myself to church ministry and the mission of the gospel.
