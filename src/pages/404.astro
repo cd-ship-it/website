@@ -1,7 +1,41 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { fetchAllSermons } from "../lib/sermonApi";
 
 const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "";
+const KNOWN_STATIC_PATHS = [
+  "/",
+  "/about-us",
+  "/about-pastors",
+  "/campus",
+  "/contact",
+  "/disclaimer",
+  "/events",
+  "/giving",
+  "/im-new",
+  "/lifegroups",
+  "/membership",
+  "/orangekids",
+  "/our-season",
+  "/preschool",
+  "/search",
+  "/sermons",
+  "/social-media-chat-groups",
+  "/churchoffice/ministry-calendar",
+  "/churchoffice/pleasanton-room-calendar",
+  "/churchoffice/milpitas-floorplan",
+];
+
+const sermonPaths = await fetchAllSermons()
+  .then((sermons) =>
+    sermons
+      .map((sermon) => (sermon.youtube_id ?? "").trim())
+      .filter(Boolean)
+      .map((youtubeId) => `/sermons/${youtubeId}`),
+  )
+  .catch(() => []);
+
+const KNOWN_PATHS = [...new Set([...KNOWN_STATIC_PATHS, ...sermonPaths])];
 ---
 
 <BaseLayout
@@ -17,12 +51,117 @@ const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "";
     <p class="text-muted mt-4 max-w-xl">
       The page you requested may have moved or no longer exists.
     </p>
+    <p id="not-found-requested" class="text-muted mt-3 max-w-xl"></p>
+    <p id="not-found-suggestion" class="text-muted mt-2 max-w-xl hidden">
+      Did you mean <a id="not-found-suggestion-link" class="text-primary-700 underline" href="/"></a>?
+    </p>
     <div class="mt-8 flex flex-wrap justify-center gap-3">
       <a href="/" class="btn btn-primary">Go Home</a>
       <a href="/campus" class="btn btn-secondary">Find a Campus</a>
       <a href="/im-new" class="btn btn-secondary">I'm New</a>
     </div>
   </section>
+
+  <script define:vars={{ KNOWN_PATHS }}>
+    function normalizePath(path) {
+      const cleaned = decodeURIComponent(String(path || ""))
+        .toLowerCase()
+        .replace(/\/+/g, "/")
+        .replace(/\/$/, "");
+      return cleaned || "/";
+    }
+
+    function compactPath(path) {
+      return normalizePath(path).replace(/[^a-z0-9]/g, "");
+    }
+
+    function levenshtein(a, b) {
+      const rows = a.length + 1;
+      const cols = b.length + 1;
+      const matrix = Array.from({ length: rows }, () => Array(cols).fill(0));
+
+      for (let i = 0; i < rows; i += 1) matrix[i][0] = i;
+      for (let j = 0; j < cols; j += 1) matrix[0][j] = j;
+
+      for (let i = 1; i < rows; i += 1) {
+        for (let j = 1; j < cols; j += 1) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j - 1] + cost,
+          );
+        }
+      }
+
+      return matrix[rows - 1][cols - 1];
+    }
+
+    function scorePath(inputPath, candidatePath) {
+      const normalizedInput = normalizePath(inputPath);
+      const normalizedCandidate = normalizePath(candidatePath);
+      if (normalizedInput === normalizedCandidate) return 1;
+
+      const compactInput = compactPath(normalizedInput);
+      const compactCandidate = compactPath(normalizedCandidate);
+      if (!compactInput || !compactCandidate) return 0;
+
+      const maxLen = Math.max(compactInput.length, compactCandidate.length);
+      const editDistance = levenshtein(compactInput, compactCandidate);
+      const editScore = 1 - editDistance / maxLen;
+
+      const startsWithScore =
+        compactCandidate.startsWith(compactInput) || compactInput.startsWith(compactCandidate)
+          ? 0.12
+          : 0;
+      const containsScore =
+        compactCandidate.includes(compactInput) || compactInput.includes(compactCandidate)
+          ? 0.06
+          : 0;
+
+      return editScore + startsWithScore + containsScore;
+    }
+
+    function guessClosestPath(inputPath, candidates) {
+      let bestPath = "";
+      let bestScore = 0;
+
+      for (const candidate of candidates) {
+        const score = scorePath(inputPath, candidate);
+        if (score > bestScore) {
+          bestScore = score;
+          bestPath = candidate;
+        }
+      }
+
+      return bestScore >= 0.52 ? bestPath : "";
+    }
+
+    function setupPathSuggestion() {
+      const requestedPath = window.location.pathname;
+      const requestedEl = document.getElementById("not-found-requested");
+      const suggestionEl = document.getElementById("not-found-suggestion");
+      const suggestionLinkEl = document.getElementById("not-found-suggestion-link");
+
+      // if (requestedEl) {
+      //   requestedEl.textContent = `Requested URL: ${requestedPath}`;
+      // }
+
+      const guessedPath = guessClosestPath(requestedPath, KNOWN_PATHS || []);
+      if (!guessedPath || guessedPath === requestedPath) return;
+      if (!(suggestionEl instanceof HTMLElement) || !(suggestionLinkEl instanceof HTMLAnchorElement)) return;
+
+      suggestionLinkEl.href = guessedPath;
+      suggestionLinkEl.textContent = guessedPath;
+      suggestionEl.classList.remove("hidden");
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", setupPathSuggestion);
+    } else {
+      setupPathSuggestion();
+    }
+  </script>
 
   {
     GA_ID && (

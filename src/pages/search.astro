@@ -21,6 +21,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <script is:inline src="/pagefind/pagefind-ui.js"></script>
   <script is:inline>
     document.addEventListener("DOMContentLoaded", () => {
+      const MIN_QUERY_LENGTH = 3;
       const message = document.getElementById("search-ui-message");
       const root = document.getElementById("search-ui");
       if (!root) return;
@@ -38,12 +39,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         element: "#search-ui",
         showSubResults: true,
         showImages: false,
+        processTerm: (term) => {
+          const normalized = typeof term === "string" ? term.trim() : "";
+          return normalized.length >= MIN_QUERY_LENGTH ? normalized : "";
+        },
         resetStyles: false,
       });
 
       const getSearchInput = () => root.querySelector(".pagefind-ui__search-input");
 
       const runSearch = (term) => {
+        if (typeof term !== "string" || term.trim().length < MIN_QUERY_LENGTH) return false;
         const input = getSearchInput();
         if (!(input instanceof HTMLInputElement)) return false;
         input.value = term;
@@ -148,10 +154,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
   }
 
-  :global(.search-page .pagefind-ui__result-title a) {
-    color: #1d4ed8;
-    text-decoration: underline;
+  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link) {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
     text-underline-offset: 2px;
+  }
+
+  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:hover),
+  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:visited),
+  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:focus) {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
   }
 
   :global(.search-page .pagefind-ui__result-image),
