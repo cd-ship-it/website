@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-const BASE = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -18,8 +17,8 @@ const BASE = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  <link rel="stylesheet" href={`${BASE}pagefind/pagefind-ui.css`} />
-  <script is:inline src={`${BASE}pagefind/pagefind-ui.js`}></script>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
   <script is:inline>
     document.addEventListener("DOMContentLoaded", () => {
       const message = document.getElementById("search-ui-message");
@@ -38,6 +37,7 @@ const BASE = import.meta.env.BASE_URL;
       new PagefindCtor({
         element: "#search-ui",
         showSubResults: true,
+        showImages: false,
         resetStyles: false,
       });
 
@@ -152,7 +152,11 @@ const BASE = import.meta.env.BASE_URL;
     color: #0d2f4f;
   }
 
-  :global(.search-page .pagefind-ui__result-image) {
-    display: none;
+  :global(.search-page .pagefind-ui__result-image),
+  :global(.search-page .pagefind-ui__result-thumb),
+  :global(.search-page .pagefind-ui__result-link .pagefind-ui__result-image),
+  :global(.search-page [class*="pagefind-ui__result-thumb"]),
+  :global(.search-page [class*="pagefind-ui__result-image"]) {
+    display: none !important;
   }
 </style>
