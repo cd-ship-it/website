@@ -67,6 +67,13 @@ function firstParagraph(
 }
 
 const allPastors = pastors ?? [];
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 ---
 
 <BaseLayout title={seo.title} description={seo.description}>
@@ -98,8 +105,15 @@ const allPastors = pastors ?? [];
       <div class="container max-w-4xl mx-auto">
 
         <div class="pastor-grid">
-          {allPastors.map((pastor, idx) => (
-            <div class="pastor-card xp-panel-inner bg-white" data-pastor-card>
+          {allPastors.map((pastor, idx) => {
+            const pastorId = slugify(pickLocalizedText(pastor.name, "en"));
+            return (
+            <div
+              id={pastorId}
+              class="pastor-card xp-panel-inner bg-white"
+              data-pastor-card
+              data-pastor-id={pastorId}
+            >
               <div class="pastor-card-summary">
                 <div class="shrink-0 flex justify-center sm:justify-start pt-6 pb-2 sm:py-6 sm:pl-6 sm:pr-0">
                   <div class="h-32 w-32 sm:h-36 sm:w-36 rounded-2xl overflow-hidden bg-cream-2 shadow-sm shrink-0">
@@ -112,7 +126,7 @@ const allPastors = pastors ?? [];
                   </div>
                 </div>
                 <div class="flex flex-col justify-center p-5 flex-1 min-w-0">
-                  <h2 class="text-xl md:text-2xl font-bold text-ink mb-0.5">
+                  <h2 id={`${pastorId}-name`} class="text-xl md:text-2xl font-bold text-ink mb-0.5">
                     <LocalizedInline value={pastor.name} />
                   </h2>
                   <p class="body-copy text-secondary-600 font-medium mb-3">
@@ -127,6 +141,7 @@ const allPastors = pastors ?? [];
                       class="pastor-toggle btn btn-primary gap-2 py-2.5 px-4 text-sm shrink-0"
                       data-pastor-toggle
                       aria-expanded="false"
+                      aria-controls={`${pastorId}-detail`}
                     >
                       <span class="toggle-label">
                         <LocalizedInline value={{ en: "Read full bio", "zh-Hant": "閱讀完整簡介", "zh-Hans": "阅读完整简介" }} />
@@ -150,7 +165,7 @@ const allPastors = pastors ?? [];
                   </div>
                 </div>
               </div>
-              <div class="pastor-card-detail" data-pastor-detail hidden>
+              <div id={`${pastorId}-detail`} class="pastor-card-detail" data-pastor-detail hidden>
                 <div class="border-t border-cream-3 mx-6 pt-5 pb-6">
                   <LocalizedHtml value={pastorBioToLocalizedHtml(pastor.bio)} class="body-copy leading-relaxed max-w-[60ch]" />
                   {pastor.email && (
@@ -168,7 +183,7 @@ const allPastors = pastors ?? [];
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
     </section>
@@ -244,34 +259,62 @@ const allPastors = pastors ?? [];
 </style>
 
 <script>
+  // @ts-nocheck
+  const READ_LABELS = { en: "Read full bio", "zh-Hant": "閱讀完整簡介", "zh-Hans": "阅读完整简介" };
+  const HIDE_LABELS = { en: "Hide bio", "zh-Hant": "收起簡介", "zh-Hans": "收起简介" };
+
+  const getLang = () => document.documentElement.lang || "en";
+
+  const setToggleLabel = (btn, labels) => {
+    const label = btn.querySelector(".toggle-label");
+    if (!label) return;
+    const lang = getLang();
+    label.textContent = labels[lang] || labels.en;
+  };
+
+  const closeCard = (card) => {
+    const btn = card.querySelector("[data-pastor-toggle]");
+    const detail = card.querySelector("[data-pastor-detail]");
+    if (!btn || !detail) return;
+    detail.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+    setToggleLabel(btn, READ_LABELS);
+  };
+
+  const openCard = (card) => {
+    const btn = card.querySelector("[data-pastor-toggle]");
+    const detail = card.querySelector("[data-pastor-detail]");
+    if (!btn || !detail) return;
+    detail.classList.add("is-open");
+    btn.setAttribute("aria-expanded", "true");
+    setToggleLabel(btn, HIDE_LABELS);
+  };
+
   document.querySelectorAll("[data-pastor-toggle]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const card = btn.closest("[data-pastor-card]");
       if (!card) return;
-      const detail = card.querySelector("[data-pastor-detail]");
-      if (!detail) return;
 
       const isOpen = btn.getAttribute("aria-expanded") === "true";
 
       if (isOpen) {
-        detail.classList.remove("is-open");
-        btn.setAttribute("aria-expanded", "false");
-        const label = btn.querySelector(".toggle-label");
-        if (label) {
-          const lang = document.documentElement.lang || "en";
-          const labels: Record<string, string> = { en: "Read full bio", "zh-Hant": "閱讀完整簡介", "zh-Hans": "阅读完整简介" };
-          label.textContent = labels[lang] || labels.en;
-        }
+        closeCard(card);
       } else {
-        detail.classList.add("is-open");
-        btn.setAttribute("aria-expanded", "true");
-        const label = btn.querySelector(".toggle-label");
-        if (label) {
-          const lang = document.documentElement.lang || "en";
-          const labels: Record<string, string> = { en: "Hide bio", "zh-Hant": "收起簡介", "zh-Hans": "收起简介" };
-          label.textContent = labels[lang] || labels.en;
-        }
+        openCard(card);
       }
     });
   });
+
+  // If URL includes a pastor hash, open that card and scroll to it.
+  const openFromHash = () => {
+    const id = decodeURIComponent(window.location.hash.replace(/^#/, "")).trim();
+    if (!id) return;
+    const card = document.querySelector(`[data-pastor-card][data-pastor-id="${CSS.escape(id)}"]`);
+    if (!(card instanceof HTMLElement)) return;
+    openCard(card);
+    card.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
 </script>

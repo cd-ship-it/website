@@ -67,7 +67,20 @@ const BASE = import.meta.env.BASE_URL;
       });
 
       const q = new URLSearchParams(window.location.search).get("q");
-      if (q) runSearchWhenReady(q);
+      if (q) {
+        runSearchWhenReady(q);
+      } else {
+        // Auto-focus the input when page loads with no pre-filled query.
+        const focusWhenReady = (retries = 20) => {
+          const input = getSearchInput();
+          if (input instanceof HTMLInputElement) {
+            input.focus();
+          } else if (retries > 0) {
+            window.setTimeout(() => focusWhenReady(retries - 1), 100);
+          }
+        };
+        focusWhenReady();
+      }
     });
   </script>
 </BaseLayout>
@@ -139,5 +152,9 @@ const BASE = import.meta.env.BASE_URL;
 
   :global(.search-page .pagefind-ui__result-title a) {
     color: #0d2f4f;
+  }
+
+  :global(.search-page .pagefind-ui__result-image) {
+    display: none;
   }
 </style>

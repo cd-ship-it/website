@@ -291,7 +291,7 @@ function isNavigableHref(href: string): boolean {
       })
     }
     
-    <!--
+    
     <li>
       <a
         href={`${BASE}search`}
@@ -303,9 +303,9 @@ function isNavigableHref(href: string): boolean {
         </svg>
       </a>
     </li>
-    -->
+    
 
-    <li>
+    <li data-pagefind-ignore>
       <div class="nav-lang-pills" role="group" aria-label="Language">
         {languageOptions.map((opt) => (
           <button
@@ -344,7 +344,7 @@ function isNavigableHref(href: string): boolean {
   <!-- Navigation Links -->
   <div class="px-4 py-6">
     <div class="flex flex-col gap-2">
-      <!--
+      
       <a
         href={`${BASE}search`}
         class={`block rounded-lg border border-transparent px-4 py-3 text-sm font-normal transition-colors ${
@@ -357,7 +357,7 @@ function isNavigableHref(href: string): boolean {
       >
         Search
       </a>
-      -->
+      
       {
         navItems.map((item, index) => {
           if (hasChildren(item)) {
@@ -536,7 +536,7 @@ function isNavigableHref(href: string): boolean {
       }
     </div>
     
-    <div class="mt-3 border-t border-gray-100 pt-3">
+    <div class="mt-3 border-t border-gray-100 pt-3" data-pagefind-ignore>
       <p class="mb-2 px-4 text-xs font-normal uppercase tracking-wide text-muted" id="mobile-lang-heading">
         <LocalizedInline value={navLabel("language")} />
       </p>
