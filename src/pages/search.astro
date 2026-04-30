@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-const BASE = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -18,69 +17,87 @@ const BASE = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  <link rel="stylesheet" href={`${BASE}pagefind/pagefind-ui.css`} />
-  <script is:inline src={`${BASE}pagefind/pagefind-ui.js`}></script>
   <script is:inline>
     document.addEventListener("DOMContentLoaded", () => {
       const message = document.getElementById("search-ui-message");
       const root = document.getElementById("search-ui");
       if (!root) return;
 
-      const PagefindCtor = window.pagefindUI || window.PagefindUI;
-      if (!PagefindCtor) {
+      // Derive pagefind base from the actual page URL at runtime.
+      // This works regardless of what subpath the site is deployed under (e.g. /v2/).
+      // Page is always at [base]/search/, so strip 'search' to get [base]/.
+      const segments = window.location.pathname.replace(/\/+$/, "").split("/");
+      segments.pop(); // remove 'search'
+      const pfBase = (segments.join("/") || "") + "/pagefind/";
+
+      // Inject CSS
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = pfBase + "pagefind-ui.css";
+      document.head.appendChild(link);
+
+      // Inject JS, then initialise UI once loaded
+      const script = document.createElement("script");
+      script.src = pfBase + "pagefind-ui.js";
+      script.onerror = () => {
         if (message) {
           message.textContent =
             "Search index is unavailable in development preview. Run a production build to enable search.";
         }
-        return;
-      }
-
-      // Render a centered search experience similar to a simple web search homepage.
-      new PagefindCtor({
-        element: "#search-ui",
-        showSubResults: true,
-        resetStyles: false,
-      });
-
-      const getSearchInput = () => root.querySelector(".pagefind-ui__search-input");
-
-      const runSearch = (term) => {
-        const input = getSearchInput();
-        if (!(input instanceof HTMLInputElement)) return false;
-        input.value = term;
-        input.focus();
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        return true;
       };
+      script.onload = () => {
+        const PagefindCtor = window.pagefindUI || window.PagefindUI;
+        if (!PagefindCtor) {
+          if (message) message.textContent = "Search index failed to load.";
+          return;
+        }
 
-      const runSearchWhenReady = (term, retries = 20) => {
-        if (runSearch(term) || retries <= 0) return;
-        window.setTimeout(() => runSearchWhenReady(term, retries - 1), 100);
-      };
-
-      document.querySelectorAll("[data-search-example]").forEach((el) => {
-        el.addEventListener("click", () => {
-          const term = el.getAttribute("data-search-example");
-          if (!term) return;
-          runSearchWhenReady(term);
+        new PagefindCtor({
+          element: "#search-ui",
+          showSubResults: true,
+          resetStyles: false,
         });
-      });
 
-      const q = new URLSearchParams(window.location.search).get("q");
-      if (q) {
-        runSearchWhenReady(q);
-      } else {
-        // Auto-focus the input when page loads with no pre-filled query.
-        const focusWhenReady = (retries = 20) => {
+        const getSearchInput = () => root.querySelector(".pagefind-ui__search-input");
+
+        const runSearch = (term) => {
           const input = getSearchInput();
-          if (input instanceof HTMLInputElement) {
-            input.focus();
-          } else if (retries > 0) {
-            window.setTimeout(() => focusWhenReady(retries - 1), 100);
-          }
+          if (!(input instanceof HTMLInputElement)) return false;
+          input.value = term;
+          input.focus();
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          return true;
         };
-        focusWhenReady();
-      }
+
+        const runSearchWhenReady = (term, retries = 20) => {
+          if (runSearch(term) || retries <= 0) return;
+          window.setTimeout(() => runSearchWhenReady(term, retries - 1), 100);
+        };
+
+        document.querySelectorAll("[data-search-example]").forEach((el) => {
+          el.addEventListener("click", () => {
+            const term = el.getAttribute("data-search-example");
+            if (!term) return;
+            runSearchWhenReady(term);
+          });
+        });
+
+        const q = new URLSearchParams(window.location.search).get("q");
+        if (q) {
+          runSearchWhenReady(q);
+        } else {
+          const focusWhenReady = (retries = 20) => {
+            const input = getSearchInput();
+            if (input instanceof HTMLInputElement) {
+              input.focus();
+            } else if (retries > 0) {
+              window.setTimeout(() => focusWhenReady(retries - 1), 100);
+            }
+          };
+          focusWhenReady();
+        }
+      };
+      document.head.appendChild(script);
     });
   </script>
 </BaseLayout>
