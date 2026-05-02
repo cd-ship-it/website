@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/Sections/PageHeader.astro";
+import "../assets/styles/wp-rendered.css";
+import { getWordPressUrl } from "../config/site";
+import { withBaseUrl } from "../lib/urls";
+import { fetchWpDynamicPageRecord } from "../lib/wordpress/mirror";
+
+const wpBaseUrl = getWordPressUrl();
+const record = wpBaseUrl
+  ? await fetchWpDynamicPageRecord({
+      slug: "weekly-prayer",
+      kind: "wordpress_page",
+      wpPageSlug: "weekly-prayer",
+      pageHeader: {
+        title: "Weekly Prayer",
+        subtitle: "Latest weekly prayer updates",
+      },
+      seo: {
+        title: "Weekly Prayer - Crosspoint Church",
+        description: "Latest Weekly Prayer content from Crosspoint Church.",
+      },
+    })
+  : null;
+---
+
+<BaseLayout
+  title="Weekly Prayer - Crosspoint Church"
+  description="Latest Weekly Prayer content from Crosspoint Church."
+>
+  <PageHeader
+    title="Weekly Prayer"
+    subtitle="Latest weekly prayer updates"
+    backgroundImage={`${withBaseUrl("/uploads/blog-header-bg.webp")}`}
+  />
+
+  <section class="py-16">
+    <div class="container max-w-4xl">
+      {!wpBaseUrl ? (
+        <div class="bg-red-50 p-6 text-red-700">
+          <p>
+            WordPress URL is not configured. Set <code class="text-sm">PUBLIC_WORDPRESS_URL</code>{" "}
+            in your environment.
+          </p>
+        </div>
+      ) : !record ? (
+        <div class="bg-red-50 p-6 text-red-700">
+          <p>No published content found yet.</p>
+        </div>
+      ) : (
+        <article>
+          <div class="prose prose-lg max-w-none" set:html={record.content?.rendered ?? ""} />
+        </article>
+      )}
+    </div>
+  </section>
+</BaseLayout>

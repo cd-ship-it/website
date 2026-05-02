@@ -32,3 +32,6 @@ uploads/**
 
 # Stock / local assets at repo root (not versioned)
 kane-reinholdtsen-LETdkk7wHQk-unsplash.jpg
+
+# Server-specific Apache config
+.htaccess

@@ -29,35 +29,7 @@ export type WpDynamicPageConfig = {
   showPostTitle?: boolean;
 };
 
-export const WP_DYNAMIC_PAGES: WpDynamicPageConfig[] = [
-  {
-    slug: "weekly-prayer",
-    kind: "wordpress_page",
-    wpPageSlug: "weekly-prayer",
-    pageHeader: {
-      title: "Weekly Prayer",
-      subtitle: "Latest weekly prayer updates",
-    },
-    seo: {
-      title: "Weekly Prayer - Crosspoint Church",
-      description: "Latest Weekly Prayer content from Crosspoint Church.",
-    },
-  },
-  {
-    slug: "heart-of-a-shepherd",
-    kind: "wordpress_category_latest_post",
-    wpCategorySlug: "word-of-your-pastor",
-    pageHeader: {
-      title: "Heart of a Shepherd",
-      subtitle: "Heart of a Shepherd",
-    },
-    seo: {
-      title: "Heart of a Shepherd - Crosspoint Church",
-      description: "Latest Heart of a Shepherd post from Crosspoint Church.",
-    },
-    showPostTitle: false,
-  },
-];
+export const WP_DYNAMIC_PAGES: WpDynamicPageConfig[] = [];
 
 export function getWpDynamicPageConfig(
   slug: string,

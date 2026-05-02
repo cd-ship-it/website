@@ -1,9 +1,13 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/Sections/PageHeader.astro";
+import { fetchAllSermons } from "../../lib/sermonApi";
 import { withBaseUrl } from "../../lib/urls";
 
-const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
+const sermons = (await fetchAllSermons())
+  .filter((sermon) => sermon.youtube_id && sermon.date)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+---
 
 <BaseLayout
   title="Sermons - Crosspoint Church"
@@ -15,7 +19,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
     backgroundImage={`${withBaseUrl("/uploads/microphone.webp")}`}
   />
 
-  <section class="py-16" data-sermons-root data-api-url={API_URL}>
+  <section class="py-16" data-sermons-root data-sermons={JSON.stringify(sermons)}>
     <div class="container">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
@@ -87,23 +91,8 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
             <h2 class="text-2xl font-bold">Sermons</h2>
           </div>
 
-          <!-- Loading state -->
-          <div id="sermons-loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Array.from({length: 6}).map(() => (
-              <div class="bg-cream-2 rounded-lg overflow-hidden animate-pulse">
-                <div class="bg-gray-200 h-44 w-full"></div>
-                <div class="p-5 space-y-3">
-                  <div class="h-5 bg-gray-200 rounded w-3/4"></div>
-                  <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                  <div class="h-4 bg-gray-200 rounded w-full"></div>
-                  <div class="h-4 bg-gray-200 rounded w-full"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-
           <!-- Sermon cards injected here -->
-          <div id="sermons-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden"></div>
+          <div id="sermons-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
           <!-- No results -->
           <div id="no-results" class="hidden text-center py-16 bg-cream rounded-lg">
@@ -112,7 +101,7 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
 
           <!-- Error state -->
           <div id="sermons-error" class="hidden text-center py-16 bg-red-50 rounded-lg">
-            <p class="text-red-600">Could not load sermons. Please try again later.</p>
+            <p class="text-red-600">Could not load sermon data.</p>
           </div>
 
           <!-- Pagination -->
@@ -138,7 +127,9 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
   import { formatDateLong, preacherLabel, summaryPreview } from "../../lib/sermons/format";
 
   const BASE = import.meta.env.BASE_URL;
-  const API_URL = document.querySelector('[data-sermons-root]')?.dataset.apiUrl ?? '';
+  const root = document.querySelector('[data-sermons-root]');
+  const ALL_SERMONS = JSON.parse(root?.dataset.sermons ?? '[]');
+  const PER_PAGE = 12;
   const mobileFilterToggle = document.getElementById('mobile-filter-toggle');
   const filtersPanel = document.getElementById('sermon-filters-panel');
 
@@ -224,26 +215,6 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
   // ── State ──────────────────────────────────────────────────────────────────
   let currentPage = 1;
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-  let requestSeq = 0;
-  let activeController: AbortController | null = null;
-
-  async function fetchWithRetry(url, options = {}, retries = 1) {
-    let lastError = null;
-
-    for (let attempt = 0; attempt <= retries; attempt++) {
-      try {
-        const response = await fetch(url, options);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response;
-      } catch (error) {
-        lastError = error;
-        if (attempt === retries) break;
-        await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
-      }
-    }
-
-    throw lastError ?? new Error('Unknown fetch error');
-  }
 
   function getFilters() {
     return {
@@ -253,90 +224,59 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
     };
   }
 
-  function buildParams(page = 1) {
+  function getFilteredSermons() {
     const f = getFilters();
-    const p = new URLSearchParams({ page });
-    p.set('_ts', String(Date.now()));
-    if (f.location) p.set('location', f.location);
-    if (f.language) p.set('language', f.language);
-    if (f.preacher) p.set('preacher', f.preacher);
-    return p.toString();
+    return ALL_SERMONS.filter((sermon) => {
+      const locationMatch = !f.location || sermon.location === f.location;
+      const languageMatch = !f.language || sermon.language === f.language;
+      const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng).toLowerCase();
+      const preacherMatch = !f.preacher || preacher.includes(f.preacher.toLowerCase());
+      return locationMatch && languageMatch && preacherMatch;
+    });
   }
 
   // ── Render ─────────────────────────────────────────────────────────────────
   async function loadSermons(page = 1) {
     currentPage = page;
-    const thisRequest = ++requestSeq;
-    const loading = document.getElementById('sermons-loading');
     const grid    = document.getElementById('sermons-grid');
     const noRes   = document.getElementById('no-results');
     const errEl   = document.getElementById('sermons-error');
     const pagEl   = document.getElementById('pagination');
     const countEl = document.getElementById('result-count');
-
-    if (activeController) activeController.abort();
-    const controller = new AbortController();
-    activeController = controller;
-    let timeoutTriggered = false;
-    const timeoutId = setTimeout(() => {
-      timeoutTriggered = true;
-      controller.abort();
-    }, 20000);
-
-    loading.classList.remove('hidden');
-    grid.classList.add('hidden');
     noRes.classList.add('hidden');
     errEl.classList.add('hidden');
     pagEl.classList.add('hidden');
 
     try {
-      const res = await fetchWithRetry(`${API_URL}?${buildParams(page)}`, {
-        signal: controller.signal,
-        cache: 'no-store',
-      }, 1);
-      const json = await res.json();
-      if (thisRequest !== requestSeq) return;
-
-      const rows = Array.isArray(json) ? json : (json?.data ?? []);
-      const pagination = json?.pagination ?? { page, total: rows.length, total_pages: 1 };
-
-      loading.classList.add('hidden');
+      const filtered = getFilteredSermons();
+      const total = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+      const boundedPage = Math.min(Math.max(1, page), totalPages);
+      currentPage = boundedPage;
+      const start = (boundedPage - 1) * PER_PAGE;
+      const rows = filtered.slice(start, start + PER_PAGE);
 
       if (rows.length === 0) {
+        grid.innerHTML = '';
         noRes.classList.remove('hidden');
         if (countEl) countEl.textContent = '';
       } else {
         grid.innerHTML = rows.map(sermonCard).join('');
-        grid.classList.remove('hidden');
         if (countEl) {
-          countEl.textContent = `${pagination.total} sermon${pagination.total !== 1 ? 's' : ''}`;
+          countEl.textContent = `${total} sermon${total !== 1 ? 's' : ''}`;
         }
 
         // Pagination
-        if (pagination.total_pages > 1) {
+        if (totalPages > 1) {
           document.getElementById('page-info').textContent =
-            `Page ${pagination.page} of ${pagination.total_pages}`;
-          document.getElementById('prev-page').disabled = page <= 1;
-          document.getElementById('next-page').disabled = page >= pagination.total_pages;
+            `Page ${boundedPage} of ${totalPages}`;
+          document.getElementById('prev-page').disabled = boundedPage <= 1;
+          document.getElementById('next-page').disabled = boundedPage >= totalPages;
           pagEl.classList.remove('hidden');
         }
       }
-    } catch (error) {
-      // Ignore stale/aborted requests when a newer one is already in flight.
-      if (thisRequest !== requestSeq) return;
-      if (error?.name === 'AbortError' && activeController !== controller) return;
-      if (error?.name === 'AbortError' && timeoutTriggered) {
-        // Treat request timeout as transient; keep prior content if any.
-        if (!grid.classList.contains('hidden')) {
-          loading.classList.add('hidden');
-          return;
-        }
-      }
-      loading.classList.add('hidden');
+    } catch {
       errEl.classList.remove('hidden');
-    } finally {
-      clearTimeout(timeoutId);
-      if (activeController === controller) activeController = null;
     }
   }
 
@@ -395,10 +335,4 @@ const API_URL = import.meta.env.PUBLIC_SERMON_API_URL ?? '/api/sermons.php';---
     });
   });
 
-  // When returning from a sermon detail page via browser back, force a fresh load.
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-      loadSermons(currentPage || 1);
-    }
-  });
 </script>

@@ -1,0 +1,61 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/Sections/PageHeader.astro";
+import "../../assets/styles/wp-rendered.css";
+import { withBaseUrl } from "../../lib/urls";
+import { fetchAllHeartOfShepherdPosts } from "../../lib/heartOfShepherdApi";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await fetchAllHeartOfShepherdPosts();
+  return posts.map((post) => ({
+    params: { slug: post.routeSlug },
+    props: { post },
+  }));
+};
+
+const { post } = Astro.props as {
+  post: {
+    title: string;
+    date: string;
+    content: string;
+  };
+};
+
+const dateLabel = post.date
+  ? new Date(post.date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : "";
+---
+
+<BaseLayout
+  title={`${post.title} - Heart of a Shepherd - Crosspoint Church`}
+  description={`Heart of a Shepherd issue from ${dateLabel || "Crosspoint Church"}.`}
+  type="article"
+>
+  <PageHeader
+    title="Heart of a Shepherd"
+    subtitle={dateLabel}
+    backgroundImage={`${withBaseUrl("/uploads/blog-header-bg.webp")}`}
+  />
+
+  <section class="py-16">
+    <div class="container max-w-4xl">
+      <article>
+        <h1 class="text-3xl md:text-4xl font-bold mb-6">{post.title}</h1>
+        <div class="prose prose-lg max-w-none" set:html={post.content} />
+      </article>
+      <div class="mt-10">
+        <a
+          href={`${import.meta.env.BASE_URL}heart-of-a-shepherd/archive`}
+          class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ink-3 hover:bg-cream transition-colors"
+        >
+          ← Back to Previous Issues
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
