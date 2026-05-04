@@ -220,6 +220,30 @@ pastors:
         自2021年进入汇点教会实习以来，对传扬福音、建立门徒、牧养群羊怀有深切负担，特别关心初信者与家庭事工的发展。坚信教会不仅是信徒属灵成长的家，也是向社区与世界见证基督之爱的灯台。立志以谦卑、忠心与顺服的心，靠主的恩典牧养群羊、教导真道、装备圣徒，在基督里得以建造、合一成长，荣耀归于独一真神。
 
         育有两个儿子，已经成年。丈夫在科技公司作工程师。
+  - name:
+      en: "Pastor Caleb Wan"
+      zh-Hant: "Pastor Caleb Wan"
+      zh-Hans: "Pastor Caleb Wan"
+    title:
+      en: "Family Pastor (Pleasanton)"
+      zh-Hant: "Family Pastor (Pleasanton)"
+      zh-Hans: "Family Pastor (Pleasanton)"
+    image: "/uploads/pastors/caleb-wen.webp"
+    email: "cwan@crosspointchurchsv.org"
+    bio:
+      en: | 
+        Caleb was born and raised in a Christian family. He was baptized at the age of 15. He received his Master of Divinity at Gateway Seminary. During COVID, God placed a burden in his heart not to be complacent with “the lifestyle of Babylon” but challenged him to take part in “rebuilding God’s temple in Jerusalem.” This formed the basis of his calling to ministry. Caleb has a heart for the next generation. He desires to help them understand and apply the Bible with confidence, ask hard questions, and stand firm in their faith in the fallen world.
+
+        Prior to entering full-time ministry, Caleb was a California licensed attorney and has been practicing law for more than a decade, prosecuting domestic violence perpetrators and protecting victims of abuse. Through his extensive experience of handling various legal issues faced by ordinary families, God has prepared him to serve in marriage and family ministry. Since 2017, Caleb and his wife Dorothy have been serving as marriage enrichment retreat instructors with Chinese Family For Christ USA, a parachurch organization that emphasizes the sanctity of marriage. The couple and their daughter are musically inclined. In their free time, they enjoy making and singing Christian music together.
+      zh-Hant: |
+        Pastor Caleb Wan出生並成長於一個基督教家庭。他15歲時受洗，並在Gateway Seminary獲得神學碩士學位。新冠疫情期間，神在他心中種下重擔，提醒他不要安於“巴比倫式的生活方式”，而是要參與“重建耶路撒冷聖殿”的行動。這成為他蒙召事奉的根基。迦勒對下一代充滿關懷。他渴望幫助他們滿懷信心地理解和應用聖經，鼓勵他們提出尖銳的問題，並在墮落的世界中堅定信仰。
+
+        在全職事奉之前，迦勒是加州執業律師，擁有十餘年的經驗，主要負責起訴家庭暴力施暴者和保護受虐者。憑藉著處理普通家庭面臨的各種法律問題的豐富經驗，神預備他從事婚姻和家庭事工。自2017年以來，Caleb和妻子Dorothy一直在美國基督家庭會（Chinese Family For Christ USA）擔任婚姻輔導導師。該機構是一個強調婚姻神聖性的基督教組織。Caleb夫婦和他們的女兒都熱愛音樂。閒暇時，他們喜歡一起創作和演唱基督教音樂。
+      zh-Hans: |
+       Pastor Caleb Wan出生並成長於一個基督教家庭。他15歲時受洗，並在Gateway Seminary獲得神學碩士學位。新冠疫情期間，神在他心中種下重擔，提醒他不要安於“巴比倫式的生活方式”，而是要參與“重建耶路撒冷聖殿”的行動。這成為他蒙召事奉的根基。迦勒對下一代充滿關懷。他渴望幫助他們滿懷信心地理解和應用聖經，鼓勵他們提出尖銳的問題，並在墮落的世界中堅定信仰。
+
+        在全職事奉之前，迦勒是加州執業律師，擁有十餘年的經驗，主要負責起訴家庭暴力施暴者和保護受虐者。憑藉著處理普通家庭面臨的各種法律問題的豐富經驗，神預備他從事婚姻和家庭事工。自2017年以來，Caleb和妻子Dorothy一直在美國基督家庭會（Chinese Family For Christ USA）擔任婚姻輔導導師。該機構是一個強調婚姻神聖性的基督教組織。Caleb夫婦和他們的女兒都熱愛音樂。閒暇時，他們喜歡一起創作和演唱基督教音樂。
+        
 
 contactPhone: "(408) 586-8688"
 draft: false
