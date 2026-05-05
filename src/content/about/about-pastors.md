@@ -228,7 +228,7 @@ pastors:
       en: "Family Pastor (Pleasanton)"
       zh-Hant: "Family Pastor (Pleasanton)"
       zh-Hans: "Family Pastor (Pleasanton)"
-    image: "/uploads/pastors/caleb-wen.webp"
+    image: "/uploads/pastors/caleb-wen2.webp"
     email: "cwan@crosspointchurchsv.org"
     bio:
       en: | 
@@ -242,7 +242,7 @@ pastors:
       zh-Hans: |
        Pastor Caleb Wan出生並成長於一個基督教家庭。他15歲時受洗，並在Gateway Seminary獲得神學碩士學位。新冠疫情期間，神在他心中種下重擔，提醒他不要安於“巴比倫式的生活方式”，而是要參與“重建耶路撒冷聖殿”的行動。這成為他蒙召事奉的根基。迦勒對下一代充滿關懷。他渴望幫助他們滿懷信心地理解和應用聖經，鼓勵他們提出尖銳的問題，並在墮落的世界中堅定信仰。
 
-        在全職事奉之前，迦勒是加州執業律師，擁有十餘年的經驗，主要負責起訴家庭暴力施暴者和保護受虐者。憑藉著處理普通家庭面臨的各種法律問題的豐富經驗，神預備他從事婚姻和家庭事工。自2017年以來，Caleb和妻子Dorothy一直在美國基督家庭會（Chinese Family For Christ USA）擔任婚姻輔導導師。該機構是一個強調婚姻神聖性的基督教組織。Caleb夫婦和他們的女兒都熱愛音樂。閒暇時，他們喜歡一起創作和演唱基督教音樂。
+        在全職事奉之前，迦勒是加州執業律師，擁有十餘年的經驗，主要負責起訴家庭暴力施暴者和保護受虐者。憑藉著處理普通家庭面臨的各種法律問題的豐富經驗，神預備他從事婚姻和家庭事工。自2017年以來，Caleb和妻子Dorothy一直在美國基督家庭會（Chinese Family For Christ USA）擔任婚姻輔導導師。該機構是一個強調婚姻神聖性的基督教組織。Caleb夫婦和他們的女兒都熱愛音樂。閒暇時，他們喜歡一起創作和演唱基督教音樂。  
         
 
 contactPhone: "(408) 586-8688"
