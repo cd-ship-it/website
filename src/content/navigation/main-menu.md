@@ -1,12 +1,12 @@
 ---
 title: "Main Navigation"
 items:
-  - id: "im-new"
-    label:
-      en: "I'm New"
-      zh-Hant: "新朋友"
-      zh-Hans: "新朋友"
-    href: "/im-new"
+  # - id: "im-new"
+  #   label:
+  #     en: "I'm New"
+  #     zh-Hant: "新朋友"
+  #     zh-Hans: "新朋友"
+  #   href: "/im-new"
   - id: "sermons"
     label:
       en: "Sermons"
