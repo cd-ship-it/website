@@ -103,7 +103,7 @@ kidsSection:
     en: "Learn More About Children's Ministry"
     zh-Hant: "了解更多兒童事工"
     zh-Hans: "了解更多儿童事工"
-  ctaHref: "orangekids"
+  ctaHref: "/orangekids"
   image: "/uploads/13.webp"
   imageAlt:
     en: "Children at church"
