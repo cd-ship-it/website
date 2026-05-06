@@ -228,7 +228,7 @@ pastors:
       en: "Family Pastor (Pleasanton)"
       zh-Hant: "Family Pastor (Pleasanton)"
       zh-Hans: "Family Pastor (Pleasanton)"
-    image: "/uploads/pastors/caleb-wen2.webp"
+    image: "/uploads/pastors/caleb-wen3.webp"
     email: "cwan@crosspointchurchsv.org"
     bio:
       en: | 
