@@ -6,6 +6,8 @@ export interface Sermon {
   preacher_eng: string;
   location: string;
   language: string;
+  /** Legacy / API text summary (not always in list type) */
+  summary?: string;
   ai_data?: string | null;
 }
 

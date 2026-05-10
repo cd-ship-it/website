@@ -5,6 +5,8 @@ import { fetchAllSermons, fetchSermon, buildSermonSlug } from "../../../lib/serm
 import type { Sermon } from "../../../lib/sermonApi";
 import { LANG_LABELS, LANG_COLORS } from "../../../lib/sermons/constants";
 import { formatDateLong, preacherLabel } from "../../../lib/sermons/format";
+import { serializeJsonLd } from "../../../lib/serializeJsonLd";
+import { enrichSermonVideoJsonLd } from "../../../lib/sermons/enrichVideoJsonLd";
 
 type AiSectionSummary = {
   header?: string;
@@ -89,16 +91,20 @@ const scriptureData = ai?.scripture_data ?? [];
 const faqs = ai?.faqs ?? [];
 const pageDescription =
   displaySummary || sermonData.summary || `Watch "${sermonData.sermon_title}" by ${preacher}`;
+const aiJsonLdForPage =
+  ai?.json_ld != null ? enrichSermonVideoJsonLd(ai.json_ld, sermonData) : null;
+const aiJsonLdHtml = serializeJsonLd(aiJsonLdForPage);
 ---
 
 <BaseLayout
   title={`${sermonData.sermon_title} - Sermons - Crosspoint Church`}
   description={pageDescription}
   type="article"
+  articleAuthor={preacher}
 >
   <Fragment slot="head">
-    {ai?.json_ld && (
-      <script type="application/ld+json" set:html={JSON.stringify(ai.json_ld)} />
+    {aiJsonLdHtml && (
+      <script type="application/ld+json" set:html={aiJsonLdHtml} />
     )}
     {theologicalEntities.length > 0 && (
       <meta name="keywords" content={theologicalEntities.join(", ")} />

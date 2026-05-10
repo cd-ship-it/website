@@ -1,5 +1,6 @@
 ---
 import { withBaseUrl } from "../../lib/urls";
+import { serializeJsonLd } from "../../lib/serializeJsonLd";
 export interface Props {
   title: string;
   description: string;
@@ -9,6 +10,8 @@ export interface Props {
   };
   type?: "website" | "article";
   canonicalUrl?: string;
+  /** Article JSON-LD only: e.g. sermon preacher name */
+  articleAuthor?: string;
 }
 
 const {
@@ -20,6 +23,7 @@ const {
   },
   type = "website",
   canonicalUrl,
+  articleAuthor,
 } = Astro.props;
 
 // Get the canonical URL
@@ -75,6 +79,8 @@ const churchJsonLd = {
   areaServed: bayAreaCityNames.map((name) => ({ "@type": "City" as const, name })),
 };
 
+const articleAuthorName = articleAuthor?.trim() || "";
+
 const articleJsonLd =
   type === "article"
     ? {
@@ -83,6 +89,14 @@ const articleJsonLd =
         headline: title,
         image: new URL(image.url, Astro.site).href,
         description,
+        ...(articleAuthorName
+          ? {
+              author: {
+                "@type": "Person" as const,
+                name: articleAuthorName,
+              },
+            }
+          : {}),
         publisher: {
           "@type": "Organization",
           name: churchInfo.name,
@@ -97,7 +111,11 @@ const articleJsonLd =
           "@id": canonicalHref,
         },
       }
-    : null;---
+    : null;
+
+const churchJsonLdHtml = serializeJsonLd(churchJsonLd);
+const articleJsonLdHtml = articleJsonLd ? serializeJsonLd(articleJsonLd) : null;
+---
 
 <!-- Basic SEO -->
 <title>{title}</title>
@@ -121,10 +139,12 @@ const articleJsonLd =
 <meta property="twitter:image:alt" content={image.alt} />
 
 <!-- JSON-LD Schema for Church -->
-<script type="application/ld+json" set:html={JSON.stringify(churchJsonLd)} />
+{churchJsonLdHtml && (
+  <script type="application/ld+json" set:html={churchJsonLdHtml} />
+)}
 
 {
-  articleJsonLd && (
-    <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+  articleJsonLdHtml && (
+    <script type="application/ld+json" set:html={articleJsonLdHtml} />
   )
 }
