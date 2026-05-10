@@ -12,49 +12,34 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
  
 
-      <div id="search-ui" class="search-page__ui"></div>
+      <div id="search-ui" class="search-page__ui">
+        <pagefind-input id="search-input" debounce="150" autofocus></pagefind-input>
+        <pagefind-summary></pagefind-summary>
+        <pagefind-results hide-sub-results></pagefind-results>
+      </div>
       <p id="search-ui-message" class="search-page__message" aria-live="polite"></p>
     </div>
   </section>
 
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <script is:inline src="/pagefind/pagefind-ui.js"></script>
-  <script is:inline>
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <script is:inline type="module" src="/pagefind/pagefind-component-ui.js"></script>
+  <script is:inline type="module">
     document.addEventListener("DOMContentLoaded", () => {
       const MIN_QUERY_LENGTH = 3;
       const message = document.getElementById("search-ui-message");
       const root = document.getElementById("search-ui");
       if (!root) return;
 
-      const PagefindCtor = window.pagefindUI || window.PagefindUI;
-      if (!PagefindCtor) {
-        if (message) {
-          message.textContent =
-            "Search index is unavailable in development preview. Run a production build to enable search.";
-        }
-        return;
-      }
-
-      new PagefindCtor({
-        element: "#search-ui",
-        showSubResults: true,
-        showImages: false,
-        processTerm: (term) => {
-          const normalized = typeof term === "string" ? term.trim() : "";
-          return normalized.length >= MIN_QUERY_LENGTH ? normalized : "";
-        },
-        resetStyles: false,
-      });
-
-      const getSearchInput = () => root.querySelector(".pagefind-ui__search-input");
+      const getInstance = () => {
+        const manager = window.PagefindComponents?.getInstanceManager?.();
+        return manager?.getInstance?.("default");
+      };
 
       const runSearch = (term) => {
         if (typeof term !== "string" || term.trim().length < MIN_QUERY_LENGTH) return false;
-        const input = getSearchInput();
-        if (!(input instanceof HTMLInputElement)) return false;
-        input.value = term;
-        input.focus();
-        input.dispatchEvent(new Event("input", { bubbles: true }));
+        const instance = getInstance();
+        if (!instance) return false;
+        instance.triggerSearch(term.trim());
         return true;
       };
 
@@ -76,8 +61,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         runSearchWhenReady(q);
       } else {
         const focusWhenReady = (retries = 20) => {
-          const input = getSearchInput();
-          if (input instanceof HTMLInputElement) {
+          const input = document.getElementById("search-input");
+          if (input) {
             input.focus();
           } else if (retries > 0) {
             window.setTimeout(() => focusWhenReady(retries - 1), 100);
@@ -85,6 +70,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         };
         focusWhenReady();
       }
+
+      window.setTimeout(() => {
+        if (!getInstance() && message) {
+          message.textContent =
+            "Search index is unavailable in development preview. Run a production build to enable search.";
+        }
+      }, 400);
     });
   </script>
 </BaseLayout>
@@ -116,9 +108,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .search-page__ui {
     margin-top: 2rem;
     text-align: left;
+    --pf-text: #0d2f4f;
+    --pf-background: #fff;
+    --pf-border: #050505;
+    --pf-border-focus: #f97316;
+    --pf-font: inherit;
+    --pf-input-height: 56px;
+    --pf-input-font-size: 17px;
+    --pf-border-radius: 9999px;
+    --pf-result-title-font-size: 16px;
+    --pf-result-excerpt-font-size: 14px;
+    --pf-results-gap: 10px;
   }
 
- 
+  .search-page__ui pagefind-results {
+    margin-top: 1rem;
+  }
 
   .search-page__message {
     margin-top: 1rem;
@@ -126,52 +131,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-size: 0.95rem;
   }
 
-  :global(.search-page .pagefind-ui) {
-    --pagefind-ui-scale: 1;
-    --pagefind-ui-primary: #f97316;
-    --pagefind-ui-text: #0d2f4f;
-    --pagefind-ui-background: #fff;
-    --pagefind-ui-border: #050505;
-    --pagefind-ui-tag: #f3f4f6;
-    --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 9999px;
-    --pagefind-ui-image-border-radius: 0.75rem;
-    --pagefind-ui-image-box-ratio: 3 / 2;
-    --pagefind-ui-font: inherit;
-  }
-
-  :global(.search-page .pagefind-ui__search-input) {
-    min-height: 3.5rem;
-    padding-inline: 1.5rem;
-    font-size: 1.05rem;
-    border-width: 3px;
-    border-color: #c2410c;
-    background-color: #fff7ed;
-  }
-
-  :global(.search-page .pagefind-ui__search-input:focus) {
-    border-color: #f97316;
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
-  }
-
-  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link) {
-    color: #1d4ed8 !important;
-    text-decoration: underline !important;
-    text-underline-offset: 2px;
-  }
-
-  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:hover),
-  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:visited),
-  :global(.search-page .pagefind-ui__result-title .pagefind-ui__result-link:focus) {
-    color: #1d4ed8 !important;
-    text-decoration: underline !important;
-  }
-
-  :global(.search-page .pagefind-ui__result-image),
-  :global(.search-page .pagefind-ui__result-thumb),
-  :global(.search-page .pagefind-ui__result-link .pagefind-ui__result-image),
-  :global(.search-page [class*="pagefind-ui__result-thumb"]),
-  :global(.search-page [class*="pagefind-ui__result-image"]) {
-    display: none !important;
+  :global(pagefind-results mark) {
+    background: #ffedd5;
+    color: #9a3412;
   }
 </style>

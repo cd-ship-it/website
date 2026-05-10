@@ -58,7 +58,7 @@ campuses:
       - en: "Mandarin: 10:00 am"
         zh-Hant: "國語崇拜：上午 10:00"
         zh-Hans: "国语崇拜：上午 10:00"
-    orangeKidsAvailable: false
+    orangeKidsAvailable: true
   - campusName:
       en: "Peninsula"
       zh-Hant: "Peninsula"

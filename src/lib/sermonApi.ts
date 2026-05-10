@@ -6,7 +6,7 @@ export interface Sermon {
   preacher_eng: string;
   location: string;
   language: string;
-  summary: string;
+  ai_data?: string | null;
 }
 
 export interface SermonListResponse {
@@ -156,4 +156,33 @@ export async function fetchSermon(id: string): Promise<Sermon | null> {
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
+}
+
+function slugifyTitle(title: string | null | undefined): string {
+  if (!title) return '';
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 60)
+    .replace(/^-+|-+$/g, '');
+}
+
+export function buildSermonUrl(sermon: Sermon): string {
+  if (!sermon.date) return `/sermons/${sermon.youtube_id}`;
+  return `/sermons/${sermon.date}/${buildSermonSlug(sermon)}`;
+}
+
+export function buildSermonSlug(sermon: Sermon): string {
+  let slugEn = '';
+  try {
+    const aiData = sermon.ai_data ? (JSON.parse(sermon.ai_data) as { title_en?: string }) : {};
+    slugEn = slugifyTitle(aiData.title_en ?? '');
+  } catch {}
+  if (!slugEn) slugEn = slugifyTitle(sermon.sermon_title);
+  if (!slugEn) slugEn = 'sermon';
+  const campus = (sermon.location ?? '').toLowerCase().replace(/[\s/]+/g, '-') || 'unknown';
+  const lang = (sermon.language ?? '').toLowerCase().replace(/[\s/]+/g, '-') || 'unknown';
+  return `${slugEn}-${campus}-${lang}-${sermon.youtube_id}`;
 }

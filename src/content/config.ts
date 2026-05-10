@@ -610,16 +610,14 @@ const aboutCollection = defineCollection({
     .superRefine((data, ctx) => {
       const isAboutUs =
         data.mission != null && data.vision != null && data.history != null;
-      const isPastorsPage =
-        data.title != null &&
-        data.pastors != null &&
-        data.pastors.length > 0;
+      /** Pastors bios are loaded from WordPress at build time; local file only needs `title` + page chrome. */
+      const isPastorsPage = data.title != null && data.mission == null;
       if (isAboutUs === isPastorsPage) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: [],
           message:
-            'about: use either about-us (mission, vision, history) or about-pastors (title, pastors[]).',
+            'about: use either about-us (mission, vision, history) or about-pastors (title, no mission/vision/history).',
         });
       }
     }),

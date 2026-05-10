@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_WP_MIRROR_CATEGORY_SLUG?: string;
   /** When "true" or "1", home hero uses backgroundImage only (no background video). */
   readonly PUBLIC_HERO_VIDEO_DISABLED?: string;
+  /** When "true" or "1", skip writing `cache/pastors.json` after a successful WordPress fetch. */
+  readonly PASTORS_CACHE_BYPASS?: string;
 }
 
 interface ImportMeta {

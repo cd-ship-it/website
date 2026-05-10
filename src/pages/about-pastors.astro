@@ -5,6 +5,7 @@ import PageHeader from "../components/Sections/PageHeader.astro";
 import LocalizedInline from "../components/UI/LocalizedInline.astro";
 import LocalizedHtml from "../components/UI/LocalizedHtml.astro";
 import { pickLocalizedText, resolveLocalizedSlot, type LocalizedText } from "../lib/i18n";
+import { fetchPastors } from "../lib/pastorsApi";
 import { withBaseUrl } from "../lib/urls";
 
 const page =
@@ -13,7 +14,7 @@ const page =
   (await getCollection("about")).find((entry) => entry.id === "about-pastors");
 if (!page) throw new Error('Content entry "about/about-pastors" not found.');
 
-const { title, seo, pageHeader, pageIntro, pastors, contactPhone } = page.data;
+const { title, seo, pageHeader, pageIntro, contactPhone } = page.data;
 
 const headerBg = pageHeader?.backgroundImage ?? `${withBaseUrl("/uploads/page-header-bg.webp")}`;
 
@@ -66,13 +67,11 @@ function firstParagraph(
   };
 }
 
-const allPastors = pastors ?? [];
+const allPastors = await fetchPastors();
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+function pastorImageSrc(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  return withBaseUrl(url);
 }
 ---
 
@@ -106,7 +105,7 @@ function slugify(input: string): string {
 
         <div class="pastor-grid">
           {allPastors.map((pastor, idx) => {
-            const pastorId = slugify(pickLocalizedText(pastor.name, "en"));
+            const pastorId = pastor.anchorId;
             return (
             <div
               id={pastorId}
@@ -118,7 +117,7 @@ function slugify(input: string): string {
                 <div class="shrink-0 flex justify-center sm:justify-start pt-6 pb-2 sm:py-6 sm:pl-6 sm:pr-0">
                   <div class="h-32 w-32 sm:h-36 sm:w-36 rounded-2xl overflow-hidden bg-cream-2 shadow-sm shrink-0">
                     <img
-                      src={`${withBaseUrl(pastor.image)}`}
+                      src={pastorImageSrc(pastor.image)}
                       alt={pickLocalizedText(pastor.name, "en")}
                       class="h-full w-full object-cover object-center"
                       loading="lazy"

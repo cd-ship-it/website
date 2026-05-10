@@ -143,6 +143,24 @@ export async function getWpPostById(id: number): Promise<WpPost | null> {
   }
 }
 
+/** WordPress media object (subset used for pastor photos). */
+export interface WpMedia {
+  id: number;
+  source_url: string;
+  media_details?: {
+    sizes?: Record<string, { source_url?: string } | undefined>;
+  };
+}
+
+export async function getWpMediaById(id: number): Promise<WpMedia | null> {
+  if (!id || id <= 0) return null;
+  try {
+    return await fetchFromWordPress<WpMedia>(`media/${id}`, {});
+  } catch {
+    return null;
+  }
+}
+
 export async function getWpPageById(id: number): Promise<WpPost | null> {
   try {
     return await fetchFromWordPress<WpPost>(`pages/${id}`, {

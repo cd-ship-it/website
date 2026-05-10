@@ -41,7 +41,8 @@ function normalizeLang(input?: string): SiteLang {
  */
 const initialLang = normalizeLang("en");
 
-const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '';---
+const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "";
+---
 
 <!doctype html>
 <html lang={initialLang} data-lang={initialLang}>
@@ -83,6 +84,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '';---
       type={type}
       canonicalUrl={canonicalUrl}
     />
+    <slot name="head" />
 
     
     

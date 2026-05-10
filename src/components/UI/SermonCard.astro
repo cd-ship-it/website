@@ -1,5 +1,6 @@
 ---
 import type { Sermon } from "../../lib/sermonApi";
+import { buildSermonUrl } from "../../lib/sermonApi";
 import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
 import { formatDateLong, preacherLabel, summaryPreview, sermonThumb } from "../../lib/sermons/format";
 import { withBaseUrl } from "../../lib/urls";
@@ -20,10 +21,12 @@ const preacher = preacherLabel(sermon.preacher_chi, sermon.preacher_eng);
 const date = formatDateLong(sermon.date);
 const langLabel = LANG_LABELS[sermon.language] ?? sermon.language;
 const langColor = LANG_COLORS[sermon.language] ?? "bg-cream-2 text-ink-3";
-const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWordLimit) : "";---
+const summaryText = showDescription ? summaryPreview(sermon.summary, summaryWordLimit) : "";
+const sermonUrl = buildSermonUrl(sermon);
+---
 
 <a
-  href={`/sermons/${sermon.youtube_id}`}
+  href={sermonUrl}
   class:list={[
     "group overflow-hidden block xp-panel-inner bg-white hover:shadow-xl transition-all duration-300",
     isHome && "sermon-card--home",

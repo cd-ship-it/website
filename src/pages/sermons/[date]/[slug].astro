@@ -1,0 +1,277 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Button from "../../../components/UI/Button.astro";
+import { fetchAllSermons, fetchSermon, buildSermonSlug } from "../../../lib/sermonApi";
+import type { Sermon } from "../../../lib/sermonApi";
+import { LANG_LABELS, LANG_COLORS } from "../../../lib/sermons/constants";
+import { formatDateLong, preacherLabel } from "../../../lib/sermons/format";
+
+type AiSectionSummary = {
+  header?: string;
+  time?: string;
+  summary?: string;
+};
+
+type AiFaq = {
+  question?: string;
+  answer?: string;
+};
+
+type AiScriptureVersionMap = Record<string, string>;
+
+type AiScriptureData = {
+  ref?: string;
+  source?: string;
+  versions?: AiScriptureVersionMap;
+};
+
+type SermonAiData = {
+  summary_en?: string;
+  summary_zh?: string;
+  key_takeaways?: string[];
+  section_summary?: AiSectionSummary[];
+  theological_entities?: string[];
+  faqs?: AiFaq[];
+  scripture_data?: AiScriptureData[];
+  json_ld?: Record<string, unknown>;
+  title_en?: string;
+};
+
+export async function getStaticPaths() {
+  const sermons = await fetchAllSermons();
+  return sermons
+    .filter((sermon) => !!sermon.date && !!sermon.youtube_id)
+    .map((sermon) => ({
+      params: {
+        date: sermon.date,
+        slug: buildSermonSlug(sermon),
+      },
+      props: { sermon },
+    }));
+}
+
+const { sermon } = Astro.props as { sermon: Sermon };
+const { slug } = Astro.params;
+const youtube_id = slug.split('-').pop()!;
+
+const latest = await fetchSermon(youtube_id).catch(() => null);
+const sermonData: Sermon = latest
+  ? {
+      ...sermon,
+      ...latest,
+      youtube_id: latest.youtube_id || youtube_id || sermon.youtube_id,
+      sermon_title: latest.sermon_title || sermon.sermon_title,
+      preacher_chi: latest.preacher_chi || sermon.preacher_chi,
+      preacher_eng: latest.preacher_eng || sermon.preacher_eng,
+      location: latest.location || sermon.location,
+      language: latest.language || sermon.language,
+      summary: latest.summary || sermon.summary,
+    }
+  : sermon;
+
+const preacher = preacherLabel(sermonData.preacher_chi, sermonData.preacher_eng);
+const formattedDate = formatDateLong(sermonData.date);
+const langLabel = LANG_LABELS[sermonData.language] ?? sermonData.language;
+const langColor = LANG_COLORS[sermonData.language] ?? "bg-cream-2 text-ink-3";
+let ai: SermonAiData | null = null;
+try {
+  ai = sermonData.ai_data ? (JSON.parse(sermonData.ai_data) as SermonAiData) : null;
+} catch {
+  ai = null;
+}
+const isEnglish = sermonData.language?.toLowerCase().includes("english");
+const displaySummary = isEnglish ? ai?.summary_en : ai?.summary_zh;
+const bibleVersion = isEnglish ? "BSB" : "OCCBT";
+const theologicalEntities = ai?.theological_entities ?? [];
+const keyTakeaways = ai?.key_takeaways ?? [];
+const sectionSummary = ai?.section_summary ?? [];
+const scriptureData = ai?.scripture_data ?? [];
+const faqs = ai?.faqs ?? [];
+const pageDescription =
+  displaySummary || sermonData.summary || `Watch "${sermonData.sermon_title}" by ${preacher}`;
+---
+
+<BaseLayout
+  title={`${sermonData.sermon_title} - Sermons - Crosspoint Church`}
+  description={pageDescription}
+  type="article"
+>
+  <Fragment slot="head">
+    {ai?.json_ld && (
+      <script type="application/ld+json" set:html={JSON.stringify(ai.json_ld)} />
+    )}
+    {theologicalEntities.length > 0 && (
+      <meta name="keywords" content={theologicalEntities.join(", ")} />
+    )}
+  </Fragment>
+
+  <section class="py-12">
+    <div class="container max-w-4xl mx-auto">
+
+      <!-- YouTube embed -->
+      <div class="mb-8">
+        <div class="relative w-full rounded-xl overflow-hidden shadow-lg" style="padding-top: 56.25%;">
+          <iframe
+            class="absolute inset-0 w-full h-full"
+            src={`https://www.youtube.com/embed/${sermonData.youtube_id}`}
+            title={sermonData.sermon_title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Sermon meta -->
+      <div class="bg-cream rounded-xl p-6 mb-8 grid grid-cols-2 gap-4">
+        <div class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-0.5">Preacher</p>
+            <p class="font-medium text-gray-900">{preacher}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-0.5">Date</p>
+            <p class="font-medium text-gray-900">{formattedDate}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-0.5">Location</p>
+            <p class="font-medium text-gray-900">{sermonData.location}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <div>
+            <p class="text-xs font-semibold text-muted uppercase tracking-wide mb-0.5">Language</p>
+            <span class={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${langColor}`}>
+              {langLabel}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {displaySummary && (
+        <section class="bg-primary-50 border-l-4 border-primary-600 rounded-r-xl p-6 mb-8">
+          <h2 class="text-lg font-bold text-heading mb-2">Summary</h2>
+          <p class="text-primary-800 leading-relaxed">{displaySummary}</p>
+        </section>
+      )}
+
+      {keyTakeaways.length > 0 && (
+        <section class="mb-8">
+          <h2 class="text-lg font-bold text-heading mb-3">Key Takeaways</h2>
+          <ul class="list-disc pl-6 space-y-2">
+            {keyTakeaways.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {sectionSummary.length > 0 && (
+        <section class="mb-8">
+          <h2 class="text-lg font-bold text-heading mb-3">Sermon Outline</h2>
+          <div class="space-y-4">
+            {sectionSummary.map((section) => (
+              <article class="rounded-xl border border-cream-3 bg-cream p-4">
+                <h3 class="text-base font-semibold text-heading">
+                  {section.header}
+                  {section.time && (
+                    <a href={`?t=${section.time}`} class="timestamp ml-2 text-sm text-primary-700 hover:text-primary-800">
+                      {section.time}
+                    </a>
+                  )}
+                </h3>
+                {section.summary && <p class="mt-1 text-ink-3">{section.summary}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {scriptureData.length > 0 && (
+        <section class="mb-8">
+          <h2 class="text-lg font-bold text-heading mb-3">Scripture References</h2>
+          <div class="space-y-4">
+            {scriptureData.map((scripture) => (
+              <blockquote class="verse-card border-l-4 border-primary-600 bg-primary-50 rounded-r-xl p-4">
+                <p class="leading-relaxed">
+                  {scripture.versions?.[bibleVersion] ?? scripture.versions?.BSB ?? ""}
+                </p>
+                {scripture.ref && <cite class="mt-2 block text-sm text-muted">{scripture.ref}</cite>}
+              </blockquote>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {faqs.length > 0 && (
+        <section class="mb-8">
+          <details class="overflow-hidden rounded-lg border border-cream-3 bg-white">
+            <summary class="cursor-pointer px-4 py-3 text-lg font-bold text-heading hover:bg-cream-2/60">
+              Questions from This Sermon
+            </summary>
+            <div class="space-y-4 border-t border-cream-3 p-4">
+              {faqs.map((faq) => (
+                <div>
+                  <p class="font-semibold text-heading">{faq.question}</p>
+                  {faq.answer && <p class="mt-2 text-ink-3">{faq.answer}</p>}
+                </div>
+              ))}
+            </div>
+          </details>
+        </section>
+      )}
+
+      {theologicalEntities.length > 0 && (
+        <section class="mb-8">
+          <h2 class="text-lg font-bold text-heading mb-3">Topics</h2>
+          <div class="flex flex-wrap gap-2">
+            {theologicalEntities.map((tag) => (
+              <div class="inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
+                {tag}</div>
+            
+            ))}
+          </div>
+        </section>
+      )}      
+
+      <!-- Actions -->
+      <div class="flex flex-wrap gap-4 mt-8">
+        <Button href={`${import.meta.env.BASE_URL}sermons`} variant="outline">
+          ← Back to All Sermons
+        </Button>
+        <Button
+          href={`https://www.youtube.com/watch?v=${sermonData.youtube_id}`}
+          variant="primary"
+          target="_blank"
+        >
+          Watch on YouTube ↗
+        </Button>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
