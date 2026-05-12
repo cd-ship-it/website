@@ -1,5 +1,6 @@
 ---
 import type { EventItem } from "../../lib/eventApi";
+import { monthLabel, dayNum, weekDay, rangeLabel } from "../../lib/events/format";
 
 export interface Props {
   event: EventItem;
@@ -7,36 +8,6 @@ export interface Props {
 }
 
 const { event, featured = false } = Astro.props as Props;
-
-function monthLabel(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`)
-    .toLocaleDateString("en-US", { month: "short" })
-    .toUpperCase();
-}
-
-function dayNum(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { day: "2-digit" });
-}
-
-function weekDay(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" });
-}
-
-function fullDate(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    weekday: "short",
-    year: "numeric",
-  });
-}
-
-function rangeLabel(startDate: string, endDate?: string, time?: string) {
-  const start = fullDate(startDate);
-  const end = endDate && endDate !== startDate ? fullDate(endDate) : "";
-  const dateText = end ? `${start} - ${end}` : start;
-  return time ? `${dateText} • ${time}` : dateText;
-}
 ---
 
 <a

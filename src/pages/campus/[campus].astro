@@ -499,7 +499,7 @@ const heroImgSrc = withBaseUrl(hero.image);
 
 <script>
   import { normalizeEvent } from "../../lib/eventApi";
-  import { monthLabel, dayNum, weekDay } from "../../lib/events/format";
+  import { monthLabel, dayNum, weekDay, rangeLabel } from "../../lib/events/format";
   import { LANG_LABELS, LANG_COLORS } from "../../lib/sermons/constants";
   import { formatDateLong, preacherLabel } from "../../lib/sermons/format";
 
@@ -582,10 +582,7 @@ const heroImgSrc = withBaseUrl(hero.image);
 
   // ── Events ─────────────────────────────────────────────────────────────────
   function eventCard(event) {
-    const dateRange = event.endDate && event.endDate !== event.startDate
-      ? `${formatDateLong(event.startDate)} – ${formatDateLong(event.endDate)}`
-      : formatDateLong(event.startDate);
-    const when = event.time ? `${dateRange} • ${event.time}` : dateRange;
+    const when = rangeLabel(event.startDate, event.endDate, event.time);
 
     return `
       <div class="flex gap-4 items-start bg-cream-2 rounded-lg p-4">

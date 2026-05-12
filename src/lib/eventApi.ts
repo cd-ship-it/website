@@ -12,6 +12,8 @@ export interface EventItem {
   location?: string;
   image?: string;
   registrationLink?: string;
+  /** Category / taxonomy labels from API (e.g. WordPress "Feature") */
+  categories?: string[];
 }
 
 export interface EventListResponse {
@@ -74,6 +76,68 @@ function uniqueEventsBySlug(events: EventItem[]): EventItem[] {
     if (count === 0) return event;
     return { ...event, slug: `${baseSlug}-${count + 1}` };
   });
+}
+
+/** Collect category labels from common WordPress / custom API shapes. */
+function normalizeEventCategories(raw: unknown): string[] {
+  const rec = asRecord(raw);
+  const acf = asRecord(rec.acf);
+  const meta = asRecord(rec.meta);
+  const embedded = asRecord(rec._embedded);
+  const out: string[] = [];
+
+  const pushLabel = (s: string) => {
+    const t = s.trim();
+    if (t) out.push(t);
+  };
+
+  const single =
+    pickString(acf, ["event_category", "category", "event_type", "type"]) ||
+    pickString(rec, ["event_category", "category", "event_type", "type"]) ||
+    pickString(meta, ["event_category", "category", "event_type", "type"]);
+  if (single) pushLabel(single);
+
+  const catArrays = [rec.categories, acf.categories, meta.categories];
+  for (const cats of catArrays) {
+    if (!Array.isArray(cats)) continue;
+    for (const c of cats) {
+      if (typeof c === "string" || typeof c === "number") {
+        if (typeof c === "string") pushLabel(c);
+        continue;
+      }
+      const cr = asRecord(c);
+      const name = pickString(cr, ["name", "title"]) || pickString(cr, ["slug"]);
+      if (name) pushLabel(name);
+    }
+  }
+
+  const embeddedTerms = embedded["wp:term"] as unknown[] | undefined;
+  if (Array.isArray(embeddedTerms)) {
+    for (const termGroup of embeddedTerms) {
+      if (!Array.isArray(termGroup)) continue;
+      for (const term of termGroup) {
+        const tr = asRecord(term);
+        const name = pickString(tr, ["name"]) || pickString(tr, ["slug"]);
+        if (name) pushLabel(name);
+      }
+    }
+  }
+
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+  for (const n of out) {
+    const key = n.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(n);
+  }
+  return deduped;
+}
+
+export function eventHasFeatureCategory(event: EventItem): boolean {
+  return (event.categories ?? []).some(
+    (c) => c.trim().toLowerCase() === "feature",
+  );
 }
 
 export function normalizeEvent(raw: unknown): EventItem {
@@ -164,6 +228,8 @@ export function normalizeEvent(raw: unknown): EventItem {
     compactSlug(`${id || "event"}-${startDate || ""}`);
   const finalSlug = idSlug || fallbackSlug || "event";
 
+  const categories = normalizeEventCategories(raw);
+
   return {
     id: id || finalSlug,
     slug: finalSlug,
@@ -176,6 +242,7 @@ export function normalizeEvent(raw: unknown): EventItem {
     location,
     image,
     registrationLink,
+    ...(categories.length > 0 ? { categories } : {}),
   };
 }
 

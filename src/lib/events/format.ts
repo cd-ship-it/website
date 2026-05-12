@@ -12,23 +12,18 @@ export function weekDay(dateStr: string): string {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", { weekday: "short" });
 }
 
+/** e.g. "Mon, Jun 7" — no year (event listings) */
 export function fullDate(dateStr: string): string {
   return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",
-    year: "numeric",
   });
 }
 
-/** "Fri, May 3, 2024" — long form with weekday, for event detail pages */
+/** Same as fullDate: weekday + short month + day, no year (event detail hero) */
 export function formatDateLong(dateStr: string): string {
-  return new Date(`${dateStr}T00:00:00`).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-  });
+  return fullDate(dateStr);
 }
 
 export function rangeLabel(

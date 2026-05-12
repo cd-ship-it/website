@@ -1,4 +1,9 @@
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import type { Sermon } from "../sermonApi";
+
+/** Sermon calendar day interpreted at noon for VideoObject.uploadDate (Google expects full ISO + offset). */
+const UPLOAD_DATE_TIMEZONE = "America/Los_Angeles";
+const UPLOAD_LOCAL_TIME = "12:00:00";
 
 function schemaTypes(type: unknown): string[] {
   if (typeof type === "string") return [type];
@@ -10,12 +15,19 @@ function isVideoObject(node: Record<string, unknown>): boolean {
   return schemaTypes(node["@type"]).includes("VideoObject");
 }
 
-function uploadDateIso(date: string): string | undefined {
+/** e.g. 2026-04-05T12:00:00-07:00 (PST/PDT per date). */
+function uploadDatePacificIso(date: string): string | undefined {
   const trimmed = date.trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+  const tz = UPLOAD_DATE_TIMEZONE;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    const instant = fromZonedTime(`${trimmed}T${UPLOAD_LOCAL_TIME}`, tz);
+    return formatInTimeZone(instant, tz, "yyyy-MM-dd'T'HH:mm:ssXXX");
+  }
   const ms = Date.parse(trimmed);
   if (Number.isNaN(ms)) return undefined;
-  return new Date(ms).toISOString().slice(0, 10);
+  const ymd = formatInTimeZone(ms, tz, "yyyy-MM-dd");
+  const instant = fromZonedTime(`${ymd}T${UPLOAD_LOCAL_TIME}`, tz);
+  return formatInTimeZone(instant, tz, "yyyy-MM-dd'T'HH:mm:ssXXX");
 }
 
 function enrichVideoObjectNode(
@@ -28,7 +40,7 @@ function enrichVideoObjectNode(
   const thumb = `https://i.ytimg.com/vi/${youtube_id}/hqdefault.jpg`;
   const embedUrl = `https://www.youtube.com/embed/${youtube_id}`;
   const contentUrl = `https://www.youtube.com/watch?v=${youtube_id}`;
-  const upload = uploadDateIso(date);
+  const upload = uploadDatePacificIso(date);
 
   const existingName = node.name;
   const name =
@@ -40,7 +52,11 @@ function enrichVideoObjectNode(
     ...node,
     name,
     thumbnailUrl: node.thumbnailUrl ?? thumb,
-    ...(upload ? { uploadDate: node.uploadDate ?? upload } : {}),
+    ...(upload
+      ? { uploadDate: upload }
+      : typeof node.uploadDate === "string"
+        ? { uploadDate: node.uploadDate }
+        : {}),
     embedUrl: node.embedUrl ?? embedUrl,
     contentUrl: node.contentUrl ?? contentUrl,
   };
