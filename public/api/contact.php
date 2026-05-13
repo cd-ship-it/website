@@ -16,6 +16,62 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 
+/**
+ * Read a config value from (in order):
+ *   1. real env vars / getenv() (SiteGround "Environment Manager", .htaccess SetEnv, etc.)
+ *   2. $_ENV / $_SERVER (populated by some PHP SAPIs)
+ *   3. A `.env` file located in the same directory as this script, or one or
+ *      two levels up (so the project root `.env` is found in local dev).
+ *
+ * Keep `.env` outside the web root in production. This loader only reads it
+ * when the variable is not already set in the environment.
+ */
+function env_value(string $key, string $default = ''): string {
+  $fromEnv = getenv($key);
+  if (is_string($fromEnv) && $fromEnv !== '') return $fromEnv;
+  if (isset($_ENV[$key]) && is_string($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+  if (isset($_SERVER[$key]) && is_string($_SERVER[$key]) && $_SERVER[$key] !== '') return $_SERVER[$key];
+
+  static $fileCache = null;
+  if ($fileCache === null) {
+    $fileCache = [];
+    $candidates = [
+      __DIR__ . '/.env',
+      dirname(__DIR__) . '/.env',
+      dirname(__DIR__, 2) . '/.env',
+    ];
+    foreach ($candidates as $path) {
+      if (!is_readable($path)) continue;
+      $lines = @file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+      if (!is_array($lines)) continue;
+      foreach ($lines as $line) {
+        $line = ltrim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        $eq = strpos($line, '=');
+        if ($eq === false) continue;
+        $k = trim(substr($line, 0, $eq));
+        $v = trim(substr($line, $eq + 1));
+        if (strlen($v) >= 2) {
+          $first = $v[0];
+          $last = $v[strlen($v) - 1];
+          if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
+            $v = substr($v, 1, -1);
+          }
+        }
+        if ($k !== '' && !array_key_exists($k, $fileCache)) {
+          $fileCache[$k] = $v;
+        }
+      }
+      break;
+    }
+  }
+  if (array_key_exists($key, $fileCache) && $fileCache[$key] !== '') {
+    return $fileCache[$key];
+  }
+
+  return $default;
+}
+
 // ─── Edit for your church / SiteGround mailbox ─────────────────────────────
 const MAIL_TO = 'cd@crosspointchurchsv.org';
 /** Use an address @ your site domain (SiteGround and most hosts require this for PHP mail). */
@@ -23,9 +79,10 @@ const MAIL_FROM = 'noreply@crosspointchurchsv.org';
 const MAIL_FROM_NAME = 'Website Contact Form';
 
 // ─── Google reCAPTCHA v3 ───────────────────────────────────────────────────
-// Paste your v3 SECRET key here (from https://www.google.com/recaptcha/admin).
-// Leave '' to skip verification (dev only — spam will not be blocked).
-const RECAPTCHA_SECRET = '6LcUzMYsAAAAAF4_M0OBEhanfiMo0pE90BOwxIO_';
+// Loaded from environment (preferred) or a sibling `.env` file. Leave unset
+// to skip verification (dev only — spam will not be blocked).
+// Get a v3 key pair at https://www.google.com/recaptcha/admin
+define('RECAPTCHA_SECRET', env_value('RECAPTCHA_SECRET'));
 /** Minimum score (0.0–1.0) to accept. 0.5 is Google's default. */
 const RECAPTCHA_MIN_SCORE = 0.5;
 /** Expected `action` name sent by the client; must match the one in contact.astro. */
