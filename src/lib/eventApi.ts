@@ -202,11 +202,12 @@ export function normalizeEvent(raw: unknown): EventItem {
     pickString(venue, ["name", "title"]) ||
     undefined;
 
+  // Prefer WordPress featured media, then other explicit image fields, then first <img> in content.
   const image =
-    pickString(imageObj, ["url", "src", "source_url"]) ||
+    pickString(firstMedia, ["source_url"]) ||
     pickString(asRecord(rec.featured_image), ["url", "src", "source_url"]) ||
     pickString(asRecord(acf.featured_image), ["url", "src", "source_url"]) ||
-    pickString(firstMedia, ["source_url"]) ||
+    pickString(imageObj, ["url", "src", "source_url"]) ||
     pickString(rec, ["featured_image", "image"]) ||
     pickString(acf, ["featured_image", "image"]) ||
     firstImageSrcFromHtml(content) ||

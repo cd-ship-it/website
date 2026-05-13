@@ -2,6 +2,8 @@
  * Build-time fetch of WordPress REST data for Open Graph / Twitter preview tags (static HTML).
  */
 
+import { wpPostFeaturedOrContentImageMeta } from "./wordpress/postImage";
+
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, " ")
@@ -21,17 +23,12 @@ export type WpLinkPreviewResult = {
   image: { url: string; alt: string };
 };
 
-type WpFeaturedMedia = {
-  source_url?: string;
-  alt_text?: string;
-};
-
 type WpPostWithEmbed = {
   title?: { rendered?: string };
   excerpt?: { rendered?: string };
   content?: { rendered?: string };
   _embedded?: {
-    "wp:featuredmedia"?: WpFeaturedMedia[];
+    "wp:featuredmedia"?: { source_url?: string; alt_text?: string }[];
   };
 };
 
@@ -81,23 +78,19 @@ export async function fetchCategoryLatestPostLinkPreview(
   }
   desc = truncate(desc, 160) || fallback.description;
 
-  const media = post._embedded?.["wp:featuredmedia"]?.[0];
-  let imageUrl = media?.source_url?.trim();
-  const alt = stripHtml(media?.alt_text ?? "") || rawTitle || fallback.image.alt;
+  const og = wpPostFeaturedOrContentImageMeta(
+    post,
+    rawTitle || fallback.image.alt,
+    wpBaseUrl,
+  );
 
-  if (!imageUrl) {
+  if (!og) {
     return { title, description: desc, image: fallback.image };
-  }
-
-  if (imageUrl.startsWith("//")) {
-    imageUrl = `https:${imageUrl}`;
-  } else if (imageUrl.startsWith("/")) {
-    imageUrl = new URL(imageUrl, wpBaseUrl).toString();
   }
 
   return {
     title,
     description: desc,
-    image: { url: imageUrl, alt },
+    image: og,
   };
 }

@@ -32,6 +32,12 @@ const compactEvents = ordered.slice(0, 6);
 const featuredInCompact = compactEvents.filter(eventHasFeatureCategory);
 const regularInCompact = compactEvents.filter((e) => !eventHasFeatureCategory(e));
 
+function thumbBackgroundStyle(imageUrl: string | undefined): string | undefined {
+  const u = imageUrl?.trim();
+  if (!u) return undefined;
+  return `background-image: url(${JSON.stringify(u)})`;
+}
+
 ---
 
 <section
@@ -70,12 +76,11 @@ const regularInCompact = compactEvents.filter((e) => !eventHasFeatureCategory(e)
                   </div>
                   {event.image?.trim() && (
                     <a href={eventHref} class="events-grid-thumb events-grid-thumb--featured">
-                      <img
-                        src={event.image.trim()}
-                        alt={event.title}
-                        loading="lazy"
-                        decoding="async"
-                        onerror="this.closest('.events-grid-thumb')?.remove()"
+                      <span
+                        class="events-grid-thumb-bg"
+                        style={thumbBackgroundStyle(event.image)}
+                        role="img"
+                        aria-label={event.title}
                       />
                     </a>
                   )}
@@ -116,12 +121,11 @@ const regularInCompact = compactEvents.filter((e) => !eventHasFeatureCategory(e)
                   </div>
                   {event.image?.trim() && (
                     <div class="events-grid-thumb">
-                      <img
-                        src={event.image.trim()}
-                        alt={event.title}
-                        loading="lazy"
-                        decoding="async"
-                        onerror="this.closest('.events-grid-thumb')?.remove()"
+                      <span
+                        class="events-grid-thumb-bg"
+                        style={thumbBackgroundStyle(event.image)}
+                        role="img"
+                        aria-label={event.title}
                       />
                     </div>
                   )}
@@ -380,11 +384,14 @@ const regularInCompact = compactEvents.filter((e) => !eventHasFeatureCategory(e)
     gap: 0.5rem;
   }
 
-  .events-grid-thumb img {
+  .events-grid-thumb-bg {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    display: block;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--cream-2);
   }
 
   .events-grid-info {

@@ -16,6 +16,7 @@ import {
   shouldShowWpDynamicPostTitle,
   type WpMirrorItem,
 } from "../lib/wordpress/mirror";
+import { wpPostFeaturedOrContentImageMeta } from "../lib/wordpress/postImage";
 
 type DynamicPageProps = {
   kind: "dynamic";
@@ -152,6 +153,11 @@ if (props.kind === "mirror") {
       .slice(0, 200) || "Crosspoint Church";
   layoutType = "article";
   headerTitle = plainTitle || mirrorItem.slug;
+
+  if (wpBaseUrl) {
+    const og = wpPostFeaturedOrContentImageMeta(mirrorItem, layoutTitle, wpBaseUrl);
+    if (og) layoutImage = og;
+  }
 } else {
   cfg = typeof slug === "string" ? getWpDynamicPageConfig(slug) : undefined;
 
@@ -190,6 +196,10 @@ if (props.kind === "mirror") {
 
     if (wpBaseUrl) {
       record = await fetchWpDynamicPageRecord(cfg);
+      if (record) {
+        const og = wpPostFeaturedOrContentImageMeta(record, layoutTitle, wpBaseUrl);
+        if (og) layoutImage = og;
+      }
     }
 
     showPostTitle = shouldShowWpDynamicPostTitle(cfg, record);
@@ -201,7 +211,14 @@ const renderRecord = isMirror ? mirrorItem : record;
 const renderTitleHtml =
   isMirror && mirrorItem
     ? mirrorItem.title?.rendered ?? ""
-    : record?.title?.rendered ?? "";---
+    : record?.title?.rendered ?? "";
+
+const recordHeroMeta =
+  renderRecord && wpBaseUrl
+    ? wpPostFeaturedOrContentImageMeta(renderRecord, layoutTitle, wpBaseUrl)
+    : undefined;
+
+---
 
 <BaseLayout
   title={layoutTitle}
@@ -213,7 +230,10 @@ const renderTitleHtml =
     <PageHeader
       title={headerTitle}
       subtitle={headerSubtitle}
-      backgroundImage={`${withBaseUrl("/uploads/blog-header-bg.webp")}`}
+      backgroundImage={
+        recordHeroMeta?.url?.trim() ||
+        `${withBaseUrl("/uploads/blog-header-bg.webp")}`
+      }
     />
   )}
 
@@ -245,6 +265,16 @@ const renderTitleHtml =
         </div>
       ) : (
         <article>
+          {recordHeroMeta && (
+            <div class="wp-record-hero mb-8 overflow-hidden rounded-2xl border border-[var(--cream-3,#ede8e0)] aspect-video max-h-[min(28rem,56vw)] md:aspect-auto md:max-h-none md:h-60">
+              <span
+                class="block h-full w-full bg-cover bg-center bg-no-repeat bg-[var(--cream-2)]"
+                style={`background-image: url(${JSON.stringify(recordHeroMeta.url)})`}
+                role="img"
+                aria-label={recordHeroMeta.alt}
+              />
+            </div>
+          )}
           {(props.kind === "mirror" || showPostTitle) && (
             <h1 class="text-3xl md:text-4xl font-bold mb-6" set:html={renderTitleHtml} />
           )}
