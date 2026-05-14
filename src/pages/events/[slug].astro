@@ -21,12 +21,18 @@ const { event } = Astro.props as { event: EventItem };
 const formattedDate = formatDateLong(event.startDate);
 const formattedEndDate = event.endDate ? formatDateLong(event.endDate) : null;
 const isFutureEvent = new Date(event.startDate) > new Date();
+
+const eventImageUrl = event.image?.trim();
+const ogImage = eventImageUrl
+  ? { url: eventImageUrl, alt: event.title }
+  : undefined;
 ---
 
 <BaseLayout
   title={`${event.title} - Events - Crosspoint Church`}
   description={event.summary}
   type="article"
+  {...(ogImage ? { image: ogImage } : {})}
 >
   <section class="py-12">
     <div class="container max-w-4xl mx-auto">
